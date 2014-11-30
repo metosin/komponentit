@@ -1,27 +1,22 @@
+(ns example
+  (:require [schema.core :as s]
+            [lomakkeet.fields :as f]
+            [lomakkeet.controller :refer [view-with-controller]]))
+
 ; Description of the state tree
 (def initial-state
   {:thing {:thing {} ; domain/Thingie
            :sub-thingies [{}]}})
 
-(defcomponent view-with-controller
-  [state
-   owner
-   {:keys [form actions render-fn] :as options}]
-  (init-state [_]
-    {:ch (chan)
-     :form (f/create-form (assoc form :owner owner))})
-  (will-mount [_]
-    (let [ch (om/get-state owner :ch)]
-      (go-loop []
-        (let [evt       (<! ch)
-              action-fn (get actions (:action evt))]
-          (if action-fn
-            (om/transact! state #(action-fn % evt))
-            (prn (str "WARNING: " (:action evt) " is unknown"))))
-        (recur)))
-    (f/init-form owner))
-  (render-state [_ {:keys [form ch]}]
-    (render-fn state form ch)))
+; FIXME: Cljs version...
+(def LocalDate #+clj org.joda.time.LocalDate #+cljs (s/pred t/date?))
+
+(s/defschema Thingie
+  {:name (s/both (s/pred seq 'required) s/Str)
+   :email s/Str
+   :date LocalDate
+   :foobar {:desc s/Str
+            :date LocalDate}})
 
 (defn render-new-thingie
   [{:keys [sub-thingies] :as thingie}
@@ -71,7 +66,7 @@
       (om/build
         view-with-controller thing
         {:opts {:form {:empty? true
-                       :schema domain/Thingie
+                       :schema Thingie
                        :cursor (:thing thing)}
                 :actions {:save
                           (fn [state evt]
@@ -79,5 +74,5 @@
                               (go (om/update! state :thing (:body (<! r))))))
                           :new-sub-thingie
                           (fn [state evt]
-                            (om/transact! state :sub-thingies #(into [] (conj % (domain/empty-sub-thingie)))))}
+                            (om/transact! state :sub-thingies #(into [] (conj % (empty-sub-thingie)))))}
                 :render-fn render-new-thingie}}))))
