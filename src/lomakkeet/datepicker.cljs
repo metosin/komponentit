@@ -26,12 +26,10 @@
   (str (.getDate v) "." (.getMonth v) "." (.getFullYear v)))
 
 (defcomponent date*
-  [data :- LocalDate
+  [{:keys [value]}
    owner
-   {:keys [ch form-group korks]
+   {:keys [ch korks]
     :as opts}]
-  (init-state [_]
-    {:error? false})
   (did-mount [_]
     (let [input (om/get-node owner "input")]
       (js/Pikaday. #js {:field input
@@ -43,14 +41,12 @@
                                               :korks korks
                                               :value (jsdate->local-date v)}))
                         :i18n pikaday-i18n})))
-  (render-state [_ {:keys [error?]}]
+  (render [_]
     (html
-      (form-group
-        opts
-        [:input.form-control
-         {:ref "input"
-          :type "text"
-          :value (or (date->str data) "")}]))))
+      [:input.form-control
+       {:ref "input"
+        :type "text"
+        :value (or (date->str value) "")}])))
 
 (defn date [form label korks & [opts]]
-  (f/build date* (merge form opts {:label label :korks korks})))
+  (f/build (merge form opts {:input date* :label label :korks korks})))

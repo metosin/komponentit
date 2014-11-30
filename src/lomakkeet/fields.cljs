@@ -12,45 +12,57 @@
             [cljs-time.core :as t]
             [lomakkeet.schema-utils :refer [get-in-schema]]))
 
+;; BUILD
+
 (defn build
-  [component {:keys [cursor korks owner schema] :as opts}]
+  [{:keys [form-group cursor korks owner schema]
+    :as opts}]
   ; NOTE: why is deref necessary?
   (let [value (get-in @cursor korks)
         schema (get-in schema korks)
         opts (assoc opts
                     :schema schema
+                    ; FIXME:
                     :required? (d/required? schema))]
-    (om/build component
-              value
-              {:opts opts
-               ; FIXME: bad
-               :state {:error (om/get-state owner (concat [:form :errors] korks))
-                       :empty? (om/get-state owner [:form :empty?])}})))
+    (om/build form-group
+              {:value value
+               :error  (om/get-state owner (concat [:form :errors] korks))
+               :empty?  (om/get-state owner [:form :empty?])}
+              {:opts opts})))
 
-(defn default-group-tpl
-  [{:keys [error label required? size empty?]
-    :or {size 6}}
-   input]
-  [:div.form-group
-   {:class (cond-> []
-             (and (not empty?) error) (conj "has-error")
-             size (conj (str "col-md-" size)))}
-   [:label label ":" (if required? "*")]
-   input
-   (if (and (not empty?) error)
-     [:span.help-block (error-message error)])])
+;; FORM GROUP ("bootstrap")
 
-(defn horizontal-group-tpl
-  [{:keys [error label required? size empty?]
-    :or {size 6}}
-   input]
-  [:div.form-group
-   {:class (if (and (not empty?) error) "has-error")}
-   [:label.control-label.col-sm-5 label ":" (if required? "*")]
-   [:div.col-sm-7 input
-    (if (and (not empty?) error)
-      [:span.help-block (error-message error)])]])
+(defcomponent default-form-group
+  [{:keys [error empty?] :as state}
+   owner
+   {:keys [input label required? size]
+    :or {size 6}
+    :as opts}]
+  (render [_]
+    (html
+      [:div.form-group
+       {:class (cond-> []
+                 (and (not empty?) error) (conj "has-error")
+                 size (conj (str "col-md-" size)))}
+       [:label label ":" (if required? "*")]
+       (om/build input state {:opts opts})
+       (if (and (not empty?) error)
+         [:span.help-block (error-message error)])])))
 
+(defcomponent horizontal-form-group
+  [{:keys [error empty?] :as state}
+   owner
+   {:keys [input label required?]
+    :as opts}]
+  (render [_]
+    (html
+      [:div.form-group
+       {:class (if (and (not empty?) error) "has-error")}
+       [:label.control-label.col-sm-5 label ":" (if required? "*")]
+       [:div.col-sm-7
+        (om/build input state {:opts opts})
+        (if (and (not empty?) error)
+          [:span.help-block (error-message error)])]])))
 
 ;; BASIC INPUTS
 
@@ -70,67 +82,62 @@
    value])
 
 (defcomponent input*
-  [data
+  [{:keys [value]}
    owner
-   {:keys [ch form-group korks el schema]
+   {:keys [ch korks el schema]
     :or {el input-input}
     :as opts}]
-  (render-state [_ {:keys [error empty?]}]
+  (render [_]
     (html
-      (form-group
-        (assoc opts :error error :empty? empty?)
-        (el data (fn [e]
-                   (put! ch {:type :change
-                             :korks korks
-                             :value (.. e -target -value)})))))))
+      (el value (fn [e]
+                  (put! ch {:type :change
+                            :korks korks
+                            :value (.. e -target -value)}))))))
 
 (defn input
   [form label korks & [opts]]
-  (build input* (merge form opts {:label label :korks korks})))
+  (build (merge form opts {:input input* :label label :korks korks})))
 
 (defn textarea
   [form label korks & [opts]]
-  (build input* (merge form opts {:label label :korks korks :el input-textarea})))
+  (build (merge form opts {:input input* :label label :korks korks :el input-textarea})))
 
 (defn static
   [form label korks & [opts]]
-  (build input* (merge form opts {:label label :korks korks :el input-static})))
+  (build (merge form opts {:input input* :label label :korks korks :el input-static})))
 
 
 ;; SELECT
 
 (defcomponent select*
-  [data
+  [{:keys [value]}
    owner
-   {:keys [ch form-group korks options]
+   {:keys [ch korks options]
     :as opts}]
-  (render-state [_ {:keys [error empty?]}]
+  (render [_]
     (html
-      (form-group
-        (assoc opts :error error :empty? empty?)
-        [:select.form-control
-         {:value data
-          :on-change (fn [e]
-                       (put! ch {:type :change
-                                 :korks korks
-                                 :value (.. e -target -value)}))}
-         (cond
-           (map? options)
-           (for [[k v] options]
-             [:option {:value k :key k} v]))]))))
+      [:select.form-control
+       {:value value
+        :on-change (fn [e]
+                     (put! ch {:type :change
+                               :korks korks
+                               :value (.. e -target -value)}))}
+       (cond
+         (map? options)
+         (for [[k v] options]
+           [:option {:value k :key k} v]))])))
 
 (defn select
   [form label korks options & [opts]]
-  (build select* (merge form opts {:label label :korks korks :options options})))
+  (build (merge form opts {:input select* :label label :korks korks :options options})))
 
 ;; FORM
 
 (defn create-form [{:keys [cursor form-group schema] :as opts}]
   (assoc opts
          :dirty? false
-         :initial-value @cursor
          :errors (s/check schema @cursor)
-         :form-group (or form-group default-group-tpl)
+         :form-group (or form-group default-form-group)
          :ch (chan)))
 
 (defn- coerce [schema value]
@@ -142,17 +149,14 @@
     value))
 
 (defn init-form [owner]
-  (let [{:keys [cursor ch schema]} (om/get-state owner :form)]
+  (let [{:keys [initial-cursor cursor ch schema]} (om/get-state owner :form)]
     (go-loop []
-      (let [initial-value (om/get-state owner [:form :initial-value])
-            {:keys [type value korks] :as evt} (<! ch)]
+      (let [{:keys [type value korks] :as evt} (<! ch)]
         (case type
           :change (do
                     (->> value (coerce (get-in-schema schema korks)) (om/update! cursor korks))
                     (om/set-state! owner [:form :errors] (s/check schema @cursor)))
-          :saved (do
-                   (om/set-state! owner [:form :initial-value] value))
           (prn (str "Unknown event-type: " type)))
         (om/set-state! owner [:form :empty?] false)
-        (om/set-state! owner [:form :dirty?] (not= @cursor initial-value)))
+        (om/set-state! owner [:form :dirty?] (not= @cursor @initial-cursor)))
       (recur))))
