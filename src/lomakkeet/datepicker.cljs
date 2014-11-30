@@ -28,7 +28,7 @@
 (defcomponent date*
   [{:keys [value]}
    owner
-   {:keys [ch korks]
+   {:keys [ch ks]
     :as opts}]
   (did-mount [_]
     (let [input (om/get-node owner "input")]
@@ -38,7 +38,7 @@
                         :firstDay 1
                         :onSelect (fn [v]
                                     (put! ch {:type :change
-                                              :korks korks
+                                              :ks ks
                                               :value (jsdate->local-date v)}))
                         :i18n pikaday-i18n})))
   (render [_]
@@ -48,5 +48,5 @@
         :type "text"
         :value (or (date->str value) "")}])))
 
-(defn date [form label korks & [opts]]
-  (f/build (merge form opts {:input date* :label label :korks korks})))
+(defn date [form label ks & [opts]]
+  (f/build (merge form opts {:input date* :label label :ks ks})))

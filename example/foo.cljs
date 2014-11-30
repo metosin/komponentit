@@ -24,7 +24,9 @@
     (render-fn state form ch)))
 
 (defn render-new-thingie
-  [{:keys [sub-thingies] :as thingie} form ch]
+  [{:keys [sub-thingies] :as thingie}
+   {:keys [empty? errors dirty?] :as form}
+   ch]
   (let [save-btn [:button.btn.btn-primary
                   {:type "button"
                    :onClick #(put ch {:action :save})}
@@ -35,8 +37,8 @@
         "New thingie"
         [:div.pull-right
          (cond
-           (and (not (:empty? form)) (:errors form)) "Form has error(s)"
-           (:dirty? form) "Form has unsaved edits")
+           (and (not empty?) errors) "Form has error(s)"
+           dirty? "Form has unsaved edits")
          save-btn]]
 
        [:form.column-content
@@ -65,15 +67,17 @@
   [thing
    owner]
   (render [_]
-    (html (om/build view-with-controller thing
-                    {:opts {:form {:empty? true
-                                   :schema domain/Thingie
-                                   :cursor (:thing thing)}
-                            :actions {:save
-                                      (fn [state evt]
-                                        (let [r (http/post "/api/foo" {:edn-params (:thing @state)})]
-                                          (om/update! state :thing (:body (<! r)))))
-                                      :new-sub-thingie
-                                      (fn [state evt]
-                                        (om/transact! state :sub-thingies #(into [] (conj % (domain/empty-sub-thingie)))))}
-                            :render-fn render-new-thingie}}))))
+    (html
+      (om/build
+        view-with-controller thing
+        {:opts {:form {:empty? true
+                       :schema domain/Thingie
+                       :cursor (:thing thing)}
+                :actions {:save
+                          (fn [state evt]
+                            (let [r (http/post "/api/foo" {:edn-params (:thing @state)})]
+                              (go (om/update! state :thing (:body (<! r))))))
+                          :new-sub-thingie
+                          (fn [state evt]
+                            (om/transact! state :sub-thingies #(into [] (conj % (domain/empty-sub-thingie)))))}
+                :render-fn render-new-thingie}}))))

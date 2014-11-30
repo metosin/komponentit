@@ -15,19 +15,19 @@
 ;; BUILD
 
 (defn build
-  [{:keys [form-group cursor korks owner schema]
+  [{:keys [form-group cursor ks owner schema]
     :as opts}]
   ; NOTE: why is deref necessary?
-  (let [value (get-in @cursor korks)
-        schema (get-in schema korks)
+  (let [value (get-in @cursor ks)
+        schema (get-in schema ks)
         opts (assoc opts
                     :schema schema
                     ; FIXME:
                     :required? (d/required? schema))]
     (om/build form-group
               {:value value
-               :error  (om/get-state owner (concat [:form :errors] korks))
-               :empty?  (om/get-state owner [:form :empty?])}
+               :error  (om/get-state owner (concat [:form :errors] ks))
+               :empty? (om/get-state owner [:form :empty?])}
               {:opts opts})))
 
 ;; FORM GROUP ("bootstrap")
@@ -84,27 +84,27 @@
 (defcomponent input*
   [{:keys [value]}
    owner
-   {:keys [ch korks el schema]
+   {:keys [ch ks el schema]
     :or {el input-input}
     :as opts}]
   (render [_]
     (html
       (el value (fn [e]
                   (put! ch {:type :change
-                            :korks korks
+                            :ks ks
                             :value (.. e -target -value)}))))))
 
 (defn input
-  [form label korks & [opts]]
-  (build (merge form opts {:input input* :label label :korks korks})))
+  [form label ks & [opts]]
+  (build (merge form opts {:input input* :label label :ks ks})))
 
 (defn textarea
-  [form label korks & [opts]]
-  (build (merge form opts {:input input* :label label :korks korks :el input-textarea})))
+  [form label ks & [opts]]
+  (build (merge form opts {:input input* :label label :ks ks :el input-textarea})))
 
 (defn static
-  [form label korks & [opts]]
-  (build (merge form opts {:input input* :label label :korks korks :el input-static})))
+  [form label ks & [opts]]
+  (build (merge form opts {:input input* :label label :ks ks :el input-static})))
 
 
 ;; SELECT
@@ -112,7 +112,7 @@
 (defcomponent select*
   [{:keys [value]}
    owner
-   {:keys [ch korks options]
+   {:keys [ch ks options]
     :as opts}]
   (render [_]
     (html
@@ -120,7 +120,7 @@
        {:value value
         :on-change (fn [e]
                      (put! ch {:type :change
-                               :korks korks
+                               :ks ks
                                :value (.. e -target -value)}))}
        (cond
          (map? options)
@@ -128,8 +128,8 @@
            [:option {:value k :key k} v]))])))
 
 (defn select
-  [form label korks options & [opts]]
-  (build (merge form opts {:input select* :label label :korks korks :options options})))
+  [form label ks options & [opts]]
+  (build (merge form opts {:input select* :label label :ks ks :options options})))
 
 ;; FORM
 
@@ -151,10 +151,10 @@
 (defn init-form [owner]
   (let [{:keys [initial-cursor cursor ch schema]} (om/get-state owner :form)]
     (go-loop []
-      (let [{:keys [type value korks] :as evt} (<! ch)]
+      (let [{:keys [type value ks] :as evt} (<! ch)]
         (case type
           :change (do
-                    (->> value (coerce (get-in-schema schema korks)) (om/update! cursor korks))
+                    (->> value (coerce (get-in-schema schema ks)) (om/update! cursor ks))
                     (om/set-state! owner [:form :errors] (s/check schema @cursor)))
           (prn (str "Unknown event-type: " type)))
         (om/set-state! owner [:form :empty?] false)
