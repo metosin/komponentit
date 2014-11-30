@@ -9,6 +9,7 @@
 
 (def LocalDate (s/pred t/date?))
 
+; FIXME:
 (def ^:private pikaday-i18n
   #js {:previousMonth "Edellinen kuukakausi",
        :nextMonth     "Seuraava kuukausi",

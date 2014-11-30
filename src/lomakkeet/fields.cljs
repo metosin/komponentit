@@ -1,16 +1,21 @@
 (ns lomakkeet.fields
-  (:require-macros [plumbing.core :refer [fnk defnk]]
-                   [cljs.core.async.macros :refer [go-loop alt!]])
-  (:require [plumbing.core :refer []]
-            [cljs.core.async :refer [put! chan <! >! timeout]]
+  (:require-macros [cljs.core.async.macros :refer [go-loop alt!]])
+  (:require [cljs.core.async :refer [put! chan <! >! timeout]]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
             [schema.core :as s]
             [schema.coerce :as sc]
             [schema.utils :as su]
-            [om.core :as om]
-            [cljs-time.core :as t]
-            [lomakkeet.schema-utils :refer [get-in-schema]]))
+            [om.core :as om]))
+
+;; FIXME:
+(defn- get-in-schema
+  "Get "
+  [schema ks & [not-found]]
+  (reduce (fn [acc k]
+            (or (get acc k) (get acc (s/optional-key k) (get acc (s/required-key k))) not-found))
+          schema
+          ks))
 
 ;; BUILD
 
@@ -21,9 +26,7 @@
   (let [value (get-in @cursor ks)
         schema (get-in schema ks)
         opts (assoc opts
-                    :schema schema
-                    ; FIXME:
-                    :required? (d/required? schema))]
+                    :schema schema)]
     (om/build form-group
               {:value value
                :error  (om/get-state owner (concat [:form :errors] ks))
@@ -35,7 +38,7 @@
 (defcomponent default-form-group
   [{:keys [error empty?] :as state}
    owner
-   {:keys [input label required? size]
+   {:keys [input label size]
     :or {size 6}
     :as opts}]
   (render [_]
@@ -44,25 +47,10 @@
        {:class (cond-> []
                  (and (not empty?) error) (conj "has-error")
                  size (conj (str "col-md-" size)))}
-       [:label label ":" (if required? "*")]
+       [:label label ":"]
        (om/build input state {:opts opts})
        (if (and (not empty?) error)
-         [:span.help-block (error-message error)])])))
-
-(defcomponent horizontal-form-group
-  [{:keys [error empty?] :as state}
-   owner
-   {:keys [input label required?]
-    :as opts}]
-  (render [_]
-    (html
-      [:div.form-group
-       {:class (if (and (not empty?) error) "has-error")}
-       [:label.control-label.col-sm-5 label ":" (if required? "*")]
-       [:div.col-sm-7
-        (om/build input state {:opts opts})
-        (if (and (not empty?) error)
-          [:span.help-block (error-message error)])]])))
+         [:span.help-block (str error)])])))
 
 ;; BASIC INPUTS
 
@@ -133,28 +121,29 @@
 
 ;; FORM
 
-(defn create-form [{:keys [cursor form-group schema] :as opts}]
+(defn create-form [{:keys [cursor form-group schema coercion-matcher] :as opts}]
   (assoc opts
          :dirty? false
          :errors (s/check schema @cursor)
          :form-group (or form-group default-form-group)
-         :ch (chan)))
+         :ch (chan)
+         :coercion-matcher (or coercion-matcher sc/json-coercion-matcher)))
 
-(defn- coerce [schema value]
+(defn- coerce [coercion-matcher schema value]
   (if schema
-    (let [coerced (ssc/domain-coercer schema value)]
+    (let [coerced (sc/coerce coercion-matcher schema value)]
       (if (su/error? coerced)
         value
         coerced))
     value))
 
 (defn init-form [owner]
-  (let [{:keys [initial-cursor cursor ch schema]} (om/get-state owner :form)]
+  (let [{:keys [initial-cursor cursor ch schema coercion-matcher]} (om/get-state owner :form)]
     (go-loop []
       (let [{:keys [type value ks] :as evt} (<! ch)]
         (case type
           :change (do
-                    (->> value (coerce (get-in-schema schema ks)) (om/update! cursor ks))
+                    (->> value (coerce coercion-matcher (get-in-schema schema ks)) (om/update! cursor ks))
                     (om/set-state! owner [:form :errors] (s/check schema @cursor)))
           (prn (str "Unknown event-type: " type)))
         (om/set-state! owner [:form :empty?] false)
