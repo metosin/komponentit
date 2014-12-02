@@ -3,40 +3,23 @@
   (:require [cljs.core.async :refer [put! chan <! >! timeout]]
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
-            [schema.core :as s]
+            [schema.core :as s :include-macros true]
             [schema.coerce :as sc]
             [schema.utils :as su]
             [om.core :as om]))
 
 ;; FIXME:
 (defn- get-in-schema
-  "Get "
   [schema ks & [not-found]]
   (reduce (fn [acc k]
             (or (get acc k) (get acc (s/optional-key k) (get acc (s/required-key k))) not-found))
           schema
           ks))
 
-;; BUILD
-
-(defn build
-  [{:keys [form-group cursor ks owner schema]
-    :as opts}]
-  ; NOTE: why is deref necessary?
-  (let [value (get-in @cursor ks)
-        schema (get-in schema ks)
-        opts (assoc opts
-                    :schema schema)]
-    (om/build form-group
-              {:value value
-               :error  (om/get-state owner (concat [:form :errors] ks))
-               :empty? (om/get-state owner [:form :empty?])}
-              {:opts opts})))
-
 ;; FORM GROUP ("bootstrap")
 
 (defcomponent default-form-group
-  [{:keys [error empty?] :as state}
+  [{:keys [error] :as input-state}
    owner
    {:keys [input label size]
     :or {size 6}
@@ -45,24 +28,35 @@
     (html
       [:div.form-group
        {:class (cond-> []
-                 (and (not empty?) error) (conj "has-error")
+                 (and error) (conj "has-error")
                  size (conj (str "col-md-" size)))}
        [:label label ":"]
-       (om/build input state {:opts opts})
+       (om/build input input-state {:opts opts})
        (if (and (not empty?) error)
          [:span.help-block (str error)])])))
+
+;; BUILD
+
+(defn build
+  [{:keys [form-state form-group ks] :as opts}]
+  (let [{:keys [value errors schema]} form-state]
+    (om/build form-group
+              {:value  (get-in value ks)
+               :error  (get-in errors ks)
+               :schema (get-in-schema schema ks)}
+              {:opts opts})))
 
 ;; BASIC INPUTS
 
 (defn input-input [value cb]
   [:input.form-control
    {:type "text"
-    :default-value value
+    :value value
     :on-change cb}])
 
 (defn input-textarea [value cb]
   [:textarea.form-control
-   {:default-value value
+   {:value value
     :on-change cb}])
 
 (defn input-static [value cb]
@@ -72,7 +66,7 @@
 (defcomponent input*
   [{:keys [value]}
    owner
-   {:keys [ch ks el schema]
+   {:keys [ch ks el]
     :or {el input-input}
     :as opts}]
   (render [_]
@@ -121,31 +115,90 @@
 
 ;; FORM
 
-(defn create-form [{:keys [cursor form-group schema coercion-matcher] :as opts}]
-  (assoc opts
-         :dirty? false
-         :errors (s/check schema @cursor)
-         :form-group (or form-group default-form-group)
-         :ch (chan)
-         :coercion-matcher (or coercion-matcher sc/json-coercion-matcher)))
-
 (defn- coerce [coercion-matcher schema value]
   (if schema
-    (let [coerced (sc/coerce coercion-matcher schema value)]
+    (let [coerced ((sc/coercer schema coercion-matcher) value)]
       (if (su/error? coerced)
         value
         coerced))
     value))
 
-(defn init-form [owner]
-  (let [{:keys [initial-cursor cursor ch schema coercion-matcher]} (om/get-state owner :form)]
-    (go-loop []
-      (let [{:keys [type value ks] :as evt} (<! ch)]
-        (case type
-          :change (do
-                    (->> value (coerce coercion-matcher (get-in-schema schema ks)) (om/update! cursor ks))
-                    (om/set-state! owner [:form :errors] (s/check schema @cursor)))
-          (prn (str "Unknown event-type: " type)))
-        (om/set-state! owner [:form :empty?] false)
-        (om/set-state! owner [:form :dirty?] (not= @cursor @initial-cursor)))
-      (recur))))
+(s/defschema FormState
+  {:value s/Any
+   :initial-value s/Any
+   :errors s/Any
+   :schema s/Any
+   s/Keyword s/Any})
+
+(defn ->form-state
+  ([value] (->form-state value nil))
+  ([value schema]
+   {:value value
+    :initial-value value
+    :errors (if schema (s/check schema value))
+    :schema schema}))
+
+(defn cancel-form [form-state]
+  (assoc form-state :value (:initial-value form-state)))
+
+(defn save-form
+  ([form-state] (save-form form-state identity))
+  ([form-state f]
+   (assoc form-state :initial-value (f (:value form-state)))))
+
+(defcomponent form
+  [{:keys [schema value initial-value]
+    :as form-state} :- FormState
+   owner
+   {:keys [actions render-fn form]
+    :as opts}]
+  (init-state [_]
+    ; (js/console.log (str @state))
+    ; (js/console.log (str (s/check FormState form-state)))
+    (assert (nil? (s/check FormState form-state)))
+    (-> {:ch (chan)
+         :form-group default-form-group
+         :coercion-matcher sc/json-coercion-matcher}
+        (merge form)))
+  (will-mount [_]
+    (let [schema (if schema @schema)
+          {:keys [ch coercion-matcher]} (om/get-state owner)]
+      (go-loop []
+        (let [evt (<! ch)]
+          (case (:type evt)
+            :action (if-let [action-fn (get actions (:action evt))]
+                      (om/transact! form-state #(action-fn % evt))
+                      (prn (str "WARNING: " (:action evt) " is unknown")))
+
+            :cancel (om/transact! form-state cancel-form)
+
+            :change (let [{:keys [ks]} evt]
+                      (->> evt :value
+                           (coerce coercion-matcher (get-in-schema schema ks))
+                           (om/update! value ks)))
+            (prn (str "Unknown event-type: " (:type evt)))))
+        ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
+        (om/update! form-state :errors (s/check schema @value))
+        (recur))))
+  (render-state [_ form]
+    (html (render-fn {:form-state form-state
+                      :value @value
+                      :form (assoc form :form-state form-state)
+                      :ch (:ch form)}))))
+
+(defn dirty? [form-state]
+  (not= (:value form-state) (:initial-value form-state)))
+
+(defn errors? [form-state]
+  (seq (:errors form-state)))
+
+; FIXME:
+(defn build-all
+  ([f xs] (build-all f xs nil))
+  ([f xs m]
+   (map (fn [x i]
+          (om/build f x (-> m
+                            (assoc :om.core/index i
+                                   :react-key ((:key-fn m) x))
+                            (dissoc :key-fn))))
+      xs (range))))

@@ -18,13 +18,15 @@
        :weekdaysShort #js ["Su","Ma","Ti","Ke","To","Pe","La"]})
 
 (defn jsdate->local-date [v]
-  (doto (goog.date.Date.)
-    (.setYear (.getFullYear v))
-    (.setMonth (.getMonth v))
-    (.setDate (.getDate v))))
+  (if v
+    (doto (goog.date.Date.)
+      (.setYear (.getFullYear v))
+      (.setMonth (.getMonth v))
+      (.setDate (.getDate v)))))
 
 (defn date->str [v]
-  (str (.getDate v) "." (.getMonth v) "." (.getFullYear v)))
+  (if v
+    (str (.getDate v) "." (.getMonth v) "." (.getFullYear v))))
 
 (defcomponent date*
   [{:keys [value]}
