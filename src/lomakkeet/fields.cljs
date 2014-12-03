@@ -1,6 +1,7 @@
 (ns lomakkeet.fields
-  (:require-macros [cljs.core.async.macros :refer [go-loop alt!]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])
   (:require [cljs.core.async :refer [put! chan <! >! timeout]]
+            cljs.core.async.impl.channels
             [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]
             [schema.core :as s :include-macros true]
@@ -15,6 +16,9 @@
             (or (get acc k) (get acc (s/optional-key k) (get acc (s/required-key k))) not-found))
           schema
           ks))
+
+(defn- chan? [v]
+  (instance? cljs.core.async.impl.channels.ManyToManyChannel v))
 
 ;; FORM GROUP ("bootstrap")
 
@@ -142,9 +146,11 @@
   (assoc form-state :value (:initial-value form-state)))
 
 (defn save-form
-  ([form-state] (save-form form-state identity))
-  ([form-state f]
-   (assoc form-state :initial-value (f (:value form-state)))))
+  ([{:keys [schema] :as form-state} value]
+   (assoc form-state
+          :value value
+          :initial-value value
+          :errors (if schema (s/check schema value)))))
 
 (defcomponent form
   [{:keys [schema value initial-value]
@@ -167,7 +173,10 @@
         (let [evt (<! ch)]
           (case (:type evt)
             :action (if-let [action-fn (get actions (:action evt))]
-                      (om/transact! form-state #(action-fn % evt))
+                      (let [next (action-fn @form-state evt)]
+                        (if (chan? next)
+                          (go (om/update! form-state (<! next)))
+                          (om/update! form-state next)))
                       (prn (str "WARNING: " (:action evt) " is unknown")))
 
             :cancel (om/transact! form-state cancel-form)
@@ -191,14 +200,3 @@
 
 (defn errors? [form-state]
   (seq (:errors form-state)))
-
-; FIXME:
-(defn build-all
-  ([f xs] (build-all f xs nil))
-  ([f xs m]
-   (map (fn [x i]
-          (om/build f x (-> m
-                            (assoc :om.core/index i
-                                   :react-key ((:key-fn m) x))
-                            (dissoc :key-fn))))
-      xs (range))))

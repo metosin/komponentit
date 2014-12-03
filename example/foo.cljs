@@ -9,7 +9,7 @@
            :sub-thingies [{}]}})
 
 ; FIXME: Cljs version...
-(def LocalDate #+clj org.joda.time.LocalDate #+cljs (s/pred t/date?))
+(def LocalDate (s/pred t/date?))
 
 (s/defschema Thingie
   {:name (s/both (s/pred seq 'required) s/Str)
