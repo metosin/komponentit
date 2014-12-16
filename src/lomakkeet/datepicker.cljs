@@ -2,12 +2,9 @@
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
             [cljs.core.async :refer [put!]]
-            [schema.core :as s]
             [sablono.core :refer-macros [html]]
-            [cljs-time.core :as t]
-            [lomakkeet.fields :as f]))
-
-(def LocalDate (s/pred t/date?))
+            [lomakkeet.fields :as f]
+            [goog.string :as gs]))
 
 ; FIXME:
 (def ^:private pikaday-i18n
@@ -26,7 +23,7 @@
 
 (defn date->str [v]
   (if v
-    (str (.getDate v) "." (.getMonth v) "." (.getFullYear v))))
+    (gs/format "%d.%d.%d" (.getDate v) (inc (.getMonth v)) (.getFullYear v))))
 
 (defcomponent date*
   [{:keys [value]}
@@ -37,7 +34,7 @@
     (let [input (om/get-node owner "input")]
       (js/Pikaday. #js {:field input
                         ; NOTE: This requires MomentJS
-                        :format "DD.MM.YYYY"
+                        :format "D.M.YYYY"
                         :firstDay 1
                         :onSelect (fn [v]
                                     (put! ch {:type :change
