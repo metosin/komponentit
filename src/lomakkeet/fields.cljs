@@ -168,14 +168,18 @@
           :initial-value value
           :errors (if schema (s/check schema value)))))
 
-; FIXME: This should probaby be parametrized somehow
-(defn- change-value [value-cursor initial-value-cursor ks value]
-  (js/console.log ks value)
+(defn- change-value
+  "Takes cursor, schema, vector of keywords and new value.
+
+   If new value is nil, schema is checked if value is in optional-key,
+   value it is, instead of setting value to nil, the key is dissoced."
+  [value-cursor schema ks value]
   (if value
     (om/update! value-cursor ks value)
-    (if-let [initial-value (get-in initial-value-cursor ks)]
-      (om/update! value-cursor ks initial-value)
-      (om/transact! value-cursor #(dissoc-in % ks)))))
+    (let [schema (get-in-schema schema (butlast ks))]
+      (if (contains? schema (s/optional-key (last ks)))
+        (om/transact! value-cursor #(dissoc-in % ks))
+        (om/update! value-cursor ks value)))))
 
 (defcomponent form
   [{:keys [schema value initial-value]
@@ -209,7 +213,7 @@
             :change (let [{:keys [ks]} evt]
                       (->> evt :value
                            (coerce coercion-matcher (get-in-schema schema ks))
-                           (change-value value initial-value ks)))
+                           (change-value value schema ks)))
             (prn (str "Unknown event-type: " (:type evt)))))
         ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
         (om/update! form-state :errors (if schema (s/check schema @value)))
