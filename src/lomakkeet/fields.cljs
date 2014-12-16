@@ -55,12 +55,12 @@
 (defn input-input [value cb]
   [:input.form-control
    {:type "text"
-    :value value
+    :value (or value "")
     :on-change cb}])
 
 (defn input-textarea [value cb]
   [:textarea.form-control
-   {:value value
+   {:value (or value "")
     :on-change cb}])
 
 (defn input-static [value cb]
