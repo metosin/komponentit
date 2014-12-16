@@ -45,9 +45,9 @@
   [{:keys [form-state form-group ks] :as opts}]
   (let [{:keys [value errors schema]} form-state]
     (om/build form-group
-              {:value  (get-in value ks)
-               :error  (get-in errors ks)
-               :schema (get-in-schema schema ks)}
+              {:value  (get-in @value ks)
+               :error  (if errors (get-in @errors ks))
+               :schema (if schema (get-in-schema @schema ks))}
               {:opts opts})))
 
 ;; BASIC INPUTS
@@ -187,7 +187,7 @@
                            (om/update! value ks)))
             (prn (str "Unknown event-type: " (:type evt)))))
         ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
-        (om/update! form-state :errors (s/check schema @value))
+        (om/update! form-state :errors (if schema (s/check schema @value)))
         (recur))))
   (render-state [_ form]
     (html (render-fn {:form-state form-state
