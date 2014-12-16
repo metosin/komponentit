@@ -49,4 +49,8 @@
         :value (or (date->str value) "")}])))
 
 (defn date [form label ks & [opts]]
-  (f/build (merge form opts {:input date* :label label :ks ks})))
+  (f/build (merge form opts
+                  {:label label :ks ks}
+                  (if (:empty-btn? opts)
+                    {:input f/emptyable-input :real-input date*}
+                    {:input date*}))))

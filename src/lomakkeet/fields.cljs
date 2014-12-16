@@ -34,6 +34,28 @@
       m)
     (dissoc m k)))
 
+;; EMPTYABLE INPUT
+
+(defn- empty-cb [{:keys [ch ks]}]
+  (fn [e]
+    (put! ch {:type :change
+              :value nil
+              :ks ks})))
+
+(defcomponent emptyable-input
+  [state
+   owner
+   {:keys [real-input] :as opts}]
+  (render [_]
+    (html
+      [:div.input-group
+       (om/build real-input state {:opts opts})
+       [:span.input-group-btn
+        [:button.btn.btn-default
+         {:type "button"
+          :on-click (empty-cb opts)}
+         "×"]]])))
+
 ;; FORM GROUP ("bootstrap")
 
 (defcomponent default-form-group

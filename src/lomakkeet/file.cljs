@@ -37,6 +37,7 @@
         {:type "button"
          :on-click #(.click (om/get-node owner "file-input"))}
         file-select-label]
+       ; FIXME: emptyable-input?
        [:button.btn.btn-default
         {:type "button"
          :on-click #(put! ch {:type :change :ks ks :value nil})}
