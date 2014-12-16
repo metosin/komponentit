@@ -70,15 +70,17 @@
 (defcomponent input*
   [{:keys [value]}
    owner
-   {:keys [ch ks el]
-    :or {el input-input}
+   {:keys [ch ks el transform-value]
+    :or {el input-input
+         transform-value identity}
     :as opts}]
   (render [_]
     (html
-      (el value (fn [e]
-                  (put! ch {:type :change
-                            :ks ks
-                            :value (.. e -target -value)}))))))
+      (el (transform-value value)
+          (fn [e]
+            (put! ch {:type :change
+                      :ks ks
+                      :value (.. e -target -value)}))))))
 
 (defn input
   [form label ks & [opts]]
