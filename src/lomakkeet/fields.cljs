@@ -20,6 +20,20 @@
 (defn- chan? [v]
   (instance? cljs.core.async.impl.channels.ManyToManyChannel v))
 
+(defn dissoc-in
+  "Dissociates an entry from a nested associative structure returning a new
+   nested structure. keys is a sequence of keys. Any empty maps that result
+   will not be present in the new structure."
+  [m [k & ks :as keys]]
+  (if ks
+    (if-let [nextmap (get m k)]
+      (let [newmap (dissoc-in nextmap ks)]
+        (if (seq newmap)
+          (assoc m k newmap)
+          (dissoc m k)))
+      m)
+    (dissoc m k)))
+
 ;; FORM GROUP ("bootstrap")
 
 (defcomponent default-form-group
@@ -154,6 +168,15 @@
           :initial-value value
           :errors (if schema (s/check schema value)))))
 
+; FIXME: This should probaby be parametrized somehow
+(defn- change-value [value-cursor initial-value-cursor ks value]
+  (js/console.log ks value)
+  (if value
+    (om/update! value-cursor ks value)
+    (if-let [initial-value (get-in initial-value-cursor ks)]
+      (om/update! value-cursor ks initial-value)
+      (om/transact! value-cursor #(dissoc-in % ks)))))
+
 (defcomponent form
   [{:keys [schema value initial-value]
     :as form-state} :- FormState
@@ -186,7 +209,7 @@
             :change (let [{:keys [ks]} evt]
                       (->> evt :value
                            (coerce coercion-matcher (get-in-schema schema ks))
-                           (om/update! value ks)))
+                           (change-value value initial-value ks)))
             (prn (str "Unknown event-type: " (:type evt)))))
         ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
         (om/update! form-state :errors (if schema (s/check schema @value)))
