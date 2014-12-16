@@ -1,78 +1,100 @@
 (ns example
-  (:require [schema.core :as s]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [om.core :as om :include-macros true]
+            [om-tools.core :refer-macros [defcomponent]]
+            [cljs.core.async :refer [put!]]
+            [schema.core :as s :include-macros true]
+            [plumbing.core :refer-macros [defnk]]
+            [sablono.core :refer-macros [html]]
+            [cljs-time.core :as t]
+            [cljs-http.client :as http]
             [lomakkeet.fields :as f]
-            [lomakkeet.controller :refer [view-with-controller]]))
+            [lomakkeet.datepicker :as df]
+            [lomakkeet.file :as ff]
+            [lomakkeet.utils :as util]
+            [figwheel.client :as fw]
+            forms
+            dev))
 
-; Description of the state tree
-(def initial-state
-  {:thing {:thing {} ; domain/Thingie
-           :sub-thingies [{}]}})
-
-; FIXME: Cljs version...
+; goog.date.Date?
 (def LocalDate (s/pred t/date?))
 
 (s/defschema Thingie
-  {:name (s/both (s/pred seq 'required) s/Str)
+  {:name (s/both s/Str (s/pred seq 'required))
    :email s/Str
-   :date LocalDate
+   :date (s/maybe LocalDate)
    :foobar {:desc s/Str
-            :date LocalDate}})
+            :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
 
-(defn render-new-thingie
-  [{:keys [sub-thingies] :as thingie}
-   {:keys [empty? errors dirty?] :as form}
-   ch]
-  (let [save-btn [:button.btn.btn-primary
-                  {:type "button"
-                   :onClick #(put ch {:action :save})}
-                  "Save"]]
-    (html
-      [:div.tasks
-       [:h2
-        "New thingie"
-        [:div.pull-right
-         (cond
-           (and (not empty?) errors) "Form has error(s)"
-           dirty? "Form has unsaved edits")
-         save-btn]]
+; Description of the state tree
+(def empty-thing
+  {:name "Luke Skywalker"
+   :email "luke@rebel.gov"
+   :date nil
+   :foobar {:desc ""
+            :file nil}})
 
-       [:form.column-content
-        [:div.row
-         (f/input form "Name"   [:name])
-         (f/input form "Email"  [:email])]
+(def initial-state
+  {:thing-page (f/->form-state empty-thing Thingie)})
 
-        [:div.row
-         (df/date form "Date" [:date] {:size 3})]
+(defonce state (atom initial-state))
 
-        [:div.row
-         (f/textarea  form "Description" [:foobar :desc])
-         (df/date     form "Date 2"      [:foobar :date] {:size 3})]]
+;; VIEWS
 
-       (om/build-all new-sub-thingie sub-thingies {:key :id})
+(defnk render-thingie-form
+  [form-state form ch]
+  (html
+    [:div.tasks
+     [:h2
+      "New thingie"
+      [:div.btn-toolbar.pull-right
+       (forms/form-status form-state)
+       (forms/cancel-btn form-state ch)
+       (forms/save-btn form-state ch)]]
 
-       [:div.column-content
-        [:button.action
-         {:type "button"
-          :onClick #(put! ch {:action :new-sub-thingie})}
-         "New sub-thingie"]]
-       [:h2.clearfix
-        [:div.pull-right save-btn]]])))
+     [:form.column-content
+      [:div.row
+       (f/input form "Name"   [:name])
+       (f/input form "Email"  [:email])]
 
-(defcomponent foo
-  [thing
+      [:div.row
+       (df/date form "Date" [:date] {:size 3 :empty-btn? true})]
+
+      [:div.row
+       (f/textarea  form "Description" [:foobar :desc])
+       (ff/file     form "File"        [:foobar :file])]]
+
+     [:div.btn-toolbar.pull-right
+      (forms/save-btn form-state ch)]]))
+
+(defn save-thing [state evt]
+  (-> state
+      (f/save-form (:value state))))
+
+(defcomponent thing-view
+  [page-state
    owner]
   (render [_]
     (html
       (om/build
-        view-with-controller thing
-        {:opts {:form {:empty? true
-                       :schema Thingie
-                       :cursor (:thing thing)}
-                :actions {:save
-                          (fn [state evt]
-                            (let [r (http/post "/api/foo" {:edn-params (:thing @state)})]
-                              (go (om/update! state :thing (:body (<! r))))))
-                          :new-sub-thingie
-                          (fn [state evt]
-                            (om/transact! state :sub-thingies #(into [] (conj % (empty-sub-thingie)))))}
-                :render-fn render-new-thingie}}))))
+        f/form page-state
+        {:opts {:form {:humanize-error forms/humanize-error}
+                :actions {:save save-thing}
+                :render-fn render-thingie-form}}))))
+
+(defcomponent app-view
+  [app-state owner]
+  (render [_]
+    (html
+      [:div
+       (om/build thing-view (:thing-page app-state))
+       (om/build dev/state-view app-state)])))
+
+(defn restart! []
+  (om/root app-view state {:target (.getElementById js/document "app")}))
+
+(restart!)
+
+(fw/watch-and-reload
+  :websocket-url "ws://localhost:3450/figwheel-ws"
+  :jsload-callback (fn [] (restart!)))

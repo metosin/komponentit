@@ -18,6 +18,7 @@
   [{:keys [value]}
    owner
    {:keys [ch ks file-select-label]
+    :or {file-select-label "Select file"}
     :as opts}]
   (render [_]
     (html
@@ -30,9 +31,7 @@
                       (if-let [file (.item e.target.files 0)]
                         (put! ch {:type :change
                                   :ks ks
-                                  :value {:file-name (.-name file)
-                                          :file-size (.-size file)
-                                          :file file}})))}]
+                                  :value file})))}]
        [:button.btn.btn-primary
         {:type "button"
          :on-click #(.click (om/get-node owner "file-input"))}
@@ -44,7 +43,7 @@
         "×"]
        (if value
          [:span.selected-file
-          " " (:file-name value) ", " (humanize-filesize (:file-size value))])])))
+          " " (.-name value) ", " (humanize-filesize (.-size value))])])))
 
 (defn file [form label ks & [opts]]
   (f/build (merge form opts {:input file* :label label :ks ks})))

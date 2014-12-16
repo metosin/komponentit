@@ -61,19 +61,20 @@
 (defcomponent default-form-group
   [{:keys [error] :as input-state}
    owner
-   {:keys [input label size]
-    :or {size 6}
+   {:keys [input label size humanize-error]
+    :or {size 6
+         humanize-error (fn [_] "error")}
     :as opts}]
   (render [_]
     (html
       [:div.form-group
        {:class (cond-> []
-                 (and error) (conj "has-error")
+                 error (conj "has-error")
                  size (conj (str "col-md-" size)))}
        [:label label ":"]
        (om/build input input-state {:opts opts})
-       (if (and (not empty?) error)
-         [:span.help-block (str error)])])))
+       (if error
+         [:span.help-block (humanize-error error)])])))
 
 ;; BUILD
 
