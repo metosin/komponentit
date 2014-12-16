@@ -194,6 +194,7 @@
   (render-state [_ form]
     (html (render-fn {:form-state form-state
                       :value @value
+                      :initial-value @initial-value
                       :form (assoc form :form-state form-state)
                       :ch (:ch form)}))))
 
