@@ -61,7 +61,7 @@
 (defcomponent default-form-group
   [{:keys [error] :as input-state}
    owner
-   {:keys [input label size]
+   {:keys [input label size help-text]
     :or {size 6}
     :as opts}]
   (render-state [_ s]
@@ -72,6 +72,8 @@
                  size (conj (str "col-md-" size)))}
        [:label label ":"]
        (om/build input input-state {:opts opts :state s})
+       (if help-text
+         [:span.help-block help-text])
        (if (and (not empty?) error)
          [:span.help-block (str error)])])))
 

@@ -26,9 +26,9 @@
             :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
 
 (defn ThingieDates [{:keys [start-date end-date] :as thingie}]
-  {:start-date (s/both LocalDate (s/pred (fn [x] (and (or (.equals x (t/today)) (t/after? x (t/today)))
-                                                      (or (.equals x end-date) (t/before? x end-date))))))
-   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (.equals x start-date) (t/after? x start-date))))))
+  {:start-date (s/both LocalDate(s/pred (fn [x] (and (or (.equals x (t/today)) (t/after? x (t/today)))
+                                                      (or (.equals x end-date) (t/before? x end-date)))) 'invalid-date))
+   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (.equals x start-date) (t/after? x start-date)))) 'invalid-date))
    s/Keyword s/Any})
 
 ; Description of the state tree
@@ -67,11 +67,13 @@
       [:div.row
        (df/date form "Start date" [:start-date]
                 {:size 3
-                 :state {:min-date (t/today) :max-date end-date}})
+                 :state {:min-date (t/today) :max-date end-date}
+                 :help-text "Today or later. Before end date."})
        (df/date form "End date"   [:end-date]
                 {:size 3
                  :empty-btn? true
-                 :state {:min-date start-date}})]
+                 :state {:min-date start-date}
+                 :help-text "Optional. After start date."})]
 
       [:div.row
        (f/textarea  form "Description" [:foobar :desc])
