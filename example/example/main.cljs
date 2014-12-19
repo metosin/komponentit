@@ -20,15 +20,23 @@
 (s/defschema Thingie
   {:name (s/both s/Str (s/pred seq 'required))
    :email s/Str
-   :date (s/maybe LocalDate)
+   :start-date LocalDate
+   :end-date   (s/maybe LocalDate)
    :foobar {:desc s/Str
             :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
+
+(defn ThingieDates [{:keys [start-date end-date] :as thingie}]
+  {:start-date (s/both LocalDate (s/pred (fn [x] (and (or (.equals x (t/today)) (t/after? x (t/today)))
+                                                      (or (.equals x end-date) (t/before? x end-date))))))
+   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (.equals x start-date) (t/after? x start-date))))))
+   s/Keyword s/Any})
 
 ; Description of the state tree
 (def empty-thing
   {:name "Luke Skywalker"
    :email "luke@rebel.gov"
-   :date nil
+   :start-date (t/today)
+   :end-date nil
    :foobar {:desc ""
             :file nil}})
 
@@ -40,7 +48,8 @@
 ;; VIEWS
 
 (defnk render-thingie-form
-  [form-state form ch]
+  [form-state form ch
+   [:value start-date end-date]]
   (html
     [:div.tasks
      [:h2
@@ -56,7 +65,13 @@
        (f/input form "Email"  [:email])]
 
       [:div.row
-       (df/date form "Date" [:date] {:size 3 :empty-btn? true})]
+       (df/date form "Start date" [:start-date]
+                {:size 3
+                 :state {:min-date (t/today) :max-date end-date}})
+       (df/date form "End date"   [:end-date]
+                {:size 3
+                 :empty-btn? true
+                 :state {:min-date start-date}})]
 
       [:div.row
        (f/textarea  form "Description" [:foobar :desc])
@@ -77,6 +92,7 @@
       (om/build
         f/form page-state
         {:opts {:form {:humanize-error forms/humanize-error}
+                :form-validation-fn (fn [v] (s/check (ThingieDates v) v))
                 :actions {:save save-thing}
                 :render-fn render-thingie-form}}))))
 
