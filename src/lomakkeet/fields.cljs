@@ -228,7 +228,7 @@
   [{:keys [schema value initial-value]
     :as form-state} :- FormState
    owner
-   {:keys [actions render-fn form]
+   {:keys [actions render-fn form form-validation-fn]
     :as opts}]
   (init-state [_]
     ; (js/console.log (str @state))
@@ -259,7 +259,9 @@
                            (change-value value schema ks)))
             (prn (str "Unknown event-type: " (:type evt)))))
         ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
-        (om/update! form-state :errors (if schema (s/check schema @value)))
+        (om/update! form-state :errors (merge
+                                         (if form-validation-fn (form-validation-fn @value))
+                                         (if schema (s/check schema @value))))
         (recur))))
   (render-state [_ form]
     (html (render-fn {:form-state form-state
