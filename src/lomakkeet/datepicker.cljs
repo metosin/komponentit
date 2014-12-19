@@ -21,9 +21,27 @@
       (.setMonth (.getMonth v))
       (.setDate (.getDate v)))))
 
+(defn local-date->jsdate [v]
+  (if v
+    (doto (js/Date.)
+      (.setYear (.getFullYear v))
+      (.setMonth (.getMonth v))
+      (.setDate (.getDate v))
+      (.setHours 0)
+      (.setMinutes 0)
+      (.setSeconds 0))))
+
 (defn date->str [v]
   (if v
     (gs/format "%d.%d.%d" (.getDate v) (inc (.getMonth v)) (.getFullYear v))))
+
+(defn- set-limit-date [k owner]
+  (let [el (om/get-state owner :el)
+        fn-name  (get {:min-date "setMinDate"
+                       :max-date "setMaxDate"} k)
+        v (om/get-state owner k)]
+    (if v
+      (.call (aget el fn-name) el v))))
 
 (defcomponent date*
   [{:keys [value]}
@@ -31,16 +49,25 @@
    {:keys [ch ks]
     :as opts}]
   (did-mount [_]
-    (let [input (om/get-node owner "input")]
-      (js/Pikaday. #js {:field input
-                        ; NOTE: This requires MomentJS
-                        :format "D.M.YYYY"
-                        :firstDay 1
-                        :onSelect (fn [v]
-                                    (put! ch {:type :change
-                                              :ks ks
-                                              :value (jsdate->local-date v)}))
-                        :i18n pikaday-i18n})))
+    (let [input (om/get-node owner "input")
+          el (js/Pikaday. #js {:field input
+                               ; NOTE: This requires MomentJS
+                               :format "D.M.YYYY"
+                               :firstDay 1
+                               :onSelect (fn [v]
+                                           (put! ch {:type :change
+                                                     :ks ks
+                                                     :value (jsdate->local-date v)}))
+                               :i18n pikaday-i18n})]
+      (om/set-state! owner :el el)
+      (set-limit-date :min-date owner)
+      (set-limit-date :max-date owner)))
+  (did-update [_ prev _]
+    (let [props (om/get-state owner)]
+      (if (not= (:min-date props) (:min-date prev))
+        (set-limit-date :min-date owner))
+      (if (not= (:max-date props) (:max-date prev))
+        (set-limit-date :max-date owner))))
   (render [_]
     (html
       [:input.form-control
