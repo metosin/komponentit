@@ -131,6 +131,26 @@
   [form label ks & [opts]]
   (build (merge form opts {:input input* :label label :ks ks :el input-static})))
 
+;; CHECKBOX
+
+(defcomponent checkbox*
+  [{:keys [value]}
+   owner
+   {:keys [ch ks]
+    :as opts}]
+  (render [_]
+    (html
+      [:input
+       {:type "checkbox"
+        :checked (boolean value)
+        :on-change (fn [e]
+                     (put! ch {:type :change
+                               :ks ks
+                               :value (.. e -target -checked)}))}])))
+
+(defn checkbox
+  [form label ks & [opts]]
+  (build (merge form opts {:input checkbox* :label label :ks ks})))
 
 ;; SELECT
 
