@@ -2,12 +2,15 @@
 
 *Proof of concept*
 
+[DEMO](http://metosin.github.io/lomakkeet)
+
 ## TODO
 
 - [ ] Come up with a proper name.
 - [ ] Publish on Clojars
 - [ ] There are some problems with action abstraction
   - Async action can update form-state only once
+- [ ] Port example project to Boot 2
 
 ## Features / Goals
 

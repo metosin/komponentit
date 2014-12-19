@@ -230,7 +230,7 @@
         (om/update! value-cursor ks value)))))
 
 (defcomponent form
-  [{:keys [schema value initial-value]
+  [{:keys [value initial-value]
     :as form-state} :- FormState
    owner
    {:keys [actions render-fn form form-validation-fn]
@@ -244,7 +244,10 @@
          :coercion-matcher sc/json-coercion-matcher}
         (merge form)))
   (will-mount [_]
-    (let [schema (if schema @schema)
+    ; Going around JSC error by retrieving schema from form-state
+    ; For some destructuring schema at defcomponent + letting it would generate
+    ; invalid JS
+    (let [schema (if (:schema form-state) @(:schema form-state))
           {:keys [ch coercion-matcher]} (om/get-state owner)]
       (go-loop []
         (let [evt (<! ch)]

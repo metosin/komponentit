@@ -1,4 +1,4 @@
-(ns example
+(ns example.main
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om-tools.core :refer-macros [defcomponent]]
@@ -7,14 +7,12 @@
             [plumbing.core :refer-macros [defnk]]
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
-            [cljs-http.client :as http]
             [lomakkeet.fields :as f]
             [lomakkeet.datepicker :as df]
             [lomakkeet.file :as ff]
             [lomakkeet.utils :as util]
-            [figwheel.client :as fw]
-            forms
-            dev))
+            [example.forms :as forms]
+            [example.dev :as dev]))
 
 ; goog.date.Date?
 (def LocalDate (s/pred t/date?))
@@ -94,7 +92,3 @@
   (om/root app-view state {:target (.getElementById js/document "app")}))
 
 (restart!)
-
-(fw/watch-and-reload
-  :websocket-url "ws://localhost:3450/figwheel-ws"
-  :jsload-callback (fn [] (restart!)))

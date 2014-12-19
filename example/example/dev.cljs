@@ -1,4 +1,4 @@
-(ns dev
+(ns example.dev
   (:require [om-tools.core :refer-macros [defcomponent]]
             [sablono.core :refer-macros [html]]))
 

@@ -2,3 +2,4 @@ target
 resources/public/js
 .nrepl*
 .lein*
+gh-pages
