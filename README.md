@@ -1,12 +1,13 @@
 # Lomakkeet
 
-*WIP*
-
+*Proof of concept*
 
 ## TODO
 
 - [ ] Come up with a proper name.
 - [ ] Publish on Clojars
+- [ ] There are some problems with action abstraction
+  - Async action can update form-state only once
 
 ## Features / Goals
 
