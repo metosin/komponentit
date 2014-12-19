@@ -211,6 +211,11 @@
           :initial-value value
           :errors (if schema (s/check schema value)))))
 
+(defn update-form
+  [{:keys [value] :as form-state} f & args]
+  (let [new-value (apply f value args)]
+    (save-form form-state new-value)))
+
 (defn- change-value
   "Takes cursor, schema, vector of keywords and new value.
 
