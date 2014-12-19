@@ -27,8 +27,8 @@
 
 (defn ThingieDates [{:keys [start-date end-date] :as thingie}]
   {:start-date (s/both LocalDate(s/pred (fn [x] (and (or (.equals x (t/today)) (t/after? x (t/today)))
-                                                      (or (.equals x end-date) (t/before? x end-date)))) 'invalid-date))
-   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (.equals x start-date) (t/after? x start-date)))) 'invalid-date))
+                                                     (or (not end-date) (.equals x end-date) (t/before? x end-date)))) 'invalid-date))
+   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (not x) (.equals x start-date) (t/after? x start-date)))) 'invalid-date))
    s/Keyword s/Any})
 
 ; Description of the state tree
