@@ -46,10 +46,10 @@
   [state
    owner
    {:keys [real-input] :as opts}]
-  (render [_]
+  (render-state [_ s]
     (html
       [:div.input-group
-       (om/build real-input state {:opts opts})
+       (om/build real-input state {:opts opts :state s})
        [:span.input-group-btn
         [:button.btn.btn-default
          {:type "button"
@@ -61,20 +61,19 @@
 (defcomponent default-form-group
   [{:keys [error] :as input-state}
    owner
-   {:keys [input label size humanize-error]
-    :or {size 6
-         humanize-error (fn [_] "error")}
+   {:keys [input label size]
+    :or {size 6}
     :as opts}]
-  (render [_]
+  (render-state [_ s]
     (html
       [:div.form-group
        {:class (cond-> []
-                 error (conj "has-error")
+                 (and error) (conj "has-error")
                  size (conj (str "col-md-" size)))}
        [:label label ":"]
-       (om/build input input-state {:opts opts})
-       (if error
-         [:span.help-block (humanize-error error)])])))
+       (om/build input input-state {:opts opts :state s})
+       (if (and (not empty?) error)
+         [:span.help-block (str error)])])))
 
 ;; BUILD
 
@@ -85,7 +84,8 @@
               {:value  (get-in @value ks)
                :error  (if errors (get-in @errors ks))
                :schema (if schema (get-in-schema @schema ks))}
-              {:opts opts})))
+              {:opts (dissoc opts :state)
+               :state (:state opts)})))
 
 ;; BASIC INPUTS
 
