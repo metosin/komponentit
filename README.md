@@ -48,3 +48,9 @@ $ lein figwheel
 - https://github.com/friemen/zackzack
 - https://github.com/friemen/cugb/blob/master/react/README.md#separation-of-concerns
 - http://jonase.github.io/nil-recur/posts/29-11-2014-om-select.html
+
+## License
+
+Copyright © 2014 Metosin Oy
+
+Distributed under the Eclipse Public License, the same as Clojure.Copyright © 2014 Metosin
