@@ -83,10 +83,7 @@
       [:div.row
        (f/textarea  form "Description" [:foobar :desc])
        (ff/file     form "File"        [:foobar :file]
-                {:help-text "Under 1MB"})]]
-
-     [:div.btn-toolbar.pull-right
-      (forms/save-btn form-state ch)]]))
+                {:help-text "Under 1MB"})]]]))
 
 (defn save-thing [state evt]
   (-> state
@@ -109,7 +106,10 @@
   (render [_]
     (html
       [:div
+       [:h1 "Example form "
+        [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/example/main.cljs"} "(Code)"]]
        (om/build thing-view (:thing-page app-state))
+       [:h1 "Om state tree"]
        (om/build dev/state-view app-state)])))
 
 (defn restart! []
