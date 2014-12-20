@@ -17,7 +17,7 @@
 ; goog.date.Date?
 (def LocalDate (s/pred t/date?))
 
-(defn between-dates [start end]
+(defn DateRange [start end]
   (s/pred (fn [x]
             (and (or (not start) (.equals x start) (t/after? x start))
                  (or (not end) (.equals x end) (t/before? x end))))
@@ -32,9 +32,9 @@
             :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
 
 (defn ThingieDates [{:keys [start-date end-date] :as thingie}]
-  {:start-date (s/both LocalDate (between-dates (t/today) end-date))
-   :end-date   (s/both (s/maybe LocalDate) (between-dates start-date nil))
-   s/Keyword s/Any})
+  (-> Thingie
+      (update-in [:start-date] #(s/both % (DateRange (t/today) end-date)))
+      (update-in [:end-date]   #(s/both % (DateRange start-date nil)))))
 
 ; Description of the state tree
 (def empty-thing
