@@ -17,6 +17,12 @@
 ; goog.date.Date?
 (def LocalDate (s/pred t/date?))
 
+(defn between-dates [start end]
+  (s/pred (fn [x]
+            (and (or (not start) (.equals x start) (t/after? x start))
+                 (or (not end) (.equals x end) (t/before? x end))))
+          'invalid-date))
+
 (s/defschema Thingie
   {:name (s/both s/Str (s/pred seq 'required))
    :email s/Str
@@ -26,9 +32,8 @@
             :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
 
 (defn ThingieDates [{:keys [start-date end-date] :as thingie}]
-  {:start-date (s/both LocalDate(s/pred (fn [x] (and (or (.equals x (t/today)) (t/after? x (t/today)))
-                                                     (or (not end-date) (.equals x end-date) (t/before? x end-date)))) 'invalid-date))
-   :end-date   (s/both (s/maybe LocalDate) (s/pred (fn [x] (and (or (not x) (.equals x start-date) (t/after? x start-date)))) 'invalid-date))
+  {:start-date (s/both LocalDate (between-dates (t/today) end-date))
+   :end-date   (s/both (s/maybe LocalDate) (between-dates start-date nil))
    s/Keyword s/Any})
 
 ; Description of the state tree
@@ -77,7 +82,8 @@
 
       [:div.row
        (f/textarea  form "Description" [:foobar :desc])
-       (ff/file     form "File"        [:foobar :file])]]
+       (ff/file     form "File"        [:foobar :file]
+                {:help-text "Under 1MB"})]]
 
      [:div.btn-toolbar.pull-right
       (forms/save-btn form-state ch)]]))
