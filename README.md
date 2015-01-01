@@ -10,7 +10,6 @@
 - [ ] Publish on Clojars
 - [ ] There are some problems with action abstraction
   - Async action can update form-state only once
-- [ ] Port example project to Boot 2
 - [ ] DOCUMENTATION!
 
 ## Features / Goals
@@ -47,10 +46,14 @@
   - e.g. date2 should be after date1
   - Possible already (`:form-validation-fn`), but I'm not pleased with the implementation
 
-## Test examples
+## Try examples
 
 ```sh
+$ cd example
 $ lein figwheel
+# Another terminal
+$ lein repl
+user=> (go)
 ```
 
 ## References:

@@ -13,9 +13,9 @@
         [:strong (if (keyword? k) (name k) k)] ": "
         (tree v ks)])]
 
-    (fn? v) "function"
+    (fn? v) [:i "function"]
 
-    :default [:span (str v)]))
+    :default [:span (pr-str v)]))
 
 (defcomponent state-view [state owner]
   (render [_]
