@@ -2,7 +2,8 @@
   (:require
     [clojure.test :refer :all]
     [schema.core :as s]
-    [schema.utils :as utils]))
+    [schema.utils :as utils]
+    [potpuri.core :refer [map-keys]]))
 
 (defprotocol ISchemaError
   (describe [this value]))
@@ -15,38 +16,33 @@
   java.lang.Class
   (describe [this value] (get basics this [:not-of-class this]))
   schema.core.Predicate
-  (describe [this value] (keyword (str "not-" (name (.-pred-name this))))))
+  (describe [this value] (keyword (str "not-" (-> this (.-pred-name) (or 'predicate) name)))))
+
+(defn validation-error? [x]
+  (instance? schema.utils.ValidationError x))
 
 (defn validation-error->map [e]
-  (let [schema (.-schema e)
-        value  (.-value e)]
-    {:schema schema
-     :value value
-     :description (describe schema value)}))
+  (if (validation-error? e)
+    (let [schema (.-schema e)
+          value  (.-value e)]
+      {:schema schema
+       :value value
+       :description (describe schema value)})))
 
 (validation-error->map (s/check s/Num "5"))
 ;; => {:schema java.lang.Number, :value "5", :description :not-a-number}
 (validation-error->map (s/check s/Str 5))
 ;; => {:schema java.lang.String, :value 5, :description :not-a-string}
-(validation-error->map (s/check (s/pred even? 'even) 5))
+(validation-error->map (s/check (s/pred even? 'even?) 5))
 ;; => {:schema (pred even), :value 5, :description :not-even}
 
 ;;;; Maps and collections of validation errors to Maps and collections of "SchemaErrors"
 
-(defn map-vals
-  "Maps a function over the values of an associative collection."
-  [f coll]
-  (persistent! (reduce-kv #(assoc! %1 %2 (f %3))
-                          (transient (empty coll))
-                          coll)))
-
 (defn error->map [value]
-  (map-vals (fn [v]
-              (cond
-                (map? v) (error->map v)
-                (coll? v) (into (empty v) (map error->map v))
-                :else (validation-error->map v)))
-            value))
+  (cond
+    (validation-error? value) (validation-error->map value)
+    (map? value)              (map-vals error->map value)
+    (coll? value)             (into (empty value) (map error->map value))))
 
 (error->map (s/check {:a s/Int} {:a "foo"}))
 ;; => {:a {:schema Int, :value "foo", :description :not-integer?}}
@@ -56,7 +52,7 @@
 (def terms {:en {:errors {:not-integer? "Is not a interger"
                           :not-a-number "Is not a number"
                           :not-a-string "Is not a string"
-                          :not-even "Should be a even number"}}})
+                          :not-even? "Should be a even number"}}})
 
 (defn loc [ks & args]
   (if-let [text (get-in (:en terms) ks)]
@@ -67,4 +63,5 @@
   (let [k (:description error)]
     (loc ((if (coll? k) concat conj) [:errors] k))))
 
-(localize-error (validation-error->map (s/check (s/pred even? 'even) 5)))
+(localize-error (validation-error->map (s/check (s/pred even? 'even?) 5)))
+;; => "Should be a even number"
