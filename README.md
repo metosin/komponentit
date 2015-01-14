@@ -39,12 +39,14 @@
 
 ## Challenges
 
-- Where to store:
+- ~~Where to store:~~ solved
   - Schema validation status (errors)
   - Initial form state
+- How to parse Schema errors to easily readable format. [spike](./example/src/clj/lomakkeet/schema_errors_spike.clj)
 - Validation against schema where some predicates depend on values of data
   - e.g. date2 should be after date1
   - Possible already (`:form-validation-fn`), but I'm not pleased with the implementation
+- Abstraction for calculating stuff when form state changes (initialized, any action, saved etc.) so that no need to do expensive operations during render-fn
 
 ## Try examples
 
