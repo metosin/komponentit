@@ -18,7 +18,7 @@
   {:repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
    :plugins [[lein-cljsbuild "1.0.4"]
-             [lein-figwheel "0.2.0-SNAPSHOT"]]
+             [lein-figwheel "0.2.2-SNAPSHOT"]]
 
    :figwheel {:http-server-root "public"
               :server-port 3450
