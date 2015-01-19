@@ -3,7 +3,7 @@
     [clojure.test :refer :all]
     [schema.core :as s]
     [schema.utils :as utils]
-    [potpuri.core :refer [map-keys]]))
+    [potpuri.core :refer [map-vals]]))
 
 (defprotocol ISchemaError
   (describe [this value]))
@@ -16,12 +16,20 @@
   java.lang.Class
   (describe [this value] (get basics this [:not-of-class this]))
   schema.core.Predicate
-  (describe [this value] (keyword (str "not-" (-> this (.-pred-name) (or 'predicate) name)))))
+  (describe [this value] (keyword (str "not-" (-> this (.-pred-name) (or 'predicate) name))))
+  schema.core.MapEntry
+  (describe [this value] value)
+  clojure.lang.PersistentArrayMap
+  (describe [this value]
+    (reduce-kv (fn [acc k v]
+                 (assoc acc k (describe v (get value k))))
+               {} this))
 
 (defn validation-error? [x]
   (instance? schema.utils.ValidationError x))
 
 (defn validation-error->map [e]
+  (println e (class e))
   (if (validation-error? e)
     (let [schema (.-schema e)
           value  (.-value e)]
@@ -65,3 +73,19 @@
 
 (localize-error (validation-error->map (s/check (s/pred even? 'even?) 5)))
 ;; => "Should be a even number"
+
+(defn checker
+  [input-schema]
+  (s/start-walker
+    (fn [s]
+      (let [walk (s/walker s)]
+        (fn [x]
+          (let [result (walk x)]
+            (if-let [err (utils/error-val result)]
+              (validation-error->map err))))))
+    input-schema))
+
+(defn check [schema x]
+  ((checker schema) x))
+
+(check {:a s/Int} {:a 5 :foo :bar})
