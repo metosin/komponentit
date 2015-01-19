@@ -25,7 +25,7 @@
               :css-dirs ["resources/public/css"]}
 
    :cljsbuild {:builds {:app {:source-paths ["dev-src/cljs"]
-                              :compiler {:output-to "target/cljsbuild/%s/public/js/cljsbuild-main.js"}}}}}]
+                              :compiler {:output-to "target/cljsbuild/public/js/cljsbuild-main.js"}}}}}]
 
  :prod
  [:shared
