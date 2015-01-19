@@ -235,7 +235,7 @@
   [{:keys [value initial-value]
     :as form-state} :- FormState
    owner
-   {:keys [actions render-fn form form-validation-fn]
+   {:keys [actions render-fn form form-validation-fn after-change]
     :as opts}]
   (init-state [_]
     ; (js/console.log (str @state))
@@ -252,7 +252,8 @@
     (let [schema (if (:schema form-state) @(:schema form-state))
           {:keys [ch coercion-matcher]} (om/get-state owner)]
       (go-loop []
-        (let [evt (<! ch)]
+        (let [evt (<! ch)
+              prev-value @value]
           (case (:type evt)
             :action (if-let [action-fn (get actions (:action evt))]
                       (let [next (action-fn @form-state evt)]
@@ -267,7 +268,14 @@
                       (->> evt :value
                            (coerce coercion-matcher (get-in-schema schema ks))
                            (change-value value schema ks)))
-            (prn (str "Unknown event-type: " (:type evt)))))
+            (prn (str "Unknown event-type: " (:type evt))))
+
+          (if after-change
+            (after-change {:form-state form-state
+                           :value @value
+                           :value-cursor value
+                           :prev-value prev-value})))
+
         ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
         (om/update! form-state :errors (merge
                                          (if form-validation-fn (form-validation-fn @value))

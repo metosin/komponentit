@@ -36,6 +36,9 @@
     - Keep reference of the intitial state, then `(not= @state initial-state)`
   - If it has errors
 - "Separation of concerns" ?
+- `:after-change`, function which is called after changes. It is called with: form-state, current value and previous values.
+  - Can be used to e.g. detect if field `:x` is changed and set value of field `:y` based on `:x` value.
+  - "When this type is selected from selectbox, the value of name field should be set to name of type"
 
 ## Challenges
 
