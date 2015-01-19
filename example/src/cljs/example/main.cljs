@@ -7,10 +7,10 @@
             [plumbing.core :refer-macros [defnk]]
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
+            [potpuri.core :as util]
             [lomakkeet.fields :as f]
             [lomakkeet.datepicker :as df]
             [lomakkeet.file :as ff]
-            [lomakkeet.utils :as util]
             [example.forms :as forms]
             [example.dev :as dev]))
 
