@@ -7,14 +7,6 @@
             [goog.string :as gs]
             org.pikaday))
 
-; FIXME:
-(def ^:private pikaday-i18n
-  #js {:previousMonth "Edellinen kuukakausi",
-       :nextMonth     "Seuraava kuukausi",
-       :months        #js ["Tammikuu","Helmikuu","Maaliskuu","Huhtikuu","Toukokuu","Kesäkuu","Heinäkuu","Elokuu","Elokuu","Lokakuu","Marraskuu","Joulukuu"],
-       :weekdays      #js ["Sunnuntai","Maanantai","Tiistai","Keskiviikko","Torstai","Perjantai","Lauantai"],
-       :weekdaysShort #js ["Su","Ma","Ti","Ke","To","Pe","La"]})
-
 (defn jsdate->local-date [v]
   (if v
     (doto (goog.date.Date.)
@@ -47,19 +39,20 @@
 (defcomponent date*
   [{:keys [value]}
    owner
-   {:keys [ch ks]
+   {:keys [ch ks datepicker-i18n]
     :as opts}]
   (did-mount [_]
     (let [input (om/get-node owner "input")
-          el (js/Pikaday. #js {:field input
+          el (js/Pikaday. (-> {:field input
                                ; NOTE: This requires MomentJS
                                :format "D.M.YYYY"
                                :firstDay 1
                                :onSelect (fn [v]
                                            (put! ch {:type :change
                                                      :ks ks
-                                                     :value (jsdate->local-date v)}))
-                               :i18n pikaday-i18n})]
+                                                     :value (jsdate->local-date v)}))}
+                              (cond-> datepicker-i18n (assoc :i18n datepicker-i18n))
+                              clj->js))]
       (om/set-state! owner :el el)
       (set-limit-date :min-date owner)
       (set-limit-date :max-date owner)))
