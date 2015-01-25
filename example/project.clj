@@ -25,8 +25,6 @@
                              :output-to "target/cljsbuild-dev/public/js/app.js"
                              :output-dir "target/cljsbuild-dev/public/js/out"
                              :source-map true
-                             :preamble ["META-INF/resources/webjars/momentjs/2.8.3/min/moment.min.js"
-                                        "META-INF/resources/webjars/Pikaday/1.2.0/pikaday.js"]
                              :optimizations :none
                              :cache-analysis true
                              :pretty-print true}}
@@ -35,8 +33,6 @@
                              :output-to "target/cljsbuild-adv/public/js/app.js"
                              :output-dir "target/cljsbuild-adv/public/js/out"
                              :source-map "target/cljsbuild-adv/public/js/out.js.map"
-                             :preamble ["META-INF/resources/webjars/momentjs/2.8.3/min/moment.min.js"
-                                        "META-INF/resources/webjars/Pikaday/1.2.0/pikaday.js"]
                              :optimizations :advanced
                              :pretty-print false}}}}
 

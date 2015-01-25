@@ -4,7 +4,8 @@
             [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
             [lomakkeet.fields :as f]
-            [goog.string :as gs]))
+            [goog.string :as gs]
+            org.pikaday))
 
 ; FIXME:
 (def ^:private pikaday-i18n

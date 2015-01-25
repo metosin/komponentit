@@ -14,6 +14,6 @@
                  [prismatic/om-tools "0.3.10" :exclusions [org.clojure/clojure]]
                  [sablono "0.2.22"]
                  [com.andrewmcveigh/cljs-time "0.3.0"]
-                 [org.webjars/momentjs "2.9.0"]
-                 [org.webjars/Pikaday "1.2.0"]]
+                 [cljsjs/moment "2.6.0-3"]
+                 [cljsjs/pikaday "1.2.0-2"]]
   :plugins [[lein-pprint "1.1.2"]])

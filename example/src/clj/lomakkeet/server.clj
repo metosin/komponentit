@@ -8,8 +8,8 @@
 
 (defroutes routes
   (resources "/" {:root "public"})
-  (resources "/react" {:root "react"})
-  (resources "/webjars" {:root "META-INF/resources/webjars"})
+  ;; Pikaday.css
+  (resources "/cljsjs" {:root "cljsjs"})
   (GET "/" []
     (resource-response "index.html" {:root "public"})))
 
