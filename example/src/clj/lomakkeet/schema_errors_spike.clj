@@ -23,7 +23,7 @@
   (describe [this value]
     (reduce-kv (fn [acc k v]
                  (assoc acc k (describe v (get value k))))
-               {} this))
+               {} this)))
 
 (defn validation-error? [x]
   (instance? schema.utils.ValidationError x))
