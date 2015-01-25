@@ -10,10 +10,10 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [prismatic/schema "0.3.3"]
                  [prismatic/plumbing "0.3.5"]
-                 [om "0.8.0-rc1"]
+                 [org.omcljs/om "0.8.4"]
                  [prismatic/om-tools "0.3.10" :exclusions [org.clojure/clojure]]
                  [sablono "0.2.22"]
-                 [com.andrewmcveigh/cljs-time "0.2.4"]
-                 [org.webjars/momentjs "2.8.3"]
+                 [com.andrewmcveigh/cljs-time "0.3.0"]
+                 [org.webjars/momentjs "2.9.0"]
                  [org.webjars/Pikaday "1.2.0"]]
   :plugins [[lein-pprint "1.1.2"]])

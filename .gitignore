@@ -4,3 +4,4 @@ resources/public/js
 .lein*
 gh-pages
 pom.xml
+figwheel_server.log
