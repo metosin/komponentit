@@ -20,7 +20,7 @@
 
   :cljsbuild
   {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "dev-src/cljs"]
-                  :compiler {:main example.main
+                  :compiler {:main "example.figwheel"
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
                              :output-dir "target/cljsbuild-dev/public/js/out"
@@ -29,7 +29,7 @@
                              :cache-analysis true
                              :pretty-print true}}
             :adv {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
-                  :compiler {:main example.main
+                  :compiler {:main "example.main"
                              :output-to "target/cljsbuild-adv/public/js/app.js"
                              :output-dir "target/cljsbuild-adv/public/js/out"
                              :source-map "target/cljsbuild-adv/public/js/out.js.map"
