@@ -14,9 +14,16 @@
 
 ## Features / Goals
 
-- Very opionated
+### The Good Parts
+
+- Level of abstraction for user
 - Easy to create custom input elements. Check [datepicker](./src/lomakkeet/datepicker.cljs).
+- Easy to compose custom inputs from different components
+  - e.g. form-group + emtyable-input + datepicker
 - Possible to customize form-groups. (add example).
+
+### The Neutral Parts
+
 - Integrate with Schema
   - Coerce e.g. strings to numbers
   - Use Schema for errors
@@ -36,6 +43,11 @@
     - Keep reference of the intitial state, then `(not= @state initial-state)`
   - If it has errors
 - "Separation of concerns" ?
+
+### The Bad Parts
+
+- Context schemas. If validation of field a depends on field b. Schema doesn't support this. It's possible to create schema
+  using function...
 - `:after-change`, function which is called after changes. It is called with: form-state, current value and previous values.
   - Can be used to e.g. detect if field `:x` is changed and set value of field `:y` based on `:x` value.
   - "When this type is selected from selectbox, the value of name field should be set to name of type"
