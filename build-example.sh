@@ -21,5 +21,5 @@ cp -r example/target/cljsbuild-adv/public/* gh-pages
 
 cd gh-pages
 git add --all
-git commit -m "Build docs from ${rev}."
+git commit -m "Build example from ${rev}."
 git push origin gh-pages

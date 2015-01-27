@@ -13,15 +13,23 @@
 
 ; FIXME: om-tools mixin?
 (defn closable-will-mount [owner & [close-cb]]
-  (goog.events.listen
-    js/window
-    goog.events.EventType.CLICK
-    (fn [e]
-      (om/set-state! owner :open? false)
-      (if close-cb (close-cb)))))
+  (let [click-handler (fn [e]
+                        (om/set-state! owner :open? false)
+                        (if close-cb (close-cb)))
+        key-handler (fn [e]
+                      (case (.-keyCode e)
+                        27 (do ; Esc
+                               (om/set-state! owner :open? false)
+                               (if close-cb (close-cb)))
+                        nil))]
+    (om/set-state! owner :click-handler click-handler)
+    (om/set-state! owner :key-handler key-handler)
+    (goog.events.listen js/window goog.events.EventType.CLICK click-handler)
+    (goog.events.listen js/window goog.events.EventType.KEYUP key-handler)))
 
 (defn closable-will-unmount [owner]
-  nil)
+  (goog.events.listen js/window goog.events.EventType.CLICK (om/get-state! :click-handler))
+  (goog.events.listen js/window goog.events.EventType.KEYUP (om/get-state! :key-handler)))
 
 ;;
 ;; Utils
@@ -107,7 +115,14 @@
                   (seq value) (value->text value)
                   :else "")
          :class (cond-> ""
-                  open? (str " input-active dropdown-active"))}]
+                  open? (str " input-active dropdown-active"))
+         :auto-complete "off"
+         :on-key-up (fn [e]
+                         (case (.-key e)
+                           ; "Enter"
+                           ; "Up"
+                           ; "Down"
+                           nil))}]
        (when open?
          [:div.selectize-dropdown.single
           [:div.selectize-dropdown-content
