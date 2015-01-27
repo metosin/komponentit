@@ -28,8 +28,8 @@
     (goog.events.listen js/window goog.events.EventType.KEYUP key-handler)))
 
 (defn closable-will-unmount [owner]
-  (goog.events.listen js/window goog.events.EventType.CLICK (om/get-state! :click-handler))
-  (goog.events.listen js/window goog.events.EventType.KEYUP (om/get-state! :key-handler)))
+  (goog.events.listen js/window goog.events.EventType.CLICK (om/get-state :click-handler))
+  (goog.events.listen js/window goog.events.EventType.KEYUP (om/get-state :key-handler)))
 
 ;;
 ;; Utils
