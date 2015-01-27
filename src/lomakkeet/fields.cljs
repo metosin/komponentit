@@ -164,7 +164,9 @@
   (render [_]
     (html
       [:select.form-control
-       {:value value
+       {:value (if (keyword? value)
+                 (name value)
+                 value)
         :on-change (fn [e]
                      (put! ch {:type :change
                                :ks ks

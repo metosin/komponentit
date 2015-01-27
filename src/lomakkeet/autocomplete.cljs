@@ -28,8 +28,8 @@
     (goog.events.listen js/window goog.events.EventType.KEYUP key-handler)))
 
 (defn closable-will-unmount [owner]
-  (goog.events.listen js/window goog.events.EventType.CLICK (om/get-state :click-handler))
-  (goog.events.listen js/window goog.events.EventType.KEYUP (om/get-state :key-handler)))
+  (goog.events.listen js/window goog.events.EventType.CLICK (om/get-state owner :click-handler))
+  (goog.events.listen js/window goog.events.EventType.KEYUP (om/get-state owner :key-handler)))
 
 ;;
 ;; Utils
@@ -116,7 +116,7 @@
                   :else "")
          :class (cond-> ""
                   open? (str " input-active dropdown-active"))
-         :auto-complete "off"
+         :auto-complete false
          :on-key-up (fn [e]
                          (case (.-key e)
                            ; "Enter"

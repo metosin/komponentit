@@ -67,7 +67,8 @@
       [:input.form-control
        {:ref "input"
         :type "text"
-        :value (or (date->str value) "")}])))
+        :value (or (date->str value) "")
+        :auto-complete false}])))
 
 (defn date [form label ks & [opts]]
   (f/build (merge form opts

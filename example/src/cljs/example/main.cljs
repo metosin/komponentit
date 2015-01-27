@@ -23,28 +23,33 @@
                  (or (not end)   (.equals x end)   (t/before? x end))))
           'invalid-date))
 
+(def email-pattern (js/RegExp. "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$" "i"))
+
 (s/defschema Thingie
   {:name (s/both s/Str (s/pred seq 'required))
-   :email s/Str
-   :start-date LocalDate
-   :end-date   (s/maybe LocalDate)
-   :foobar {:desc s/Str
-            :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}
-   :country s/Str})
+   :email (s/both s/Str (s/pred #(re-find email-pattern %) 'email))
+   :dates {:start LocalDate
+           :end   (s/maybe LocalDate)}
+   :desc s/Str
+   :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))
+   :country s/Str
+   :gender s/Keyword})
 
-(defn ThingieDates [{:keys [start-date end-date] :as thingie}]
+(defn ThingieDates [{{:keys [start end]} :dates}]
   (-> Thingie
-      (update-in [:start-date] #(s/both % (DateRange (t/today) end-date)))
-      (assoc-in  [:end-date]    (s/maybe (s/both LocalDate (DateRange start-date nil))))))
+      (update-in [:dates :start] #(s/both % (DateRange (t/today) end)))
+      (assoc-in  [:dates :end]    (s/maybe (s/both LocalDate (DateRange start nil))))))
 
 ; Description of the state tree
 (def empty-thing
   {:name "Luke Skywalker"
    :email "luke@rebel.gov"
-   :start-date (t/today)
-   :end-date nil
-   :foobar {:desc ""
-            :file nil}})
+   :dates {:start (t/today)
+           :end   nil}
+   :desc ""
+   :file nil
+   :country "FI"
+   :gender :other})
 
 (def initial-state
   {:thing-page (f/->form-state empty-thing Thingie)})
@@ -55,11 +60,11 @@
 
 (defnk render-thingie-form
   [form-state form ch
-   [:value start-date end-date]]
+   [:value [:dates start end]]]
   (html
     [:div.tasks
      [:h2
-      "New thingie"
+      "Basic fields"
       [:div.btn-toolbar.pull-right
        (forms/form-status form-state)
        (forms/cancel-btn form-state ch)
@@ -71,23 +76,35 @@
        (f/input form "Email"  [:email])]
 
       [:div.row
-       (df/date form "Start date" [:start-date]
-                {:size 3
-                 :state {:min-date (t/today) :max-date end-date}
-                 :help-text "Today or later. Before end date."})
-       (df/date form "End date"   [:end-date]
-                {:size 3
-                 :empty-btn? true
-                 :state {:min-date start-date}
-                 :help-text "Optional. After start date."})]
+       (f/textarea  form "Textarea" [:desc])
+       (f/select    form "Select"   [:gender]
+                 {:male   "Male"
+                  :female "Female"
+                  :other  "Other"})]
 
       [:div.row
-       (f/textarea  form "Description" [:foobar :desc])
-       (ff/file     form "File"        [:foobar :file]
-                {:help-text "Under 1MB"})]
+       [:div.col-sm-6 [:h2 "Datepicker (using " [:a {:href "https://github.com/dbushell/Pikaday"} "Pikaday"] ")"]]
+       [:div.col-sm-6 [:h2 "Filepicker"]]]
+
+      [:div.row
+       (df/date form "Start date" [:dates :start]
+                {:size 3
+                 :state {:min-date (t/today) :max-date end}
+                 :help-text "Today or later. Before end date."})
+       (df/date form "End date"   [:dates :end]
+                {:size 3
+                 :empty-btn? true
+                 :state {:min-date start}
+                 :help-text "Optional. After start date."})
+      (ff/file  form "File"        [:file]
+               {:help-text "Under 1MB"})]
+
       [:div.row
        [:div.col-sm-12 [:h2 "Autocomplete"]]
-       (eac/country-select form "Country" [:country])]]]))
+       (eac/country-select form "Country" [:country])
+       [:div.form-group.col-sm-6
+        [:label "Autocomplete (tree):"]
+        [:p.form-control-static "TODO"]]]]]))
 
 (defn save-thing [state evt]
   (-> state
@@ -111,7 +128,7 @@
     (html
       [:div
        [:h1 "Example form "
-        [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/example/main.cljs"} "(Code)"]]
+        [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
        (om/build thing-view (:thing-page app-state))
        [:h1 "Om state tree"]
        (om/build dev/state-view app-state)])))

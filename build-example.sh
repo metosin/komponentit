@@ -18,6 +18,7 @@ lein cljsbuild once adv
 
 cp -r example/resources/public/* gh-pages
 cp -r example/target/cljsbuild-adv/public/* gh-pages
+cp -r example/target/generated/css/public/* gh-pages
 
 cd gh-pages
 git add --all
