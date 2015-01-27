@@ -15,6 +15,8 @@
                  [compojure "1.3.1"]
                  [http-kit "2.1.19"]
 
+                 [org.webjars/bootstrap "3.3.2"]
+
                  [figwheel "0.2.2-SNAPSHOT"]]
   :plugins [[lein-pprint "1.1.2"]]
 
@@ -36,17 +38,21 @@
                              :optimizations :advanced
                              :pretty-print false}}}}
 
+  :less {:source-paths ["src/less"]
+         :target-path "target/generated/css"}
+
   :profiles
   {:dev
    {:source-paths ["dev-src/clj"]
     :plugins [[lein-cljsbuild "1.0.4"]
-              [lein-figwheel "0.2.2-SNAPSHOT"]]
+              [lein-figwheel "0.2.2-SNAPSHOT"]
+              [lein-less4j "0.1.0-SNAPSHOT"]]
 
     :figwheel {:http-server-root "public"
                :server-port 3450
-               :css-dirs ["resources/public/css"]}
+               :css-dirs ["target/generated/css/public"]}
 
-    :resource-paths ["resources" "target/cljsbuild-dev"]}
+    :resource-paths ["resources" "target/cljsbuild-dev" "target/generated/css"]}
 
    :uberjar
-   {:resource-paths ["resources" "target/cljsbuild-adv"]}})
+   {:resource-paths ["resources" "target/cljsbuild-adv" "target/generated/css"]}})
