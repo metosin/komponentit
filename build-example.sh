@@ -1,6 +1,25 @@
 #!/bin/bash
 
-lein cljsbuild clean
-lein with-profile prod cljsbuild once
+rev=$(git rev-parse HEAD)
 
-cp -r resources/public/js gh-pages
+if [[ ! -d gh-pages ]]; then
+    git clone --branch gh-pages git@github.com:metosin/lomakkeet.git gh-pages
+fi
+
+(
+cd gh-pages
+git pull
+)
+
+(
+cd example
+lein cljsbuild once adv
+)
+
+cp -r example/resources/public/* gh-pages
+cp -r example/target/cljsbuild-adv/public/* gh-pages
+
+cd gh-pages
+git add --all
+git commit -m "Build docs from ${rev}."
+git push origin gh-pages

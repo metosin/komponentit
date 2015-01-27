@@ -10,7 +10,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [prismatic/schema "0.3.3"]
                  [prismatic/plumbing "0.3.5"]
-                 [org.omcljs/om "0.8.4"]
+                 [org.omcljs/om "0.8.6"]
                  [prismatic/om-tools "0.3.10" :exclusions [org.clojure/clojure]]
                  [sablono "0.2.22"]
                  [com.andrewmcveigh/cljs-time "0.3.0"]

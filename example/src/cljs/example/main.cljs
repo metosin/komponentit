@@ -12,7 +12,8 @@
             [lomakkeet.datepicker :as df]
             [lomakkeet.file :as ff]
             [example.forms :as forms]
-            [example.dev :as dev]))
+            [example.dev :as dev]
+            [example.autocomplete :as eac]))
 
 (def LocalDate goog.date.Date)
 
@@ -28,7 +29,8 @@
    :start-date LocalDate
    :end-date   (s/maybe LocalDate)
    :foobar {:desc s/Str
-            :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}})
+            :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))}
+   :country s/Str})
 
 (defn ThingieDates [{:keys [start-date end-date] :as thingie}]
   (-> Thingie
@@ -82,7 +84,10 @@
       [:div.row
        (f/textarea  form "Description" [:foobar :desc])
        (ff/file     form "File"        [:foobar :file]
-                {:help-text "Under 1MB"})]]]))
+                {:help-text "Under 1MB"})]
+      [:div.row
+       [:div.col-sm-12 [:h2 "Autocomplete"]]
+       (eac/country-select form "Country" [:country])]]]))
 
 (defn save-thing [state evt]
   (-> state
