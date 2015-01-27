@@ -16,6 +16,7 @@
                  [http-kit "2.1.19"]
 
                  [org.webjars/bootstrap "3.3.2"]
+                 [org.webjars/selectize.js "0.11.2"]
 
                  [figwheel "0.2.2-SNAPSHOT"]]
   :plugins [[lein-pprint "1.1.2"]]
@@ -39,7 +40,8 @@
                              :pretty-print false}}}}
 
   :less {:source-paths ["src/less"]
-         :target-path "target/generated/css"}
+         :target-path "target/generated/css/public"
+         :source-map true}
 
   :profiles
   {:dev
