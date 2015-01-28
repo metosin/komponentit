@@ -74,6 +74,10 @@
         :on-key-press (fn [e]
                         (let [k (.-key e)]
                           (when (= "Enter" k)
+                            ; FIXME: Really parse val
+                            ; FIXME: unset :val
+                            ; FIXME: .setDate, .gotoDate?
+                            ; setDate + onSelect event? -> no put! here
                             (put! ch {:type :change
                                       :ks ks
                                       :value (om/get-state owner :val)}))))
