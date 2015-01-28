@@ -10,7 +10,6 @@
             [potpuri.core :as util]
             [lomakkeet.fields :as f]
             [lomakkeet.datepicker :as df]
-            [lomakkeet.daterange :as dr]
             [lomakkeet.file :as ff]
             [example.forms :as forms]
             [example.dev :as dev]
