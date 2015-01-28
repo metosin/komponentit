@@ -10,6 +10,7 @@
             [potpuri.core :as util]
             [lomakkeet.fields :as f]
             [lomakkeet.datepicker :as df]
+            [lomakkeet.daterange :as dr]
             [lomakkeet.file :as ff]
             [example.forms :as forms]
             [example.dev :as dev]
@@ -52,7 +53,7 @@
    :gender :other})
 
 (def initial-state
-  {:thing-page (f/->form-state empty-thing Thingie)})
+  {:example-page (f/->form-state empty-thing Thingie)})
 
 (defonce state (atom initial-state))
 
@@ -96,8 +97,8 @@
                  :empty-btn? true
                  :state {:min-date start}
                  :help-text "Optional. After start date."})
-      (ff/file  form "File"        [:file]
-               {:help-text "Under 1MB"})]
+       (ff/file form "File"        [:file]
+                {:help-text "Under 1MB"})]
 
       [:div.row
        [:div.col-sm-12 [:h2 "Autocomplete"]]
@@ -129,7 +130,7 @@
       [:div
        [:h1 "Example form "
         [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
-       (om/build thing-view (:thing-page app-state))
+       (om/build thing-view (:example-page app-state))
        [:h1 "Om state tree"]
        (om/build dev/state-view app-state)])))
 

@@ -8,7 +8,7 @@
             goog.events))
 
 ;;
-;; Mixin: componentti closes when users clicks somewhere else
+;; Mixin: dropdown closes when users clicks somewhere else
 ;;
 
 ; FIXME: om-tools mixin?
@@ -35,24 +35,37 @@
 ;; Utils
 ;;
 
+; FIXME: Use macro to create more optimal code
 (defn create-matcher [fields]
   (fn [item term]
     (some (fn [field]
             (not= (.indexOf (-> item (get field) (.toLowerCase)) term) -1))
           fields)))
 
-(defn- highlight-match [text query]
-  (reduce (fn [output term]
-            (reduce (fn [acc el]
-                      (if (string? el)
-                        (if-let [[_ a b c] (.match el (js/RegExp. (str "^(.*)(" term ")(.*)$") "i"))]
-                          (conj acc a [:span.highlight b] c)
-                          (conj acc el))
-                        (conj acc el)))
-                    []
-                    output))
-          [:span text]
-          query))
+(defn regex-match
+  "If string contains term, returns vector of three elements.
+   String before the match, the match, rest of string."
+  [string query]
+  (-> string
+      (.match (js/RegExp. (str "^(.*)(" term ")(.*)$") "i"))
+      rest))
+
+(defn highlight-match
+  "Takes and element. Top level strings inside element are matched
+   against query terms and highlighted.
+
+   E.g. [:span \"Hello World\"] -> [:span \"H\" [:span.highlight \"ello\"] \" World\"]"
+  [el query]
+  (if query
+    (reduce
+      (fn [acc item]
+        (if (string? item)
+          (if-let [[a b c] (regex-match item query)]
+            (conj acc a [:span.highlight b] c)
+            (conj acc item))
+          (conj acc item)))
+      [] output)
+    el))
 
 (defn- query-match? [term-match? v query]
   (every? (partial term-match? v) query))
@@ -80,9 +93,7 @@
          {:key (item->key item)
           :on-click #(cb (item->key item))
           :data-selectable true}
-         (if query
-           (highlight-match text query)
-           [:span text])]))))
+         (highlight-match [:span text] query)]))))
 
 ; Uses selectize styles
 (defcomponent autocomplete*

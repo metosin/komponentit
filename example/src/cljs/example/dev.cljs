@@ -29,9 +29,9 @@
 
 (defcomponent state-view [state owner]
   (init-state [_]
-    {:thing-page {:value {:dates {}}
-                  :initial-value {:dates {}}
-                  :errors {}}})
+    {:example-page {:value {:dates {}}
+                    :initial-value {:dates {}}
+                    :errors {}}})
   (render-state [_ _]
     (html
       (tree state [] owner))))
