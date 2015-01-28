@@ -41,6 +41,8 @@
    owner
    {:keys [ch ks datepicker-i18n]
     :as opts}]
+  (init-state [_]
+    {:val nil})
   (did-mount [_]
     (let [input (om/get-node owner "input")
           el (js/Pikaday. (-> {:field input
@@ -62,12 +64,19 @@
         (set-limit-date :min-date owner))
       (if (not= (:max-date props) (:max-date prev))
         (set-limit-date :max-date owner))))
-  (render [_]
+  (render-state [_ {:keys [val]}]
     (html
       [:input.form-control
        {:ref "input"
         :type "text"
-        :value (or (date->str value) "")
+        :value (or val (date->str value) "")
+        :on-change #(om/set-state! owner :val (.. % -target -value))
+        :on-key-press (fn [e]
+                        (let [k (.-key e)]
+                          (when (= "Enter" k)
+                            (put! ch {:type :change
+                                      :ks ks
+                                      :value (om/get-state owner :val)}))))
         :auto-complete false}])))
 
 (defn date [form label ks & [opts]]
