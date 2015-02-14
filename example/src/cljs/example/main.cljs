@@ -12,8 +12,8 @@
             [lomakkeet.datepicker :as df]
             [lomakkeet.file :as ff]
             [example.forms :as forms]
-            [example.dev :as dev]
-            [example.autocomplete :as eac]))
+            [example.autocomplete :as eac]
+            [om-dev-tools.core :as dev]))
 
 (def LocalDate goog.date.Date)
 
@@ -55,6 +55,9 @@
   {:example-page (f/->form-state empty-thing Thingie)})
 
 (defonce state (atom initial-state))
+(defonce dev-state (atom (-> (dev/empty-state)
+                             (assoc :open? true)
+                             (assoc-in [:state-tree-state :example-page :value :dates] {}))))
 
 ;; VIEWS
 
@@ -129,11 +132,11 @@
       [:div
        [:h1 "Example form "
         [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
-       (om/build thing-view (:example-page app-state))
-       [:h1 "Om state tree"]
-       (om/build dev/state-view app-state)])))
+       (om/build thing-view (:example-page app-state))])))
 
 (defn restart! []
-  (om/root app-view state {:target (.getElementById js/document "app")}))
+  (dev/root app-view state {:target (.getElementById js/document "app")
+                            :dev-target (.getElementById js/document "dev")
+                            :dev-state dev-state}))
 
 (restart!)

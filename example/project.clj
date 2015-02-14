@@ -5,9 +5,10 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/clj"]
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2727"]
+                 [org.clojure/clojurescript "0.0-2850"]
                  [metosin/lomakkeet "0.1.0-SNAPSHOT"]
                  [metosin/potpuri "0.2.1"]
+                 [metosin/om-dev-tools "0.1.0"]
 
                  ; Example server
                  [org.clojure/tools.namespace "0.2.8"]
@@ -48,13 +49,17 @@
    {:source-paths ["dev-src/clj"]
     :plugins [[lein-cljsbuild "1.0.4"]
               [lein-figwheel "0.2.2-SNAPSHOT"]
-              [lein-less4j "0.1.0-SNAPSHOT"]]
+              [lein-less4j "0.1.0-SNAPSHOT"]
+              [lein-pdo "0.1.1"]]
 
     :figwheel {:http-server-root "public"
                :server-port 3450
-               :css-dirs ["target/generated/css/public"]}
+               :css-dirs ["target/generated/css/public"]
+               :repl false}
 
     :resource-paths ["resources" "target/cljsbuild-dev" "target/generated/css"]}
 
    :uberjar
-   {:resource-paths ["resources" "target/cljsbuild-adv" "target/generated/css"]}})
+   {:resource-paths ["resources" "target/cljsbuild-adv" "target/generated/css"]}}
+
+  :aliases {"develop" ["pdo" ["less4j" "auto"] ["figwheel"]]})
