@@ -13,7 +13,8 @@
             [lomakkeet.file :as ff]
             [example.forms :as forms]
             [example.autocomplete :as eac]
-            [om-dev-tools.core :as dev]))
+            [om-dev-tools.core :as dev]
+            [om-dev-tools.state-tree :as dev-state]))
 
 (def LocalDate goog.date.Date)
 
@@ -56,8 +57,9 @@
 
 (defonce state (atom initial-state))
 (defonce dev-state (atom (-> (dev/empty-state)
-                             (assoc :open? true)
-                             (assoc-in [:state-tree-state :example-page :value :dates] {}))))
+                             (assoc :open? false :current :instrumentation)
+                             (assoc-in [:state-tree-state :example-page :value :dates] {})
+                             (assoc-in [:state-tree-state :example-page :initial-value :dates] {}))))
 
 ;; VIEWS
 
@@ -132,7 +134,12 @@
       [:div
        [:h1 "Example form "
         [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
-       (om/build thing-view (:example-page app-state))])))
+       (om/build thing-view (:example-page app-state))
+       [:h2 "Om state tree"]
+       [:div.om-dev-tools-state-tree
+        (let [dev-state (om/observe owner (om/ref-cursor (:state-tree-state (om/root-cursor dev-state))))]
+          (om/build dev-state/state-view {:state-tree-state dev-state
+                                          :app-state app-state}))]])))
 
 (defn restart! []
   (dev/root app-view state {:target (.getElementById js/document "app")
