@@ -45,7 +45,7 @@
 (defn regex-match
   "If string contains term, returns vector of three elements.
    String before the match, the match, rest of string."
-  [string query]
+  [string term]
   (-> string
       (.match (js/RegExp. (str "^(.*)(" term ")(.*)$") "i"))
       rest))
@@ -58,13 +58,16 @@
   [el query]
   (if query
     (reduce
-      (fn [acc item]
-        (if (string? item)
-          (if-let [[a b c] (regex-match item query)]
-            (conj acc a [:span.highlight b] c)
-            (conj acc item))
-          (conj acc item)))
-      [] output)
+      (fn [output term]
+        (reduce
+          (fn [acc item]
+             (if (string? item)
+               (if-let [[a b c] (regex-match item term)]
+                 (conj acc a [:span.highlight b] c)
+                 (conj acc item))
+               (conj acc item)))
+          [] output))
+      el query)
     el))
 
 (defn- query-match? [term-match? v query]
