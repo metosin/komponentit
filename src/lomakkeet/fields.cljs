@@ -61,8 +61,8 @@
 (defcomponent default-form-group
   [{:keys [error] :as input-state}
    owner
-   {:keys [input label size help-text]
-    :or {size 6}
+   {:keys [input label label-separator size help-text]
+    :or {size 6 label-separator ":"}
     :as opts}]
   (render-state [_ s]
     (html
@@ -70,7 +70,7 @@
        {:class (cond-> []
                  (and error) (conj "has-error")
                  size (conj (str "col-md-" size)))}
-       [:label label ":"]
+       [:label label label-separator]
        (om/build input input-state {:opts opts :state s})
        (if help-text
          [:span.help-block help-text])
@@ -240,8 +240,8 @@
    {:keys [actions render-fn form form-validation-fn after-change]
     :as opts}]
   (init-state [_]
-    ; (js/console.log (str @state))
-    ; (js/console.log (str (s/check FormState form-state)))
+;;     (js/console.log (str "STATE:" @form-state))
+;;     (js/console.log (str "CHECK:" (s/check FormState form-state)))
     (assert (nil? (s/check FormState form-state)))
     (-> {:ch (chan)
          :form-group default-form-group
