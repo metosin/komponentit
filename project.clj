@@ -1,4 +1,4 @@
-(defproject metosin/lomakkeet "0.1.0-SNAPSHOT"
+(defproject metosin/lomakkeet "0.1.0"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -19,16 +19,16 @@
 
   :cljsbuild
   {:builds {:test {:source-paths ["src" "test"]
-                   :notify-command ["phantomjs" :cljs.test/runner 
-                                    "test/phantomjs-shims.js" 
+                   :notify-command ["phantomjs" :cljs.test/runner
+                                    "test/phantomjs-shims.js"
                                     "target/testable.js"]
                    :compiler {:output-to  "target/testable.js"
                               :output-dir "target/cljsbuild-test"
                               :source-map "target/cljsbuild-test.js.map"
                               :optimizations :whitespace
                               :pretty-print  true}}}
-   :test-commands {"test" ["phantomjs" :runner 
-                           "test/phantomjs-shims.js" 
+   :test-commands {"test" ["phantomjs" :runner
+                           "test/phantomjs-shims.js"
                            "target/testable.js"]}}
 
   :profiles
