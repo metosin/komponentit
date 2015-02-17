@@ -1,6 +1,6 @@
 (defproject metosin/lomakkeet "0.1.0"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Proof of concept: Form library for Om"
+  :url "https://github.com/metosin/lomakkeet"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src"]
