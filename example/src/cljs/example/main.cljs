@@ -111,7 +111,16 @@
         [:label "Autocomplete (tree):"]
         [:p.form-control-static "TODO"]]]]]))
 
+; FIXME: Fnk would fit event handlers well
 (defn save-thing [state evt]
+  ; In reality this could look something like:
+  #_
+  (let [id (-> state :value :id)
+        req (http/post (str "/api/thingie/" id) {:params (:value state)})
+        resp (<! req)]
+    (if (ok? resp)
+      (f/save-form state (:body resp))
+      (assoc state :errors (:body resp))))
   (-> state
       (f/save-form (:value state))))
 
