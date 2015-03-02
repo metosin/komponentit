@@ -66,6 +66,7 @@
 ## Try examples
 
 ```sh
+$ lein install
 $ cd example
 $ lein figwheel
 # Another terminal
