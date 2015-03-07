@@ -19,7 +19,7 @@
 - Level of abstraction for user
 - Easy to create custom input elements. Check [datepicker](./src/lomakkeet/datepicker.cljs).
 - Easy to compose custom inputs from different components
-  - e.g. form-group + emtyable-input + datepicker
+  - e.g. form-group + emptyable-input + datepicker
 - Possible to customize form-groups. (add example).
 
 ### The Neutral Parts
@@ -40,7 +40,7 @@
 - Form should know if:
   - Its dirty
     - If there has been any changes to the form
-    - Keep reference of the intitial state, then `(not= @state initial-state)`
+    - Keep reference of the initial state, then `(not= @state initial-state)`
   - If it has errors
 - "Separation of concerns" ?
 
