@@ -1,16 +1,12 @@
 (ns example.main
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [om.core :as om :include-macros true]
-            [om-tools.core :refer-macros [defcomponent]]
+  (:require [om.core :as om]
             [cljs.core.async :refer [put!]]
             [schema.core :as s :include-macros true]
-            [plumbing.core :refer-macros [defnk]]
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
             [potpuri.core :as util]
-            [lomakkeet.fields :as f]
-            [lomakkeet.datepicker :as df]
-            [lomakkeet.file :as ff]
+            [lomakkeet.core :as f]
             [example.forms :as forms]
             [example.autocomplete :as eac]
             [om-dev-tools.core :as dev]
@@ -63,9 +59,9 @@
 
 ;; VIEWS
 
-(defnk render-thingie-form
-  [form-state form ch
-   [:value [:dates start end]]]
+(defn render-thingie-form
+  [{:keys [form-state form ch]
+    {{:keys [start end]} :dates} :value}]
   (html
     [:div.tasks
      [:h2
@@ -92,17 +88,17 @@
        [:div.col-sm-6 [:h2 "Filepicker"]]]
 
       [:div.row
-       (df/date form "Start date" [:dates :start]
-                {:size 3
-                 :state {:min-date (t/today) :max-date end}
-                 :help-text "Today or later. Before end date."})
-       (df/date form "End date"   [:dates :end]
-                {:size 3
-                 :empty-btn? true
-                 :state {:min-date start}
-                 :help-text "Optional. After start date."})
-       (ff/file form "File"        [:file]
-                {:help-text "Under 1MB"})]
+       (f/date form "Start date" [:dates :start]
+               {:size 3
+                :state {:min-date (t/today) :max-date end}
+                :help-text "Today or later. Before end date."})
+       (f/date form "End date"   [:dates :end]
+               {:size 3
+                :empty-btn? true
+                :state {:min-date start}
+                :help-text "Optional. After start date."})
+       (f/file form "File"        [:file]
+               {:help-text "Under 1MB"})]
 
       [:div.row
        [:div.col-sm-12 [:h2 "Autocomplete"]]
@@ -124,10 +120,8 @@
   (-> state
       (f/save-form (:value state))))
 
-(defcomponent thing-view
-  [page-state
-   owner]
-  (render [_]
+(defn thing-view [page-state owner]
+  (om/component
     (html
       (om/build
         f/form page-state
@@ -136,9 +130,8 @@
                 :actions {:save save-thing}
                 :render-fn render-thingie-form}}))))
 
-(defcomponent app-view
-  [app-state owner]
-  (render [_]
+(defn app-view [app-state owner]
+  (om/component
     (html
       [:div
        [:h1 "Example form "

@@ -1,10 +1,8 @@
 (ns lomakkeet.file
   (:require [om.core :as om :include-macros true]
-            [om-tools.core :refer-macros [defcomponent]]
             [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
-            [goog.string :as gs]
-            [lomakkeet.fields :as f]))
+            [goog.string :as gs]))
 
 (defn humanize-filesize
   [bytes & [fmt]]
@@ -14,13 +12,13 @@
     (gs/format (or fmt "%0.1f %s") size (get units unit))))
 
 ; FIXME: Button label... classes...
-(defcomponent file*
+(defn file*
   [{:keys [value]}
    owner
    {:keys [ch ks file-select-label]
     :or {file-select-label "Select file"}
     :as opts}]
-  (render [_]
+  (om/component
     (html
       [:div
        [:input
@@ -44,6 +42,3 @@
        (if value
          [:span.selected-file
           " " (.-name value) ", " (humanize-filesize (.-size value))])])))
-
-(defn file [form label ks & [opts]]
-  (f/build (merge form opts {:input file* :label label :ks ks})))

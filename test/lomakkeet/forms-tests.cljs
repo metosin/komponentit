@@ -4,10 +4,7 @@
             [lomakkeet.fields :as f]
             [sablono.core :refer-macros [html]]
             [schema.core :as s :include-macros true]
-            [plumbing.core :refer-macros [defnk]]
-            [om.core :as om :include-macros true]
-            [om-tools.dom :as dom :include-macros true]
-            [om-tools.core :refer-macros [defcomponent]]))
+            [om.core :as om]))
 
 (extend-type js/NodeList
   ISeqable
@@ -29,8 +26,8 @@
 (defn test-render-with-opts [opts more]
   (test-render (assoc more :opts opts)))
 
-(defnk test-render
-  [opts form-state form ch value]
+(defn test-render
+  [{:keys [opts form]}]
   (html
     (f/input form "name" [:name] opts)))
 

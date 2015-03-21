@@ -1,17 +1,15 @@
 (ns lomakkeet.autocomplete
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [om.core :as om :include-macros true]
-            [om-tools.core :refer-macros [defcomponent]]
             [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
-            [lomakkeet.fields :as f]
-            goog.events))
+            goog.events)
+  (:import [goog.events EventType]))
 
 ;;
 ;; Mixin: dropdown closes when users clicks somewhere else
 ;;
 
-; FIXME: om-tools mixin?
 (defn closable-will-mount [owner & [close-cb]]
   (let [click-handler (fn [e]
                         (om/set-state! owner :open? false)
@@ -99,54 +97,59 @@
          (highlight-match [:span text] query)]))))
 
 ; Uses selectize styles
-(defcomponent autocomplete*
+(defn autocomplete*
   [{:keys [value]}
    owner
    {:keys [ch ks renderer value->text loading-el load-items]
     :or {value->text identity
          loading-el [:div "Loading..."]}
     :as opts}]
-  (init-state [_]
-    {:open? false
-     :search nil})
-  (will-mount [_]
-    (load-items owner)
-    (closable-will-mount owner #(om/set-state! owner :search nil)))
-  (will-unmount [_]
-    (closable-will-unmount owner))
-  (render-state [_ {:keys [open? search items]}]
-    (html
-      [:div.selectize-control.single
-       [:input.selectize-input
-        {:on-focus (fn [e]
-                     (om/set-state! owner :open? true)
-                     (if-not search
-                       (om/set-state! owner :search "")))
-         :on-click (fn [e] (.stopPropagation e))
-         :on-change #(om/set-state! owner :search (.. % -target -value))
-         :value (cond
-                  search search
-                  (seq value) (value->text value)
-                  :else "")
-         :class (cond-> ""
-                  open? (str " input-active dropdown-active"))
-         :auto-complete false
-         :on-key-up (fn [e]
-                         (case (.-key e)
-                           ; "Enter"
-                           ; "Up"
-                           ; "Down"
-                           nil))}]
-       (when open?
-         [:div.selectize-dropdown.single
-          [:div.selectize-dropdown-content
-           (if items
-             (renderer
-               items
-               (normalize-search search)
-               (fn [id]
-                 (put! ch {:type :change
-                           :ks ks
-                           :value id})
-                 (om/set-state! owner :open? false)))
-             loading-el)]])])))
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:open? false
+       :search nil})
+    om/IWillMount
+    (will-mount [_]
+      (load-items owner)
+      (closable-will-mount owner #(om/set-state! owner :search nil)))
+    om/IWillUnmount
+    (will-unmount [_]
+      (closable-will-unmount owner))
+    om/IRenderState
+    (render-state [_ {:keys [open? search items]}]
+      (html
+        [:div.selectize-control.single
+         [:input.selectize-input
+          {:on-focus (fn [e]
+                       (om/set-state! owner :open? true)
+                       (if-not search
+                         (om/set-state! owner :search "")))
+           :on-click (fn [e] (.stopPropagation e))
+           :on-change #(om/set-state! owner :search (.. % -target -value))
+           :value (cond
+                    search search
+                    (seq value) (value->text value)
+                    :else "")
+           :class (cond-> ""
+                    open? (str " input-active dropdown-active"))
+           :auto-complete false
+           :on-key-up (fn [e]
+                        (case (.-key e)
+                          ; "Enter"
+                          ; "Up"
+                          ; "Down"
+                          nil))}]
+         (when open?
+           [:div.selectize-dropdown.single
+            [:div.selectize-dropdown-content
+             (if items
+               (renderer
+                 items
+                 (normalize-search search)
+                 (fn [id]
+                   (put! ch {:type :change
+                             :ks ks
+                             :value id})
+                   (om/set-state! owner :open? false)))
+               loading-el)]])]))))
