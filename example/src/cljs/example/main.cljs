@@ -7,49 +7,14 @@
             [cljs-time.core :as t]
             [potpuri.core :as util]
             [lomakkeet.core :as f]
+            [om-dev-tools.core :as dev]
+            [om-dev-tools.state-tree :as dev-state]
             [example.forms :as forms]
             [example.autocomplete :as eac]
-            [om-dev-tools.core :as dev]
-            [om-dev-tools.state-tree :as dev-state]))
-
-(def LocalDate goog.date.Date)
-
-(defn DateRange [start end]
-  (s/pred (fn [x]
-            (and (or (not start) (.equals x start) (t/after?  x start))
-                 (or (not end)   (.equals x end)   (t/before? x end))))
-          'invalid-date))
-
-(def email-pattern (js/RegExp. "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$" "i"))
-
-(s/defschema Thingie
-  {:name (s/both s/Str (s/pred seq 'required))
-   :email (s/both s/Str (s/pred #(re-find email-pattern %) 'email))
-   :dates {:start LocalDate
-           :end   (s/maybe LocalDate)}
-   :desc s/Str
-   :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))
-   :country s/Str
-   :gender s/Keyword})
-
-(defn ThingieDates [{{:keys [start end]} :dates}]
-  (-> Thingie
-      (update-in [:dates :start] #(s/both % (DateRange (t/today) end)))
-      (assoc-in  [:dates :end]    (s/maybe (s/both LocalDate (DateRange start nil))))))
-
-; Description of the state tree
-(def empty-thing
-  {:name "Luke Skywalker"
-   :email "luke@rebel.gov"
-   :dates {:start (t/today)
-           :end   nil}
-   :desc ""
-   :file nil
-   :country "FI"
-   :gender :other})
+            [example.domain :as d]))
 
 (def initial-state
-  {:example-page (f/->form-state empty-thing Thingie)})
+  {:example-page (f/->form-state d/empty-thing d/Thingie)})
 
 (defonce state (atom initial-state))
 (defonce dev-state (atom (-> (dev/empty-state)
@@ -78,10 +43,7 @@
 
       [:div.row
        (f/textarea  form "Textarea" [:desc])
-       (f/select    form "Select"   [:gender]
-                 {:male   "Male"
-                  :female "Female"
-                  :other  "Other"})]
+       (f/select    form "Select"   [:gender] d/genders)]
 
       [:div.row
        [:div.col-sm-6 [:h2 "Datepicker (using " [:a {:href "https://github.com/dbushell/Pikaday"} "Pikaday"] ")"]]
@@ -126,7 +88,7 @@
       (om/build
         f/form page-state
         {:opts {:form {:humanize-error forms/humanize-error}
-                :form-validation-fn (fn [v] (s/check (ThingieDates v) v))
+                :form-validation-fn (fn [v] (s/check (d/ThingieDates v) v))
                 :actions {:save save-thing}
                 :render-fn render-thingie-form}}))))
 
