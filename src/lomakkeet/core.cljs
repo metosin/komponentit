@@ -7,33 +7,10 @@
             [schema.coerce :as sc]
             [schema.utils :as su]
             [om.core :as om]
+            [schema-tools.core :as st]
+            [lomakkeet.util :refer [chan? dissoc-in]]
             [lomakkeet.file :as file]
             [lomakkeet.datepicker :as date]))
-
-;; FIXME:
-(defn- get-in-schema
-  [schema ks & [not-found]]
-  (reduce (fn [acc k]
-            (or (get acc k) (get acc (s/optional-key k) (get acc (s/required-key k))) not-found))
-          schema
-          ks))
-
-(defn- chan? [v]
-  (instance? cljs.core.async.impl.channels.ManyToManyChannel v))
-
-(defn dissoc-in
-  "Dissociates an entry from a nested associative structure returning a new
-   nested structure. keys is a sequence of keys. Any empty maps that result
-   will not be present in the new structure."
-  [m [k & ks :as keys]]
-  (if ks
-    (if-let [nextmap (get m k)]
-      (let [newmap (dissoc-in nextmap ks)]
-        (if (seq newmap)
-          (assoc m k newmap)
-          (dissoc m k)))
-      m)
-    (dissoc m k)))
 
 ;; EMPTYABLE INPUT
 
@@ -90,7 +67,7 @@
     (om/build form-group
               {:value  (get-in @value ks)
                :error  (if errors (get-in @errors ks))
-               :schema (if schema (get-in-schema @schema ks))}
+               :schema (if schema (st/get-in @schema ks))}
               {:opts (dissoc opts :state)
                :state (:state opts)})))
 
@@ -243,7 +220,7 @@
   [value-cursor schema ks value]
   (if value
     (om/update! value-cursor ks value)
-    (let [schema (get-in-schema schema (butlast ks))]
+    (let [schema (st/get-in schema (butlast ks))]
       (if (contains? schema (s/optional-key (last ks)))
         (om/transact! value-cursor #(dissoc-in % ks))
         (om/update! value-cursor ks value)))))
@@ -284,7 +261,7 @@
 
               :change (let [{:keys [ks]} evt]
                         (->> evt :value
-                             (coerce coercion-matcher (get-in-schema schema ks))
+                             (coerce coercion-matcher (st/get-in schema ks))
                              (change-value value schema ks)))
               (prn (str "Unknown event-type: " (:type evt))))
 

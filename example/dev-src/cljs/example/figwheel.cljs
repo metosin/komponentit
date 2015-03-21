@@ -3,5 +3,4 @@
             [example.main :as example]))
 
 (fw/watch-and-reload
-  :websocket-url "ws://localhost:3450/figwheel-ws"
-  :jsload-callback (fn [] (example/restart!)))
+  :websocket-url "ws://localhost:3450/figwheel-ws")

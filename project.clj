@@ -12,7 +12,8 @@
                  [sablono "0.3.3"]
                  [com.andrewmcveigh/cljs-time "0.3.0"]
                  [cljsjs/moment "2.6.0-3"]
-                 [cljsjs/pikaday "1.2.0-2"]]
+                 [cljsjs/pikaday "1.2.0-2"]
+                 [metosin/schema-tools "0.3.0"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild

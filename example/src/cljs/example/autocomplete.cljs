@@ -251,16 +251,27 @@
    {:code "ZM" :name "Zambia"}
    {:code "ZW" :name "Zimbabwe"}])
 
-(def ^:private country-list-render
-  ; Could be functions
-  (ac/create-list-renderer {:item->key :code
-                            :item->text :name
-                            :term-match? (ac/create-matcher [:code :name])}))
-
 (defn country-code->name [code]
   (:name (first (filter (comp (partial = code) :code) countries))))
 
+(def term-match? (ac/create-matcher [:code :name]))
+(def query-match? (partial ac/query-match? term-match?))
+
 (defn country-select [form label ks & [opts]]
-  (f/build (merge form opts {:input ac/autocomplete* :renderer country-list-render :value->text country-code->name :label label :ks ks
-                             :load-items (fn [owner]
-                                           (om/set-state! owner :items countries))})))
+  (f/build (merge form opts {:input ac/autocomplete*
+                             :value->text country-code->name
+                             :item->key :code
+                             :item->text :highlighted-text
+                             :label label
+                             :ks ks
+                             :load-items (fn [owner query]
+                                           (let [c (atom -1)]
+                                             (om/set-state! owner :data (->> countries
+                                                                             (filter (fn [x]
+                                                                                       (or (not query) (query-match? x query))))
+                                                                             (map (fn [x]
+                                                                                    (assoc x
+                                                                                           :i (swap! c inc)
+                                                                                           :highlighted-text (ac/highlight-string (:name x) query))))
+                                                                             vec))
+                                             (om/set-state! owner :count @c)))})))

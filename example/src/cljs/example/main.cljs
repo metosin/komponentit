@@ -1,7 +1,5 @@
-(ns example.main
-  (:require-macros [cljs.core.async.macros :refer [go]])
+(ns ^:always-reload example.main
   (:require [om.core :as om]
-            [cljs.core.async :refer [put!]]
             [schema.core :as s :include-macros true]
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
@@ -69,16 +67,7 @@
         [:label "Autocomplete (tree):"]
         [:p.form-control-static "TODO"]]]]]))
 
-; FIXME: Fnk would fit event handlers well
 (defn save-thing [state evt]
-  ; In reality this could look something like:
-  #_
-  (let [id (-> state :value :id)
-        req (http/post (str "/api/thingie/" id) {:params (:value state)})
-        resp (<! req)]
-    (if (ok? resp)
-      (f/save-form state (:body resp))
-      (assoc state :errors (:body resp))))
   (-> state
       (f/save-form (:value state))))
 
@@ -102,7 +91,7 @@
        [:h2 "Om state tree"]
        [:div.om-dev-tools-state-tree
         (let [dev-state (om/observe owner (om/ref-cursor (:state-tree-state (om/root-cursor dev-state))))]
-          (om/build dev-state/state-view {:state-tree-state dev-state
+          (om/build dev-state/state-view {:state dev-state
                                           :app-state app-state}))]])))
 
 (defn restart! []
