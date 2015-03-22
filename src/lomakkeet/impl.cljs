@@ -19,9 +19,7 @@
     (render-state [_ s]
       (html
         [:div.form-group
-         {:class (cond-> []
-                   (and error) (conj "has-error")
-                   size (conj (str "col-md-" size)))}
+         {:class (str (if error "has-error") " " (if size (str "col-md-" size)))}
          [:label label label-separator]
          (om/build input input-state {:opts opts :state s})
          (if help-text

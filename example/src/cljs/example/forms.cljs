@@ -1,5 +1,6 @@
 (ns example.forms
-  (:require [cljs.core.async :refer [put!]]))
+  (:require [cljs.core.async :refer [put!]]
+            [lomakkeet.core :as f]))
 
 (defn humanize-error [x]
   (if (instance? schema.utils.ValidationError x)
@@ -9,21 +10,21 @@
         "virhe"))
     "virhe"))
 
-(defn form-status [{:keys [errors value initial-value]}]
+(defn form-status [fs]
   (cond
-    (and (not empty?) errors)  "Form has error(s)"
-    (not= value initial-value) "Form has unsaved edits"))
+    (f/errors? fs) "Form has error(s)"
+    (f/dirty? fs)  "Form has unsaved edits"))
 
-(defn cancel-btn [form-state ch]
+(defn cancel-btn [fs ch]
   [:button.btn.btn-primary
    {:type "button"
-    :disabled (= (:value form-state) (:initial-value form-state))
+    :disabled (not (f/dirty? fs))
     :on-click #(put! ch {:type :cancel})}
    "Cancel"])
 
-(defn save-btn [form-state ch]
+(defn save-btn [fs ch]
   [:button.btn.btn-primary
    {:type "button"
-    :disabled (seq (:errors form-state))
+    :disabled (f/errors? fs)
     :on-click #(put! ch {:type :action, :action :save})}
    "Save"])
