@@ -17,8 +17,8 @@
 (defonce state (atom initial-state))
 (defonce dev-state (atom (-> (dev/empty-state)
                              (assoc :open? false :current :instrumentation)
-                             (assoc-in [:state-tree-state :example-page :value :dates] {})
-                             (assoc-in [:state-tree-state :example-page :initial-value :dates] {}))))
+                             (assoc-in [:state-tree-state :example-page :lomakkeet.core/value :dates] {})
+                             (assoc-in [:state-tree-state :example-page :lomakkeet.core/initial-value :dates] {}))))
 
 ;; VIEWS
 

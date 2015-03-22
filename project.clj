@@ -11,7 +11,7 @@
                  [org.omcljs/om "0.8.8"]
                  [sablono "0.3.3"]
                  [metosin/schema-tools "0.3.0"]
-                 [com.andrewmcveigh/cljs-time "0.3.0"]
+                 [com.andrewmcveigh/cljs-time "0.3.2"]
                  [cljsjs/pikaday "1.2.0-3"]]
   :plugins [[lein-pprint "1.1.2"]]
 

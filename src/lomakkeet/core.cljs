@@ -62,8 +62,8 @@
 ;; BUILD
 
 (defn build
-  [{:keys [form-state form-group ks] :as opts}]
-  (let [{:keys [value errors schema]} form-state]
+  [{:keys [fs form-group ks] :as opts}]
+  (let [{value ::value errors ::errors schema ::schema} fs]
     (om/build form-group
               {:value  (get-in @value ks)
                :error  (if errors (get-in @errors ks))
@@ -183,34 +183,38 @@
     value))
 
 (s/defschema FormState
-  {:value s/Any
-   :initial-value s/Any
-   :errors s/Any
-   :schema s/Any
+  {::value s/Any
+   ::initial-value s/Any
+   ::errors s/Any
+   ::schema s/Any
+   ::metadata s/Any
+   ::disabled s/Bool
    s/Keyword s/Any})
 
 (defn ->fs
   ([value] (->fs value nil))
   ([value schema]
-   {:value value
-    :initial-value value
-    :errors (if schema (s/check schema value))
-    :schema schema}))
+   {::value value
+    ::initial-value value
+    ::errors (if schema (s/check schema value))
+    ::schema schema
+    ::metadata nil
+    ::disabled false}))
 
-(defn cancel-form [form-state]
-  (assoc form-state :value (:initial-value form-state)))
+(defn reset [fs]
+  (assoc fs ::value (::initial-value fs)))
 
 (defn save-form
-  ([{:keys [schema] :as form-state} value]
-   (assoc form-state
-          :value value
-          :initial-value value
-          :errors (if schema (s/check schema value)))))
+  ([{schema ::schema :as fs} value]
+   (assoc fs
+          ::value value
+          ::initial-value value
+          ::errors (if schema (s/check schema value)))))
 
 (defn update-form
-  [{:keys [value] :as form-state} f & args]
+  [{:keys [value] :as fs} f & args]
   (let [new-value (apply f value args)]
-    (save-form form-state new-value)))
+    (save-form fs new-value)))
 
 (defn- change-value
   "Takes cursor, schema, vector of keywords and new value.
@@ -226,38 +230,34 @@
         (om/update! value-cursor ks value)))))
 
 (s/defn form
-  [{:keys [value initial-value]
-    :as form-state} :- FormState
+  [{value ::value initial-value ::initial-value :as fs} :- FormState
    owner
    {:keys [actions render-fn form form-validation-fn after-change]
     :as opts}]
   (reify
     om/IInitState
     (init-state [_]
-      (assert (nil? (s/check FormState form-state)))
-      (-> {:ch (chan)
-           :form-group default-form-group
-           :coercion-matcher sc/json-coercion-matcher}
-          (merge form)))
+      (assert (nil? (s/check FormState fs)))
+      (merge {:ch (chan)
+              :form-group default-form-group
+              :coercion-matcher sc/json-coercion-matcher}
+             form))
     om/IWillMount
     (will-mount [_]
-      ; Going around JSC error by retrieving schema from form-state
-      ; For some destructuring schema at defcomponent + letting it would generate
-      ; invalid JS
-      (let [schema (if (:schema form-state) @(:schema form-state))
+      (let [schema (if (::schema fs) @(::schema fs))
             {:keys [ch coercion-matcher]} (om/get-state owner)]
         (go-loop []
           (let [evt (<! ch)
                 prev-value @value]
             (case (:type evt)
               :action (if-let [action-fn (get actions (:action evt))]
-                        (let [next (action-fn @form-state evt)]
+                        (let [next (action-fn @fs evt)]
                           (if (chan? next)
-                            (go (om/update! form-state (<! next)))
-                            (om/update! form-state next)))
+                            (go (om/update! fs (<! next)))
+                            (om/update! fs next)))
                         (prn (str "WARNING: " (:action evt) " is unknown")))
 
-              :cancel (om/transact! form-state cancel-form)
+              :cancel (om/transact! fs reset)
 
               :change (let [{:keys [ks]} evt]
                         (->> evt :value
@@ -266,26 +266,26 @@
               (prn (str "Unknown event-type: " (:type evt))))
 
             (if after-change
-              (after-change {:form-state form-state
+              (after-change {:fs fs
                              :value @value
                              :value-cursor value
                              :prev-value prev-value})))
 
-          ; Update form-state because :errors can be nil and (:errors form-state) could return not-a-cursor
-          (om/update! form-state :errors (merge
-                                           (if form-validation-fn (form-validation-fn @value))
-                                           (if schema (s/check schema @value))))
+          ; Update fs because :errors can be nil and (:errors fs) could return not-a-cursor
+          (om/update! fs ::errors (merge
+                                    (if form-validation-fn (form-validation-fn @value))
+                                    (if schema (s/check schema @value))))
           (recur))))
     om/IRenderState
     (render-state [_ form]
-      (html (render-fn {:form-state form-state
+      (html (render-fn {:fs fs
                         :value @value
                         :initial-value @initial-value
-                        :form (assoc form :form-state form-state)
+                        :form (assoc form :fs fs)
                         :ch (:ch form)})))))
 
-(defn dirty? [form-state]
-  (not= (:value form-state) (:initial-value form-state)))
+(defn dirty? [fs]
+  (not= (::value fs) (::initial-value fs)))
 
-(defn errors? [form-state]
-  (seq (:errors form-state)))
+(defn errors? [fs]
+  (seq (::errors fs)))
