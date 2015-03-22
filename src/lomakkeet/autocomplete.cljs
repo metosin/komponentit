@@ -114,6 +114,8 @@
 (defn autocomplete-list*
   [_ owner {:keys [cb renderer item->key item->text]}]
   (reify
+    om/IDisplayName
+    (display-name [_] "autocomplete-list*")
     om/IRenderState
     (render-state [_ {:keys [data selection]}]
       (html
@@ -142,6 +144,8 @@
                        :value (item->key item)})
              (om/set-state! owner :open? false))]
     (reify
+      om/IDisplayName
+      (display-name [_] "autocomplete*")
       om/IInitState
       (init-state [_]
         (init-state))

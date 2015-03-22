@@ -40,6 +40,8 @@
    {:keys [ch ks datepicker-i18n]
     :as opts}]
   (reify
+    om/IDisplayName
+    (display-name [_] "date*")
     om/IInitState
     (init-state [_]
       {:val nil})

@@ -25,6 +25,8 @@
    owner
    {:keys [real-input] :as opts}]
   (reify
+    om/IDisplayName
+    (display-name [_] "emptyable-input")
     om/IRenderState
     (render-state [_ s]
       (html
@@ -45,6 +47,8 @@
     :or {size 6 label-separator ":"}
     :as opts}]
   (reify
+    om/IDisplayName
+    (display-name [_] "default-form-group")
     om/IRenderState
     (render-state [_ s]
       (html
@@ -235,6 +239,8 @@
    {:keys [actions render-fn form form-validation-fn after-change]
     :as opts}]
   (reify
+    om/IDisplayName
+    (display-name [_] "form")
     om/IInitState
     (init-state [_]
       (assert (nil? (s/check FormState fs)))
