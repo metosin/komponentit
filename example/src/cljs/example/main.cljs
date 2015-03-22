@@ -12,7 +12,7 @@
             [example.domain :as d]))
 
 (def initial-state
-  {:example-page (f/->form-state d/empty-thing d/Thingie)})
+  {:example-page (f/->fs d/empty-thing d/Thingie)})
 
 (defonce state (atom initial-state))
 (defonce dev-state (atom (-> (dev/empty-state)

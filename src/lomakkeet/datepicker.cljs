@@ -3,7 +3,7 @@
             [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
             [goog.string :as gs]
-            org.pikaday))
+            cljsjs.pikaday.with-moment))
 
 (defn jsdate->local-date [v]
   (if v

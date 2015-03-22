@@ -189,8 +189,8 @@
    :schema s/Any
    s/Keyword s/Any})
 
-(defn ->form-state
-  ([value] (->form-state value nil))
+(defn ->fs
+  ([value] (->fs value nil))
   ([value schema]
    {:value value
     :initial-value value

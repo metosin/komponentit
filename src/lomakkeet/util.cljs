@@ -25,6 +25,7 @@
   "Creates a channel which will change put a new value to the output channel
    after timeout has passed. Each value change resets the timeout. If value
    changes more frequently only the latest value is put out.
+
    When input channel closes, the output channel is closed."
   (let [out (a/chan)]
     (a/go-loop [last-val nil]
