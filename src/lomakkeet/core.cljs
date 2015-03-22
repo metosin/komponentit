@@ -85,8 +85,9 @@
           ::errors (if schema (s/check schema value)))))
 
 (defn update-form
-  [{:keys [value] :as fs} f & args]
-  (let [new-value (apply f value args)]
+  [fs f & args]
+  (let [value (::value fs)
+        new-value (apply f value args)]
     (save-form fs new-value)))
 
 (defn- change-value

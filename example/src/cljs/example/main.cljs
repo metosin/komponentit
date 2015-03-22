@@ -78,8 +78,7 @@
   (om/component
     (om/build
       f/form page-state
-      {:opts {:form {:humanize-error forms/humanize-error}
-              :form-validation-fn (fn [v] (s/check (d/ThingieDates v) v))
+      {:opts {:form-validation-fn (fn [v] (s/check (d/ThingieDates v) v))
               :actions {:save save-thing}
               :component thingie-form}})))
 
