@@ -4,7 +4,7 @@
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
             [potpuri.core :as util]
-            [lomakkeet.core :as f]
+            [lomakkeet.om :as f]
             [lomakkeet.action :as action]
             [om-dev-tools.core :as dev]
             [om-dev-tools.state-tree :as dev-state]
@@ -23,11 +23,7 @@
 
 ;; VIEWS
 
-(defn thingie-form
-  [{{{:keys [start end]} :dates} :lomakkeet.core/value
-    :as fs}
-   _
-   {:keys [form]}]
+(defn thingie-form [fs _ {:keys [form]}]
   (om/component
     (html
       [:div.tasks
@@ -52,17 +48,9 @@
          [:div.col-sm-6 [:h2 "Filepicker"]]]
 
         [:div.row
-         (f/date form "Start date" [:dates :start]
-                 {:size 3
-                  :state {:min-date (t/today) :max-date end}
-                  :help-text "Today or later. Before end date."})
-         (f/date form "End date"   [:dates :end]
-                 {:size 3
-                  :empty-btn? true
-                  :state {:min-date start}
-                  :help-text "Optional. After start date."})
-         (f/file form "File"        [:file]
-                 {:help-text "Under 1MB"})]
+         (f/date form "Start date" [:dates :start] {:size 3 :help-text "Today or later. Before end date."})
+         (f/date form "End date"   [:dates :end]   {:size 3 :help-text "Optional. After start date."})
+         (f/file form "File"       [:file]         {:help-text "Under 1MB"})]
 
         [:div.row
          [:div.col-sm-12 [:h2 "Autocomplete"]]

@@ -1,6 +1,6 @@
 (ns example.autocomplete
   (:require [lomakkeet.autocomplete :as ac]
-            [lomakkeet.core :as f]
+            [lomakkeet.om :as f]
             [om.core :as om :include-macros true]))
 
 (def countries

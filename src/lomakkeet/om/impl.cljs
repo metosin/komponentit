@@ -1,4 +1,4 @@
-(ns lomakkeet.impl
+(ns lomakkeet.om.impl
   (:require [sablono.core :refer-macros [html]]
             [om.core :as om]
             [lomakkeet.action :refer [action!]]))
@@ -8,18 +8,18 @@
 (defn default-form-group
   [{:keys [error] :as input-state}
    owner
-   {:keys [input label label-separator size help-text]
-    :or {size 6 label-separator ":"}
+   {:keys [input label size help-text]
+    :or {size 6}
     :as opts}]
   (reify
     om/IDisplayName
     (display-name [_] "default-form-group")
-    om/IRenderState
-    (render-state [_ s]
+    om/IRender
+    (render [_]
       (html
         [:div.form-group
          {:class (str (if error "has-error") " " (if size (str "col-md-" size)))}
-         [:label label label-separator]
+         [:label label]
          (om/build input input-state {:opts opts})
          (if help-text
            [:span.help-block help-text])
@@ -27,6 +27,12 @@
            [:span.help-block (str error)])]))))
 
 ;; BASIC INPUTS
+
+(defn- cb [form ks e]
+  (action! form {:type :change, :ks ks, :value (.. e -target -value)}))
+
+(defn- cb-checked [form ks e]
+  (action! form {:type :change, :ks ks, :value (.. e -target -checked)}))
 
 (defn input-input [value cb]
   [:input.form-control
@@ -45,7 +51,7 @@
 
 (defn input*
   [{:keys [value]}
-   owner
+   _
    {:keys [form ks el transform-value]
     :or {el input-input
          transform-value identity}
@@ -56,17 +62,13 @@
     om/IRender
     (render [_]
       (html
-        (el (transform-value value)
-            (fn [e]
-              (action! form {:type :change
-                             :ks ks
-                             :value (.. e -target -value)})))))))
+        (el (transform-value value) (partial cb form ks))))))
 
 ;; CHECKBOX
 
 (defn checkbox*
   [{:keys [value]}
-   owner
+   _
    {:keys [form ch ks]
     :as opts}]
   (om/component
@@ -74,16 +76,13 @@
       [:input
        {:type "checkbox"
         :checked (boolean value)
-        :on-change (fn [e]
-                     (action! form {:type :change
-                                    :ks ks
-                                    :value (.. e -target -checked)}))}])))
+        :on-change (partial cb-checked form ks)}])))
 
 ;; SELECT
 
 (defn select*
   [{:keys [value]}
-   owner
+   _
    {:keys [form ch ks options]
     :as opts}]
   (om/component
@@ -92,10 +91,7 @@
        {:value (if (keyword? value)
                  (name value)
                  value)
-        :on-change (fn [e]
-                     (action! form {:type :change
-                                    :ks ks
-                                    :value (.. e -target -value)}))}
+        :on-change (partial cb form ks)}
        (cond
          (map? options)
          (for [[k v] options]
