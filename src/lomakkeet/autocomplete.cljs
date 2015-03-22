@@ -58,24 +58,24 @@
   (when (.-relatedTarget e)
     (om/set-state! owner :open? false)
     (om/set-state! owner :search nil))
-  true)
+  nil)
 
 (defn click [owner e]
   (om/set-state! owner :open? true)
   (.stopPropagation e)
-  true)
+  nil)
 
 (defn focus [owner _]
   (if-not (om/get-state owner :open?)
     (om/set-state! owner :input ""))
   (om/set-state! owner :open? true)
-  true)
+  nil)
 
 (defn change [owner cb e]
   (let [v (.. e -target -value)]
     (om/set-state! owner :input v)
     (cb v))
-  true)
+  nil)
 
 (defn key-down [owner find-by-selection cb e]
   (let [selected (om/get-state owner :selection)
@@ -126,7 +126,8 @@
               {:key (item->key item)
                :class (if (= selection i) "active")
                :ref (str "item-" i)
-               :data-selectable i}
+               :data-selectable i
+               :on-click #(cb item)}
               (item->text item)])
            [:div {:ref "item-0" :data-selectable 1} [:span "No results"]])]))))
 
@@ -164,6 +165,7 @@
           [:div.selectize-control.single
            [:input.selectize-input
             {:on-focus  (partial focus owner)
+             :on-blur   (partial blur owner)
              :on-click  (partial click owner)
              :on-change (partial change owner (fn [x]
                                                 (put! (om/get-state owner :debounce) x)))
