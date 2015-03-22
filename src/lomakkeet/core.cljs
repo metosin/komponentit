@@ -236,7 +236,7 @@
 (s/defn form
   [{value ::value initial-value ::initial-value :as fs} :- FormState
    owner
-   {:keys [actions render-fn form form-validation-fn after-change]
+   {:keys [actions component form form-validation-fn after-change]
     :as opts}]
   (reify
     om/IDisplayName
@@ -271,6 +271,7 @@
                              (change-value value schema ks)))
               (prn (str "Unknown event-type: " (:type evt))))
 
+            ; FIXME:
             (if after-change
               (after-change {:fs fs
                              :value @value
@@ -279,16 +280,14 @@
 
           ; Update fs because :errors can be nil and (:errors fs) could return not-a-cursor
           (om/update! fs ::errors (merge
+                                    ; FIXME:
                                     (if form-validation-fn (form-validation-fn @value))
                                     (if schema (s/check schema @value))))
           (recur))))
-    om/IRenderState
-    (render-state [_ form]
-      (html (render-fn {:fs fs
-                        :value @value
-                        :initial-value @initial-value
-                        :form (assoc form :fs fs)
-                        :ch (:ch form)})))))
+    om/IRender
+    (render [_ ]
+      (om/build component fs {:opts {:ch (om/get-state owner :ch)
+                                     :form (assoc (om/get-state owner) :fs fs)}}))))
 
 (defn dirty? [fs]
   (not= (::value fs) (::initial-value fs)))

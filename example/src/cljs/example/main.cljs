@@ -22,50 +22,53 @@
 
 ;; VIEWS
 
-(defn render-thingie-form
-  [{:keys [form-state form ch]
-    {{:keys [start end]} :dates} :value}]
-  (html
-    [:div.tasks
-     [:h2
-      "Basic fields"
-      [:div.btn-toolbar.pull-right
-       (forms/form-status form-state)
-       (forms/cancel-btn form-state ch)
-       (forms/save-btn form-state ch)]]
+(defn thingie-form
+  [{{{:keys [start end]} :dates} :lomakkeet.core/value
+    :as fs}
+   owner
+   {:keys [ch form]}]
+  (om/component
+    (html
+      [:div.tasks
+       [:h2
+        "Basic fields"
+        [:div.btn-toolbar.pull-right
+         (forms/form-status fs)
+         (forms/cancel-btn fs ch)
+         (forms/save-btn fs ch)]]
 
-     [:form.column-content
-      [:div.row
-       (f/input form "Name"   [:name])
-       (f/input form "Email"  [:email])]
+       [:form.column-content
+        [:div.row
+         (f/input form "Name"   [:name])
+         (f/input form "Email"  [:email])]
 
-      [:div.row
-       (f/textarea  form "Textarea" [:desc])
-       (f/select    form "Select"   [:gender] d/genders)]
+        [:div.row
+         (f/textarea  form "Textarea" [:desc])
+         (f/select    form "Select"   [:gender] d/genders)]
 
-      [:div.row
-       [:div.col-sm-6 [:h2 "Datepicker (using " [:a {:href "https://github.com/dbushell/Pikaday"} "Pikaday"] ")"]]
-       [:div.col-sm-6 [:h2 "Filepicker"]]]
+        [:div.row
+         [:div.col-sm-6 [:h2 "Datepicker (using " [:a {:href "https://github.com/dbushell/Pikaday"} "Pikaday"] ")"]]
+         [:div.col-sm-6 [:h2 "Filepicker"]]]
 
-      [:div.row
-       (f/date form "Start date" [:dates :start]
-               {:size 3
-                :state {:min-date (t/today) :max-date end}
-                :help-text "Today or later. Before end date."})
-       (f/date form "End date"   [:dates :end]
-               {:size 3
-                :empty-btn? true
-                :state {:min-date start}
-                :help-text "Optional. After start date."})
-       (f/file form "File"        [:file]
-               {:help-text "Under 1MB"})]
+        [:div.row
+         (f/date form "Start date" [:dates :start]
+                 {:size 3
+                  :state {:min-date (t/today) :max-date end}
+                  :help-text "Today or later. Before end date."})
+         (f/date form "End date"   [:dates :end]
+                 {:size 3
+                  :empty-btn? true
+                  :state {:min-date start}
+                  :help-text "Optional. After start date."})
+         (f/file form "File"        [:file]
+                 {:help-text "Under 1MB"})]
 
-      [:div.row
-       [:div.col-sm-12 [:h2 "Autocomplete"]]
-       (eac/country-select form "Country" [:country])
-       [:div.form-group.col-sm-6
-        [:label "Autocomplete (tree):"]
-        [:p.form-control-static "TODO"]]]]]))
+        [:div.row
+         [:div.col-sm-12 [:h2 "Autocomplete"]]
+         (eac/country-select form "Country" [:country])
+         [:div.form-group.col-sm-6
+          [:label "Autocomplete (tree):"]
+          [:p.form-control-static "TODO"]]]]])))
 
 (defn save-thing [state evt]
   (-> state
@@ -73,13 +76,12 @@
 
 (defn thing-view [page-state owner]
   (om/component
-    (html
-      (om/build
-        f/form page-state
-        {:opts {:form {:humanize-error forms/humanize-error}
-                :form-validation-fn (fn [v] (s/check (d/ThingieDates v) v))
-                :actions {:save save-thing}
-                :render-fn render-thingie-form}}))))
+    (om/build
+      f/form page-state
+      {:opts {:form {:humanize-error forms/humanize-error}
+              :form-validation-fn (fn [v] (s/check (d/ThingieDates v) v))
+              :actions {:save save-thing}
+              :component thingie-form}})))
 
 (defn app-view [app-state owner]
   (om/component
