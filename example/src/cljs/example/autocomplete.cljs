@@ -258,7 +258,7 @@
 (def query-match? (partial ac/query-match? term-match?))
 
 (defn country-select [form label ks & [opts]]
-  (f/build (merge form opts {:input ac/autocomplete*
+  (f/build form (merge opts {:input ac/autocomplete*
                              :value->text country-code->name
                              :item->key :code
                              :item->text :highlighted-text

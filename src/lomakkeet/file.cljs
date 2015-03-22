@@ -1,8 +1,8 @@
 (ns lomakkeet.file
   (:require [om.core :as om :include-macros true]
-            [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
-            [goog.string :as gs]))
+            [goog.string :as gs]
+            [lomakkeet.action :refer [action!]]))
 
 (defn humanize-filesize
   [bytes & [fmt]]
@@ -15,7 +15,7 @@
 (defn file*
   [{:keys [value]}
    owner
-   {:keys [ch ks file-select-label]
+   {:keys [form ch ks file-select-label]
     :or {file-select-label "Select file"}
     :as opts}]
   (om/component
@@ -27,9 +27,9 @@
          :ref "file-input"
          :on-change (fn [e]
                       (if-let [file (.item e.target.files 0)]
-                        (put! ch {:type :change
-                                  :ks ks
-                                  :value file})))}]
+                        (action! form {:type :change
+                                       :ks ks
+                                       :value file})))}]
        [:button.btn.btn-primary
         {:type "button"
          :on-click #(.click (om/get-node owner "file-input"))}
@@ -37,7 +37,7 @@
        ; FIXME: emptyable-input?
        [:button.btn.btn-default
         {:type "button"
-         :on-click #(put! ch {:type :change :ks ks :value nil})}
+         :on-click #(action! form {:type :change :ks ks :value nil})}
         "×"]
        (if value
          [:span.selected-file

@@ -6,7 +6,8 @@
             [om.core :as om]
             [sablono.core :refer-macros [html]]
             [lomakkeet.util :as util]
-            [lomakkeet.impl.mixins :as mixins]))
+            [lomakkeet.impl.mixins :as mixins]
+            [lomakkeet.action :refer [action!]]))
 
 ;;
 ;; Utils
@@ -134,15 +135,15 @@
 (defn autocomplete*
   [{:keys [value]}
    owner
-   {:keys [ch ks item->key value->text load-items find-by-selection ->query]
+   {:keys [form ch ks item->key value->text load-items find-by-selection ->query]
     :or {value->text identity
          find-by-selection default-find-by-selection
          ->query default->query}
     :as opts}]
   (let [cb (fn [item]
-             (put! ch {:type :change
-                       :ks ks
-                       :value (item->key item)})
+             (action! form {:type :change
+                            :ks ks
+                            :value (item->key item)})
              (om/set-state! owner :open? false))]
     (reify
       om/IDisplayName

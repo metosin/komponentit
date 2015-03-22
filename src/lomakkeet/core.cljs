@@ -1,190 +1,71 @@
 (ns lomakkeet.core
-  (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])
-  (:require [cljs.core.async :refer [put! chan <! >! timeout]]
-            cljs.core.async.impl.channels
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require [cljs.core.async :refer [put! chan <! close!]]
             [sablono.core :refer-macros [html]]
             [schema.core :as s :include-macros true]
-            [schema.coerce :as sc]
-            [schema.utils :as su]
             [om.core :as om]
             [schema-tools.core :as st]
-            [lomakkeet.util :refer [chan? dissoc-in]]
+            [lomakkeet.action :as action]
+            [lomakkeet.impl :as impl]
+            [lomakkeet.util :refer [dissoc-in]]
             [lomakkeet.file :as file]
             [lomakkeet.datepicker :as date]))
 
-;; EMPTYABLE INPUT
+(defprotocol IFormCoerce
+  (coerce [_ schema value]))
 
-(defn- empty-cb [{:keys [ch ks]}]
-  (fn [e]
-    (put! ch {:type :change
-              :value nil
-              :ks ks})))
+(defprotocol IDidChange
+  (did-change [_]))
 
-(defn emptyable-input
-  [state
-   owner
-   {:keys [real-input] :as opts}]
-  (reify
-    om/IDisplayName
-    (display-name [_] "emptyable-input")
-    om/IRenderState
-    (render-state [_ s]
-      (html
-        [:div.input-group
-         (om/build real-input state {:opts opts :state s})
-         [:span.input-group-btn
-          [:button.btn.btn-default
-           {:type "button"
-            :on-click (empty-cb opts)}
-           "×"]]]))))
+(defprotocol IForm
+  (get-fs [this]))
 
-;; FORM GROUP ("bootstrap")
-
-(defn default-form-group
-  [{:keys [error] :as input-state}
-   owner
-   {:keys [input label label-separator size help-text]
-    :or {size 6 label-separator ":"}
-    :as opts}]
-  (reify
-    om/IDisplayName
-    (display-name [_] "default-form-group")
-    om/IRenderState
-    (render-state [_ s]
-      (html
-        [:div.form-group
-         {:class (cond-> []
-                   (and error) (conj "has-error")
-                   size (conj (str "col-md-" size)))}
-         [:label label label-separator]
-         (om/build input input-state {:opts opts :state s})
-         (if help-text
-           [:span.help-block help-text])
-         (if (and (not empty?) error)
-           [:span.help-block (str error)])]))))
+(defrecord Form [form owner]
+  IForm
+  (get-fs [_] (om/get-props owner))
+  action/IActionable
+  (action! [_ evt]
+    (action/action! form evt))
+  action/IActionHandler
+  (handle-change [_ evt]
+    (action/handle-change form evt))
+  action/IPureActionHandler
+  (pure-handle-change [_ fs evt]
+    (action/pure-handle-change form fs evt)))
 
 ;; BUILD
 
-(defn build
-  [{:keys [fs form-group ks] :as opts}]
-  (let [{value ::value errors ::errors schema ::schema} fs]
-    (om/build form-group
+(defn build [form {:keys [ks] :as opts}]
+  (let [{value ::value errors ::errors schema ::schema} (get-fs form)]
+    (om/build impl/default-form-group
               {:value  (get-in @value ks)
                :error  (if errors (get-in @errors ks))
                :schema (if schema (st/get-in @schema ks))}
-              {:opts (dissoc opts :state)
+              {:opts (-> opts (assoc :form form) (dissoc :state))
                :state (:state opts)})))
 
-;; BASIC INPUTS
+(defn input [form label ks & [opts]]
+  (build form (merge opts {:input impl/input* :label label :ks ks})))
 
-(defn input-input [value cb]
-  [:input.form-control
-   {:type "text"
-    :value (or value "")
-    :on-change cb}])
+(defn textarea [form label ks & [opts]]
+  (build form (merge opts {:input impl/input* :label label :ks ks :el impl/input-textarea})))
 
-(defn input-textarea [value cb]
-  [:textarea.form-control
-   {:value (or value "")
-    :on-change cb}])
+(defn static [form label ks & [opts]]
+  (build form (merge opts {:input impl/input* :label label :ks ks :el impl/input-static})))
 
-(defn input-static [value cb]
-  [:p.form-control-static
-   value])
+(defn checkbox [form label ks & [opts]]
+  (build form (merge opts {:input impl/checkbox* :label label :ks ks})))
 
-(defn input*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks el transform-value]
-    :or {el input-input
-         transform-value identity}
-    :as opts}]
-  (om/component
-    (html
-      (el (transform-value value)
-          (fn [e]
-            (put! ch {:type :change
-                      :ks ks
-                      :value (.. e -target -value)}))))))
-
-(defn input
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks})))
-
-(defn textarea
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks :el input-textarea})))
-
-(defn static
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks :el input-static})))
-
-;; CHECKBOX
-
-(defn checkbox*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks]
-    :as opts}]
-  (om/component
-    (html
-      [:input
-       {:type "checkbox"
-        :checked (boolean value)
-        :on-change (fn [e]
-                     (put! ch {:type :change
-                               :ks ks
-                               :value (.. e -target -checked)}))}])))
-
-(defn checkbox
-  [form label ks & [opts]]
-  (build (merge form opts {:input checkbox* :label label :ks ks})))
-
-;; SELECT
-
-(defn select*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks options]
-    :as opts}]
-  (om/component
-    (html
-      [:select.form-control
-       {:value (if (keyword? value)
-                 (name value)
-                 value)
-        :on-change (fn [e]
-                     (put! ch {:type :change
-                               :ks ks
-                               :value (.. e -target -value)}))}
-       (cond
-         (map? options)
-         (for [[k v] options]
-           [:option {:value k :key k} v]))])))
-
-(defn select
-  [form label ks options & [opts]]
-  (build (merge form opts {:input select* :label label :ks ks :options options})))
+(defn select [form label ks options & [opts]]
+  (build form (merge opts {:input impl/select* :label label :ks ks :options options})))
 
 (defn date [form label ks & [opts]]
-  (build (merge form opts
-                {:label label :ks ks}
-                (if (:empty-btn? opts)
-                  {:input emptyable-input :real-input date/date*}
-                  {:input date/date*}))))
+  (build form (merge opts {:label label :ks ks :input date/date*})))
 
 (defn file [form label ks & [opts]]
-  (build (merge form opts {:input file/file* :label label :ks ks})))
+  (build form (merge opts {:input file/file* :label label :ks ks})))
 
 ;; FORM
-
-(defn- coerce [coercion-matcher schema value]
-  (if schema
-    (let [coerced ((sc/coercer schema coercion-matcher) value)]
-      (if (su/error? coerced)
-        value
-        coerced))
-    value))
 
 (s/defschema FormState
   {::value s/Any
@@ -207,6 +88,9 @@
 
 (defn reset [fs]
   (assoc fs ::value (::initial-value fs)))
+
+(defn commit [fs]
+  (assoc fs ::initial-value (::value fs)))
 
 (defn save-form
   ([{schema ::schema :as fs} value]
@@ -234,60 +118,46 @@
         (om/update! value-cursor ks value)))))
 
 (s/defn form
-  [{value ::value initial-value ::initial-value :as fs} :- FormState
-   owner
-   {:keys [actions component form form-validation-fn after-change]
-    :as opts}]
+  [fs :- FormState, owner, {:keys [parent component]}]
   (reify
     om/IDisplayName
     (display-name [_] "form")
     om/IInitState
     (init-state [_]
-      (assert (nil? (s/check FormState fs)))
-      (merge {:ch (chan)
-              :form-group default-form-group
-              :coercion-matcher sc/json-coercion-matcher}
-             form))
+      {:ch (chan)})
     om/IWillMount
-    (will-mount [_]
-      (let [schema (if (::schema fs) @(::schema fs))
-            {:keys [ch coercion-matcher]} (om/get-state owner)]
-        (go-loop []
-          (let [evt (<! ch)
-                prev-value @value]
-            (case (:type evt)
-              :action (if-let [action-fn (get actions (:action evt))]
-                        (let [next (action-fn @fs evt)]
-                          (if (chan? next)
-                            (go (om/update! fs (<! next)))
-                            (om/update! fs next)))
-                        (prn (str "WARNING: " (:action evt) " is unknown")))
-
-              :cancel (om/transact! fs reset)
-
-              :change (let [{:keys [ks]} evt]
-                        (->> evt :value
-                             (coerce coercion-matcher (st/get-in schema ks))
-                             (change-value value schema ks)))
-              (prn (str "Unknown event-type: " (:type evt))))
-
-            ; FIXME:
-            (if after-change
-              (after-change {:fs fs
-                             :value @value
-                             :value-cursor value
-                             :prev-value prev-value})))
-
-          ; Update fs because :errors can be nil and (:errors fs) could return not-a-cursor
-          (om/update! fs ::errors (merge
-                                    ; FIXME:
-                                    (if form-validation-fn (form-validation-fn @value))
-                                    (if schema (s/check schema @value))))
-          (recur))))
+    (will-mount [this]
+      (go-loop []
+        (let [ch (om/get-state owner :ch)
+              evt (<! ch)]
+          (when evt
+            (action/handle-change this evt)
+            (recur)))))
+    om/IWillUnmount
+    (will-unmount [_]
+      (let [ch (om/get-state owner :ch)]
+        (close! ch)))
     om/IRender
-    (render [_ ]
-      (om/build component fs {:opts {:ch (om/get-state owner :ch)
-                                     :form (assoc (om/get-state owner) :fs fs)}}))))
+    (render [this]
+      (om/build component fs {:opts {:form (Form. this owner)}}))
+    action/IActionable
+    (action! [this evt]
+      (js/console.log "form action!" (pr-str evt))
+      (let [ch (om/get-state owner :ch)]
+        (put! ch evt))
+      nil)
+    action/IActionHandler
+    (handle-change [this evt]
+      (case (:type evt)
+        :cancel (om/transact! fs reset)
+        :change (let [schema (if (::schema fs) @(::schema fs))
+                      {ks :ks new-value :value} evt
+                      new-value (if (satisfies? IFormCoerce parent)
+                                  (coerce parent (st/get-in schema ks) new-value)
+                                  new-value)]
+                  (change-value (::value fs) schema ks new-value))
+        ; Redirect rest of action to form container component
+        (action/handle-change parent evt)))))
 
 (defn dirty? [fs]
   (not= (::value fs) (::initial-value fs)))

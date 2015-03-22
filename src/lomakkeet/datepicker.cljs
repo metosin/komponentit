@@ -1,8 +1,8 @@
 (ns lomakkeet.datepicker
   (:require [om.core :as om :include-macros true]
-            [cljs.core.async :refer [put!]]
             [sablono.core :refer-macros [html]]
             [goog.string :as gs]
+            [lomakkeet.action :refer [action!]]
             cljsjs.pikaday.with-moment))
 
 (defn jsdate->local-date [v]
@@ -37,7 +37,7 @@
 (defn date*
   [{:keys [value]}
    owner
-   {:keys [ch ks datepicker-i18n]
+   {:keys [form ch ks datepicker-i18n]
     :as opts}]
   (reify
     om/IDisplayName
@@ -53,9 +53,9 @@
                                  :format "D.M.YYYY"
                                  :firstDay 1
                                  :onSelect (fn [v]
-                                             (put! ch {:type :change
-                                                       :ks ks
-                                                       :value (jsdate->local-date v)}))}
+                                             (action! form {:type :change
+                                                            :ks ks
+                                                            :value (jsdate->local-date v)}))}
                                 (cond-> datepicker-i18n (assoc :i18n datepicker-i18n))
                                 clj->js))]
         (om/set-state! owner :el el)
@@ -83,7 +83,7 @@
                               ; FIXME: unset :val
                               ; FIXME: .setDate, .gotoDate?
                               ; setDate + onSelect event? -> no put! here
-                              (put! ch {:type :change
-                                        :ks ks
-                                        :value (om/get-state owner :val)}))))
+                              (action! form {:type :change
+                                             :ks ks
+                                             :value (om/get-state owner :val)}))))
           :auto-complete false}]))))
