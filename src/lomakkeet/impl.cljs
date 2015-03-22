@@ -6,7 +6,7 @@
 ;; FORM GROUP ("bootstrap")
 
 (defn default-form-group
-  [{:keys [value error] :as input-state}
+  [{:keys [error] :as input-state}
    owner
    {:keys [input label label-separator size help-text]
     :or {size 6 label-separator ":"}
