@@ -51,13 +51,17 @@
     :or {el input-input
          transform-value identity}
     :as opts}]
-  (om/component
-    (html
-      (el (transform-value value)
-          (fn [e]
-            (put! ch {:type :change
-                      :ks ks
-                      :value (.. e -target -value)}))))))
+  (reify
+    om/IDisplayName
+    (display-name [_] "input*")
+    om/IRender
+    (render [_]
+      (html
+        (el (transform-value value)
+            (fn [e]
+              (put! ch {:type :change
+                        :ks ks
+                        :value (.. e -target -value)})))))))
 
 ;; CHECKBOX
 

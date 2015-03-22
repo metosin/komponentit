@@ -2,14 +2,6 @@
   (:require [cljs.core.async :refer [put!]]
             [lomakkeet.core :as f]))
 
-(defn humanize-error [x]
-  (if (instance? schema.utils.ValidationError x)
-    (let [[b] @(.-expectation-delay x)]
-      (if (symbol? b)
-        (str b)
-        "virhe"))
-    "virhe"))
-
 (defn form-status [fs]
   (cond
     (f/errors? fs) "Form has error(s)"
