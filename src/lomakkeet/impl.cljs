@@ -24,7 +24,7 @@
          (om/build input input-state {:opts opts :state s})
          (if help-text
            [:span.help-block help-text])
-         (if (and (not empty?) error)
+         (if error
            [:span.help-block (str error)])]))))
 
 ;; BASIC INPUTS
