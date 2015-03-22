@@ -1,67 +1,16 @@
 (ns lomakkeet.core
-  (:require-macros [cljs.core.async.macros :refer [go go-loop alt!]])
-  (:require [cljs.core.async :refer [put! chan <! >! timeout]]
-            cljs.core.async.impl.channels
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require [cljs.core.async :refer [put! chan <!]]
             [sablono.core :refer-macros [html]]
             [schema.core :as s :include-macros true]
             [schema.coerce :as sc]
             [schema.utils :as su]
             [om.core :as om]
             [schema-tools.core :as st]
+            [lomakkeet.impl :as impl]
             [lomakkeet.util :refer [chan? dissoc-in]]
             [lomakkeet.file :as file]
             [lomakkeet.datepicker :as date]))
-
-;; EMPTYABLE INPUT
-
-(defn- empty-cb [{:keys [ch ks]}]
-  (fn [e]
-    (put! ch {:type :change
-              :value nil
-              :ks ks})))
-
-(defn emptyable-input
-  [state
-   owner
-   {:keys [real-input] :as opts}]
-  (reify
-    om/IDisplayName
-    (display-name [_] "emptyable-input")
-    om/IRenderState
-    (render-state [_ s]
-      (html
-        [:div.input-group
-         (om/build real-input state {:opts opts :state s})
-         [:span.input-group-btn
-          [:button.btn.btn-default
-           {:type "button"
-            :on-click (empty-cb opts)}
-           "×"]]]))))
-
-;; FORM GROUP ("bootstrap")
-
-(defn default-form-group
-  [{:keys [error] :as input-state}
-   owner
-   {:keys [input label label-separator size help-text]
-    :or {size 6 label-separator ":"}
-    :as opts}]
-  (reify
-    om/IDisplayName
-    (display-name [_] "default-form-group")
-    om/IRenderState
-    (render-state [_ s]
-      (html
-        [:div.form-group
-         {:class (cond-> []
-                   (and error) (conj "has-error")
-                   size (conj (str "col-md-" size)))}
-         [:label label label-separator]
-         (om/build input input-state {:opts opts :state s})
-         (if help-text
-           [:span.help-block help-text])
-         (if (and (not empty?) error)
-           [:span.help-block (str error)])]))))
 
 ;; BUILD
 
@@ -75,103 +24,23 @@
               {:opts (dissoc opts :state)
                :state (:state opts)})))
 
-;; BASIC INPUTS
+(defn input [form label ks & [opts]]
+  (build (merge form opts {:input impl/input* :label label :ks ks})))
 
-(defn input-input [value cb]
-  [:input.form-control
-   {:type "text"
-    :value (or value "")
-    :on-change cb}])
+(defn textarea [form label ks & [opts]]
+  (build (merge form opts {:input impl/input* :label label :ks ks :el impl/input-textarea})))
 
-(defn input-textarea [value cb]
-  [:textarea.form-control
-   {:value (or value "")
-    :on-change cb}])
+(defn static [form label ks & [opts]]
+  (build (merge form opts {:input impl/input* :label label :ks ks :el impl/input-static})))
 
-(defn input-static [value cb]
-  [:p.form-control-static
-   value])
+(defn checkbox [form label ks & [opts]]
+  (build (merge form opts {:input impl/checkbox* :label label :ks ks})))
 
-(defn input*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks el transform-value]
-    :or {el input-input
-         transform-value identity}
-    :as opts}]
-  (om/component
-    (html
-      (el (transform-value value)
-          (fn [e]
-            (put! ch {:type :change
-                      :ks ks
-                      :value (.. e -target -value)}))))))
-
-(defn input
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks})))
-
-(defn textarea
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks :el input-textarea})))
-
-(defn static
-  [form label ks & [opts]]
-  (build (merge form opts {:input input* :label label :ks ks :el input-static})))
-
-;; CHECKBOX
-
-(defn checkbox*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks]
-    :as opts}]
-  (om/component
-    (html
-      [:input
-       {:type "checkbox"
-        :checked (boolean value)
-        :on-change (fn [e]
-                     (put! ch {:type :change
-                               :ks ks
-                               :value (.. e -target -checked)}))}])))
-
-(defn checkbox
-  [form label ks & [opts]]
-  (build (merge form opts {:input checkbox* :label label :ks ks})))
-
-;; SELECT
-
-(defn select*
-  [{:keys [value]}
-   owner
-   {:keys [ch ks options]
-    :as opts}]
-  (om/component
-    (html
-      [:select.form-control
-       {:value (if (keyword? value)
-                 (name value)
-                 value)
-        :on-change (fn [e]
-                     (put! ch {:type :change
-                               :ks ks
-                               :value (.. e -target -value)}))}
-       (cond
-         (map? options)
-         (for [[k v] options]
-           [:option {:value k :key k} v]))])))
-
-(defn select
-  [form label ks options & [opts]]
-  (build (merge form opts {:input select* :label label :ks ks :options options})))
+(defn select [form label ks options & [opts]]
+  (build (merge form opts {:input impl/select* :label label :ks ks :options options})))
 
 (defn date [form label ks & [opts]]
-  (build (merge form opts
-                {:label label :ks ks}
-                (if (:empty-btn? opts)
-                  {:input emptyable-input :real-input date/date*}
-                  {:input date/date*}))))
+  (build (merge form opts {:input date/date* :label label :ks ks})))
 
 (defn file [form label ks & [opts]]
   (build (merge form opts {:input file/file* :label label :ks ks})))
@@ -245,7 +114,7 @@
     (init-state [_]
       (assert (nil? (s/check FormState fs)))
       (merge {:ch (chan)
-              :form-group default-form-group
+              :form-group impl/default-form-group
               :coercion-matcher sc/json-coercion-matcher}
              form))
     om/IWillMount
