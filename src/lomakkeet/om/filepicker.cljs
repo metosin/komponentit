@@ -1,4 +1,4 @@
-(ns lomakkeet.file
+(ns lomakkeet.om.filepicker
   (:require [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
             [goog.string :as gs]

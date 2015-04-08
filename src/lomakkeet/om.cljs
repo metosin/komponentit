@@ -8,10 +8,11 @@
             [schema-tools.core :as st]
             [lomakkeet.core :as core]
             [lomakkeet.action :as action]
-            [lomakkeet.om.impl :as impl]
             [lomakkeet.util :refer [dissoc-in]]
-            [lomakkeet.file :as file]
-            [lomakkeet.datepicker :as date]))
+
+            [lomakkeet.om.impl :as impl]
+            [lomakkeet.om.filepicker :as file]
+            [lomakkeet.om.datepicker :as date]))
 
 (defprotocol IFormCoerce
   (coerce [_ schema value]))

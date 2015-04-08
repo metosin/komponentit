@@ -1,16 +1,15 @@
-(ns ^:always-reload example.main
+(ns ^:figwheel-always example.om
   (:require [om.core :as om]
             [schema.core :as s :include-macros true]
             [sablono.core :refer-macros [html]]
             [cljs-time.core :as t]
-            [potpuri.core :as util]
             [lomakkeet.om :as f]
             [lomakkeet.action :as action]
             [om-dev-tools.core :as dev]
             [om-dev-tools.state-tree :as dev-state]
-            [example.forms :as forms]
-            [example.autocomplete :as eac]
-            [example.domain :as d]))
+            [example.domain :as d]
+            [example.om.forms :as forms]
+            [example.om.autocomplete :as eac]))
 
 (def initial-state
   {:example-page (f/->fs d/empty-thing d/Thingie)})
@@ -94,8 +93,9 @@
                                           :app-state app-state}))]])))
 
 (defn restart! []
-  (dev/root app-view state {:target (.getElementById js/document "app")
-                            :dev-target (.getElementById js/document "dev")
-                            :dev-state dev-state}))
+  (if-let [root (.getElementById js/document "om")]
+    (dev/root app-view state {:target root
+                              :dev-target (.getElementById js/document "dev")
+                              :dev-state dev-state})))
 
 (restart!)

@@ -1,4 +1,4 @@
-(ns example.forms
+(ns example.om.forms
   (:require [lomakkeet.core :as f]
             [lomakkeet.action :refer [action!]]))
 
