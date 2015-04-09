@@ -6,13 +6,13 @@
             [lomakkeet.util :as util]
             [lomakkeet.action :refer [action!]]
             [lomakkeet.autocomplete :as ac]
-            [lomakkeet.impl.mixins :as mixins]))
+            [lomakkeet.om.mixins :as mixins]))
 
 (defn blur [owner e]
   (if (.-relatedTarget e)
-    (om/update-state! owner (assoc %
-                                   :open? false
-                                   :search nil)))
+    (om/update-state! owner #(assoc %
+                                    :open? false
+                                    :search nil)))
   nil)
 
 (defn click [owner e]
@@ -70,6 +70,13 @@
               (item->text item)])
            [:div {:ref "item-0" :data-selectable 1} [:span "No results"]])]))))
 
+(defn init-state []
+  {:data nil ; The results
+   :selection 0 ; Selected item
+   :input nil ; Search string
+   :open? false
+   :debounce (mixins/debounce-init)})
+
 (defn autocomplete*
   [{:keys [value]}
    owner
@@ -88,7 +95,7 @@
       (display-name [_] "autocomplete*")
       om/IInitState
       (init-state [_]
-        (ac/init-state))
+        (init-state))
       om/IWillMount
       (will-mount [_]
         (if value (load-items owner (->query value)))

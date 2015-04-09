@@ -51,7 +51,6 @@
            :help-text "Optional. After start date."}]
          [f/file form "File" [:file] {:help-text "Under 1MB"}]]
 
-        #_
         [:div.row
          [:div.col-sm-12 [:h2 "Autocomplete"]]
          [eac/country-select form "Country" [:country]]

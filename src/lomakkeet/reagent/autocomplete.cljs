@@ -6,7 +6,8 @@
             [reagent.ratom :refer-macros [run! reaction]]
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
-            [lomakkeet.impl.mixins :as mixins]))
+            [lomakkeet.reagent.impl :as impl]
+            [lomakkeet.reagent.mixins :as mixins]))
 
 (defn blur [open? search e]
   (when (.-relatedTarget e)
@@ -105,7 +106,7 @@
 
         cb
         (fn [v]
-          ; (dispatch [:update-value {:ks ks :value (item->key v)}])
+          (impl/cb form ks (item->key v))
           (reset! open? false))]
     (swap! items load-items)
     (go (loop [] (let [x (<! delayed-search)]

@@ -1,4 +1,4 @@
-(ns lomakkeet.impl.mixins
+(ns lomakkeet.om.mixins
   (:require-macros [cljs.core.async.macros :refer [go alt!]])
   (:require [cljs.core.async :refer [close! <! put! tap untap chan]]
             [om.core :as om]
@@ -44,3 +44,4 @@
 
 (defn debounce-will-unmount [input]
   (close! input))
+

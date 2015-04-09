@@ -4,7 +4,6 @@
   (:require [clojure.string :as string]
             [cljs.core.async :refer [put!]]
             [lomakkeet.util :as util]
-            [lomakkeet.impl.mixins :as mixins]
             [lomakkeet.action :refer [action!]]))
 
 ;;
@@ -57,10 +56,3 @@
   (some (fn [{:keys [i] :as v}]
           (if (= i x) v))
         data))
-
-(defn init-state []
-  {:data nil ; The results
-   :selection 0 ; Selected item
-   :input nil ; Search string
-   :open? false
-   :debounce (mixins/debounce-init)})
