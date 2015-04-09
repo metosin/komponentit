@@ -53,47 +53,6 @@
     (.split #" ")
     (->> (remove empty?))))
 
-(defn blur [owner e]
-  (when (.-relatedTarget e)
-    (om/set-state! owner :open? false)
-    (om/set-state! owner :search nil))
-  nil)
-
-(defn click [owner e]
-  (om/set-state! owner :open? true)
-  (.stopPropagation e)
-  nil)
-
-(defn focus [owner _]
-  (if-not (om/get-state owner :open?)
-    (om/set-state! owner :input ""))
-  (om/set-state! owner :open? true)
-  nil)
-
-(defn change [owner cb e]
-  (let [v (.. e -target -value)]
-    (om/set-state! owner :input v)
-    (cb v))
-  nil)
-
-(defn key-down [owner find-by-selection cb e]
-  (let [selected (om/get-state owner :selection)
-        n (om/get-state owner :count)
-        change-selection (fn change-selection  [f e]
-                           (om/update-state! owner :selection (comp (partial util/limit 0 n) f))
-                           (.preventDefault e)
-                           (.stopPropagation e))]
-    (om/set-state! owner :open? true)
-
-    (case (.-key e)
-      "Enter" (when-let [v (find-by-selection (om/get-state owner :data) (om/get-state owner :selection))]
-                (cb v)
-                (om/set-state! owner :open? false)
-                (om/set-state! owner :search nil))
-      "ArrowUp" (change-selection dec e)
-      "ArrowDown" (change-selection inc e)
-      nil)))
-
 (defn default-find-by-selection [data x]
   (some (fn [{:keys [i] :as v}]
           (if (= i x) v))

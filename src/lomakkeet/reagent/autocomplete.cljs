@@ -8,6 +8,45 @@
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.impl.mixins :as mixins]))
 
+(defn blur [open? search e]
+  (when (.-relatedTarget e)
+    (reset! open? false)
+    (reset! search nil))
+  nil)
+
+(defn click [open? e]
+  (reset! open? true)
+  (.stopPropagation e)
+  nil)
+
+(defn focus [open? search e]
+  (if-not @open?
+    (reset! search ""))
+  (reset! open? true)
+  nil)
+
+(defn change [search cb e]
+  (let [v (.. e -target -value)]
+    (reset! search v)
+    (cb v))
+  nil)
+
+(defn key-down [open? search results selected n find-by-selection cb e]
+  (let [change-selection (fn change-selection  [f e]
+                           (swap! selected (comp (partial util/limit 0 n) f))
+                           (.preventDefault e)
+                           (.stopPropagation e))]
+    (reset! open? true)
+
+    (case (.-key e)
+      "Enter" (when-let [v (find-by-selection @results @selected)]
+                (cb v)
+                (reset! open? false)
+                (reset! search nil))
+      "ArrowUp" (change-selection dec e)
+      "ArrowDown" (change-selection inc e)
+      nil)))
+
 (defn filter-results [term-match? n items query]
   (reset! n -1)
   (->> (if query
@@ -83,13 +122,13 @@
        (fn []
          [:div.selectize-control.single
           [:input.selectize-input
-           {:on-focus  (partial ac/focus open? search)
-            :on-blur   (partial ac/blur open? search)
-            :on-click  (partial ac/click open?)
-            :on-change (partial ac/change search)
+           {:on-focus  (partial focus open? search)
+            :on-blur   (partial blur open? search)
+            :on-click  (partial click open?)
+            :on-change (partial change search identity)
             ; Needs a horrible amount of parameters, perhaps using wrap could help?
             ; write selected -> check limits etc.
-            :on-key-down (partial ac/key-down open? search results selected n find-by-selection cb)
+            :on-key-down (partial key-down open? search results selected n find-by-selection cb)
             :value (or (if @open?
                          @search
                          (value->text @value))

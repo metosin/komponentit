@@ -10,7 +10,7 @@
                  [prismatic/schema "0.4.0"]
                  [org.omcljs/om "0.8.8"]
                  [sablono "0.3.3"]
-                 [reagent "0.5.1-SNAPSHOT"]
+                 [reagent "0.5.0"]
                  [metosin/schema-tools "0.3.0"]
                  [com.andrewmcveigh/cljs-time "0.3.2"]
                  [cljsjs/pikaday "1.2.0-3"]]

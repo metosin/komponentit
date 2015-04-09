@@ -8,6 +8,47 @@
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.impl.mixins :as mixins]))
 
+(defn blur [owner e]
+  (when (.-relatedTarget e)
+    (om/set-state! owner :open? false)
+    (om/set-state! owner :search nil))
+  nil)
+
+(defn click [owner e]
+  (om/set-state! owner :open? true)
+  (.stopPropagation e)
+  nil)
+
+(defn focus [owner _]
+  (if-not (om/get-state owner :open?)
+    (om/set-state! owner :input ""))
+  (om/set-state! owner :open? true)
+  nil)
+
+(defn change [owner cb e]
+  (let [v (.. e -target -value)]
+    (om/set-state! owner :input v)
+    (cb v))
+  nil)
+
+(defn key-down [owner find-by-selection cb e]
+  (let [selected (om/get-state owner :selection)
+        n (om/get-state owner :count)
+        change-selection (fn change-selection  [f e]
+                           (om/update-state! owner :selection (comp (partial util/limit 0 n) f))
+                           (.preventDefault e)
+                           (.stopPropagation e))]
+    (om/set-state! owner :open? true)
+
+    (case (.-key e)
+      "Enter" (when-let [v (find-by-selection (om/get-state owner :data) (om/get-state owner :selection))]
+                (cb v)
+                (om/set-state! owner :open? false)
+                (om/set-state! owner :search nil))
+      "ArrowUp" (change-selection dec e)
+      "ArrowDown" (change-selection inc e)
+      nil)))
+
 (defn autocomplete-list*
   [_ owner {:keys [cb renderer item->key item->text]}]
   (reify
@@ -61,12 +102,12 @@
         (html
           [:div.selectize-control.single
            [:input.selectize-input
-            {:on-focus  (partial ac/focus owner)
-             :on-blur   (partial ac/blur owner)
-             :on-click  (partial ac/click owner)
-             :on-change (partial ac/change owner (fn [x]
-                                                   (put! (om/get-state owner :debounce) x)))
-             :on-key-up (partial ac/key-down owner find-by-selection cb)
+            {:on-focus  (partial focus owner)
+             :on-blur   (partial blur owner)
+             :on-click  (partial click owner)
+             :on-change (partial change owner (fn [x]
+                                                (put! (om/get-state owner :debounce) x)))
+             :on-key-up (partial key-down owner find-by-selection cb)
              :value (or (if open? input (value->text value)) "")
              :class (if open? "input-active dropdown-active")
              :auto-complete false}]
