@@ -38,3 +38,4 @@
 (def update core/update)
 (def dirty? core/dirty?)
 (def errors? core/errors?)
+(def get-value core/get-value)

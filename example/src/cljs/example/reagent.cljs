@@ -16,8 +16,8 @@
 
 (defn thing-view []
   (let [form  (reagent/cursor app-state [:example-page])
-        start (reaction (get-in (::l/value @form) [:dates :start]))
-        end   (reaction (get-in (::l/value @form) [:dates :end]))]
+        start (reaction (f/get-value @form [:dates :start]))
+        end   (reaction (f/get-value @form [:dates :end]))]
     (fn []
       [:div.tasks
        [:h2

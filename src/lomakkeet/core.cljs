@@ -6,7 +6,7 @@
             [schema-tools.core :as st]
             [lomakkeet.util :refer [dissoc-in]]))
 
-(def ^:dynamic *coercion-matcher* sc/json-coercion-matcher)
+(def ^:dynamic *coercion-matcher* sc/string-coercion-matcher)
 
 ;;
 ;; Form state
@@ -16,7 +16,6 @@
   {::value s/Any
    ::initial-value s/Any
    ::errors s/Any
-   ::non-pristine s/Any
    ::schema s/Any
    ::disabled s/Bool
    s/Keyword s/Any})
@@ -26,7 +25,6 @@
   ([value schema]
    {::value value
     ::initial-value value
-    ::non-pristine nil
     ::errors (if schema (s/check schema value))
     ::schema schema
     ::disabled false}))
@@ -89,6 +87,10 @@
               (update-in fs [::value] dissoc-in ks)
               (update-in fs [::value] assoc-in ks value))))
         validate)))
+
+(defn get-value
+  [fs ks]
+  (get-in (::value fs) ks))
 
 ;;
 ;; Predicates

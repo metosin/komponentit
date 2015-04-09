@@ -9,9 +9,10 @@
             [lomakkeet.impl.mixins :as mixins]))
 
 (defn blur [owner e]
-  (when (.-relatedTarget e)
-    (om/set-state! owner :open? false)
-    (om/set-state! owner :search nil))
+  (if (.-relatedTarget e)
+    (om/update-state! owner (assoc %
+                                   :open? false
+                                   :search nil)))
   nil)
 
 (defn click [owner e]
@@ -19,7 +20,7 @@
   (.stopPropagation e)
   nil)
 
-(defn focus [owner _]
+(defn focus [owner e]
   (if-not (om/get-state owner :open?)
     (om/set-state! owner :input ""))
   (om/set-state! owner :open? true)
