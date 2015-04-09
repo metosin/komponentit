@@ -12,7 +12,7 @@
 
 (defn date* [form {:keys [ks datepicker-i18n min-date max-date]}]
   (let [el (atom nil)
-        value (reaction (get-in (::l/value @form) ks))]
+        value (reaction (l/get-value @form ks))]
     (if min-date
       (run! (if @el (.setMinDate @el (try-deref min-date)))))
     (if max-date

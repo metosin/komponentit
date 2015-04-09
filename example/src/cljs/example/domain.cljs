@@ -29,7 +29,7 @@
 
 ; Description of the state tree
 (def empty-thing
-  {:name "Luke Skywalker"
+  {:name ""
    :email "luke@rebel.gov"
    :dates {:start (t/today)
            :end   nil}

@@ -16,6 +16,7 @@
   {::value s/Any
    ::initial-value s/Any
    ::errors s/Any
+   ::not-pristine s/Any
    ::schema s/Any
    ::disabled s/Bool
    s/Keyword s/Any})
@@ -26,6 +27,7 @@
    {::value value
     ::initial-value value
     ::errors (if schema (s/check schema value))
+   ::not-pristine nil
     ::schema schema
     ::disabled false}))
 
@@ -86,6 +88,7 @@
             (if (contains? parent-schema (s/optional-key (last ks)))
               (update-in fs [::value] dissoc-in ks)
               (update-in fs [::value] assoc-in ks value))))
+        (update-in [::not-pristine] assoc-in ks true)
         validate)))
 
 (defn get-value

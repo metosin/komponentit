@@ -12,17 +12,18 @@
    {:keys [ks input label label-separator size help-text]
     :or {size 6 label-separator ":"}
     :as opts}]
-  (let [error (reaction (get-in (::l/errors @form) ks))]
+  (let [error (reaction (get-in (::l/errors @form) ks))
+        not-pristine (reaction (get-in (::l/not-pristine @form) ks))]
     (fn []
       [:div.form-group
        {:class (cond-> ""
-                 @error (str " has-error")
+                 (and @not-pristine @error) (str " has-error")
                  size (str " col-md-" size))}
        [:label label label-separator]
        [real-el form opts]
        (if help-text
          [:span.help-block help-text])
-       (if @error
+       (if (and @not-pristine @error)
          [:span.help-block (str @error)])])))
 
 ;; BASIC INPUTS
