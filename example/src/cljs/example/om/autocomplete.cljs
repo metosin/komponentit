@@ -1,5 +1,6 @@
 (ns example.om.autocomplete
   (:require [lomakkeet.autocomplete :as ac]
+            [lomakkeet.om.autocomplete :as oac]
             [lomakkeet.om :as f]
             [om.core :as om :include-macros true]
             [example.autocomplete :refer [countries]]))
@@ -11,7 +12,7 @@
 (def query-match? (partial ac/query-match? term-match?))
 
 (defn country-select [form label ks & [opts]]
-  (f/build form (merge opts {:input ac/autocomplete*
+  (f/build form (merge opts {:input oac/autocomplete*
                              :value->text country-code->name
                              :item->key :code
                              :item->text :highlighted-text

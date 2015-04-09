@@ -14,9 +14,6 @@
             [lomakkeet.om.filepicker :as file]
             [lomakkeet.om.datepicker :as date]))
 
-(defprotocol IFormCoerce
-  (coerce [_ schema value]))
-
 (defprotocol IDidChange
   (did-change [_]))
 
@@ -39,7 +36,7 @@
 ;; BUILD
 
 (defn build [form {:keys [ks] :as opts}]
-  (let [{value :lomakkeet.core/value errors :lomakkeet.core/errors schema :lomakkeet.core/schema} (get-fs form)]
+  (let [{value ::core/value errors ::core/errors schema ::core/schema} (get-fs form)]
     (om/build impl/default-form-group
               {:value  (get-in @value ks)
                :error  (if errors (get-in @errors ks))
@@ -67,19 +64,6 @@
 
 (defn file [form label ks & [opts]]
   (build form (merge opts {:input file/file* :label label :ks ks})))
-
-(defn- change-value
-  "Takes cursor, schema, vector of keywords and new value.
-
-   If new value is nil, schema is checked if value is in optional-key,
-   value it is, instead of setting value to nil, the key is dissoced."
-  [value-cursor schema ks value]
-  (if value
-    (om/update! value-cursor ks value)
-    (let [schema (st/get-in schema (butlast ks))]
-      (if (contains? schema (s/optional-key (last ks)))
-        (om/transact! value-cursor #(dissoc-in % ks))
-        (om/update! value-cursor ks value)))))
 
 (s/defn form
   [fs :- core/FormState, owner, {:keys [parent component]}]
@@ -114,12 +98,7 @@
     (handle-change [this evt]
       (case (:type evt)
         :cancel (om/transact! fs core/reset)
-        :change (let [schema (if (:lomakkeet.core/schema fs) @(:lomakkeet.core/schema fs))
-                      {ks :ks new-value :value} evt
-                      new-value (if (satisfies? IFormCoerce parent)
-                                  (coerce parent (st/get-in schema ks) new-value)
-                                  new-value)]
-                  (change-value (:lomakkeet.core/value fs) schema ks new-value))
+        :change (om/transact! fs #(core/change-value % (:ks evt) (:value evt)))
         ; Redirect rest of action to form container component
         (action/handle-change parent evt)))))
 

@@ -2,7 +2,8 @@
   (:require [goog.string :as gs]
             [goog.dom :as dom]
             [reagent.core :as reagent]
-            [reagent.ratom :refer-macros [reaction]]))
+            [reagent.ratom :refer-macros [reaction]]
+            [lomakkeet.reagent.impl :as impl]))
 
 (defn humanize-filesize
   [bytes & [fmt]]
@@ -22,7 +23,7 @@
          :type "file"
          :on-change (fn [e]
                       (if-let [file (.item e.target.files 0)]
-                        (println file)))}]
+                        (impl/cb form ks file)))}]
        [:button.btn.btn-primary
         {:type "button"
          :on-click #(-> (reagent/dom-node this)
@@ -33,7 +34,7 @@
        ; FIXME: emptyable-input?
        [:button.btn.btn-default
         {:type "button"
-         :on-click identity}
+         :on-click #(impl/cb form ks nil)}
         "×"]
        (if @value
          [:span.selected-file

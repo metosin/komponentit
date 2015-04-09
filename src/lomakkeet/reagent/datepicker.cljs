@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [reagent.ratom :refer-macros [reaction]]
             [goog.string :as gs]
-            [lomakkeet.date :refer [date->str]]
+            [lomakkeet.date :refer [date->str jsdate->local-date]]
+            [lomakkeet.reagent.impl :as impl]
             cljsjs.pikaday.with-moment))
 
 (defn date* [form {:keys [ks datepicker-i18n]}]
@@ -15,7 +16,7 @@
                                       ; NOTE: This requires MomentJS
                                       :format "D.M.YYYY"
                                       :firstDay 1
-                                      :onSelect identity}
+                                      :onSelect #(impl/cb form ks (jsdate->local-date %))}
                                      (cond-> datepicker-i18n (assoc :i18n datepicker-i18n))
                                      clj->js))))
        :reagent-render

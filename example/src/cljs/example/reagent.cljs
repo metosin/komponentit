@@ -10,10 +10,10 @@
 
 (enable-console-print!)
 
-(defonce thingie-form (atom (f/->fs d/empty-thing d/Thingie)))
+(defonce app-state (atom {:example-page (f/->fs d/empty-thing d/Thingie)}))
 
 (defn thing-view []
-  (let [form thingie-form]
+  (let [form (reagent/cursor app-state [:example-page])]
     (fn []
       (let [{{:keys [start end]} :dates} @form]
         [:div.tasks
@@ -70,7 +70,9 @@
   [:div
    [:h1 "Example Reagent form "
     [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
-   [thing-view]])
+   [thing-view]
+   [:h1 "Reagent state"]
+   [dev-view app-state]])
 
 (defn restart! []
   (if-let [root (js/document.getElementById "reagent")]

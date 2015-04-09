@@ -1,7 +1,12 @@
 (ns lomakkeet.core
   (:refer-clojure :exclude [update])
   (:require [schema.core :as s :include-macros true]
-            [schema-tools.core :as st]))
+            [schema.coerce :as sc]
+            [schema.utils :as su]
+            [schema-tools.core :as st]
+            [lomakkeet.util :refer [dissoc-in]]))
+
+(def ^:dynamic *coercion-matcher* sc/json-coercion-matcher)
 
 ;;
 ;; Form state
@@ -11,8 +16,8 @@
   {::value s/Any
    ::initial-value s/Any
    ::errors s/Any
+   ::non-pristine s/Any
    ::schema s/Any
-   ::metadata s/Any
    ::disabled s/Bool
    s/Keyword s/Any})
 
@@ -21,9 +26,9 @@
   ([value schema]
    {::value value
     ::initial-value value
+    ::non-pristine nil
     ::errors (if schema (s/check schema value))
     ::schema schema
-    ::metadata nil
     ::disabled false}))
 
 ;;
@@ -40,15 +45,15 @@
   [fs]
   (assoc fs ::initial-value (::value fs)))
 
+(defn validate
+  [fs]
+  (assoc fs ::errors (if-let [schema (::schema fs)] (s/check schema (::value fs)))))
+
 (defn save
-  "Set a new value to form. This changes both the value and the initial value.
-   This will trigger a schema validation for the value."
+  "Set a new value to form. This will trigger a schema validation for the value.
+   Doesn't trigger commit."
   [fs value]
-  (let [schema (::schema fs)]
-    (assoc fs
-           ::value value
-           ::initial-value value
-           ::errors (if schema (s/check schema value)))))
+  (-> fs (assoc ::value value) validate))
 
 (defn update
   "Use a function to set a new value to form. This changes both the value and the initial value.
@@ -58,6 +63,32 @@
   (let [value (::value fs)
         new-value (apply f value args)]
     (save fs new-value)))
+
+(defn coerce
+  "Return either coerced or the original value if the coercion failed."
+  [schema value]
+  (if schema
+    (let [coerced ((sc/coercer schema *coercion-matcher*) value)]
+      (if (su/error? coerced)
+        value
+        coerced))
+    value))
+
+(defn change-value
+  "Takes fs, schema, vector of keywords and new value.
+
+   If new value is nil, schema is checked if value is in optional-key,
+   value it is, instead of setting value to nil, the key is dissoced."
+  [fs ks value]
+  (let [schema (::schema fs)
+        value (coerce (st/get-in schema ks) value)]
+    (-> (if value
+          (update-in fs [::value] assoc-in ks value)
+          (let [parent-schema (st/get-in schema (butlast ks))]
+            (if (contains? parent-schema (s/optional-key (last ks)))
+              (update-in fs [::value] dissoc-in ks)
+              (update-in fs [::value] assoc-in ks value))))
+        validate)))
 
 ;;
 ;; Predicates

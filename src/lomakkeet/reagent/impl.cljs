@@ -1,5 +1,9 @@
 (ns lomakkeet.reagent.impl
-  (:require [reagent.ratom :refer-macros [reaction]]))
+  (:require [reagent.ratom :refer-macros [reaction]]
+            [lomakkeet.core :as l]))
+
+(defn cb[form ks value]
+  (swap! form l/change-value ks value))
 
 ;; FORM GROUP ("bootstrap")
 
@@ -8,7 +12,7 @@
    {:keys [ks input label label-separator size help-text]
     :or {size 6 label-separator ":"}
     :as opts}]
-  (let [error (reaction (get-in (::errors @form) ks))]
+  (let [error (reaction (get-in (::l/errors @form) ks))]
     (fn []
       [:div.form-group
        {:class (cond-> ""
@@ -42,31 +46,30 @@
   [form {:keys [ks transform-value el]
          :or {transform-value identity
               el input-input}}]
-  (let [value (reaction (get-in (::value @form) ks))]
+  (let [value (reaction (get-in (::l/value @form) ks))]
     (fn []
-      (el (transform-value @value) identity))))
-
+      (el (transform-value @value) #(cb form ks (.. % -target -value))))))
 
 ;; CHECKBOX
 
 (defn checkbox*
   [form {:keys [ks]}]
-  (let [value (reaction (get-in (::value @form) ks))]
+  (let [value (reaction (get-in (::l/value @form) ks))]
     (fn []
       [:input
        {:type "checkbox"
         :checked (boolean @value)
-        :on-change identity}])))
+        :on-change #(cb form ks (.. % -target -checked))}])))
 
 ;; SELECT
 
 (defn select*
   [form {:keys [ks options]}]
-  (let [value (reaction (get-in (::value @form) ks))]
+  (let [value (reaction (get-in (::l/value @form) ks))]
     (fn []
       [:select.form-control
        {:value @value
-        :on-change identity}
+        :on-change #(cb form ks (.. % -target -value))}
        (cond
          (map? options)
          (for [[k v] options]
