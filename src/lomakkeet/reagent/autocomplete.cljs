@@ -85,56 +85,39 @@
      [choice-item item selected cb opts])])
 
 (defn autocomplete*
-  [form {:keys [ks value->text item->key loading-el load-items term-match? ->query find-by-selection]
+  [form {:keys [ks value->text item->key load-items term-match? ->query find-by-selection]
          :or {value->text identity
-              loading-el [:div "Loading..."]
               ->query ac/default->query
               find-by-selection ac/default-find-by-selection}
          :as opts}]
   (let [open? (atom false)
         search (atom nil)
+        query (reaction (->query @search))
         items (atom nil)
-        value (reaction (get-in (:lomakkeet.core/value @form) ks))
-
-        search-chan (chan)
-        delayed-search (util/debounce search-chan 100)
-        query (atom nil)
-        selected (atom 0)
-
         n (atom -1)
         results (reaction (filter-results term-match? n @items @query))
+        value (reaction (get-in (:lomakkeet.core/value @form) ks))
+        selected (atom 0)
 
         cb
         (fn [v]
           (impl/cb form ks (item->key v))
           (reset! open? false))]
     (swap! items load-items)
-    (go (loop [] (let [x (<! delayed-search)]
-                   (when x
-                     (reset! query (->query x))
-                     (recur)))))
-    (run! (if-let [s @search] (put! search-chan s)))
-    (reagent/create-class
-      {:component-did-unmount
-       (fn [_]
-         (close! search-chan))
-       :reagent-render
-       (fn []
-         [dropdown-container
-          :open? open?
-          :el [:input.selectize-input
-               {:on-focus  (partial focus open? search)
-                :on-blur   (partial blur open? search)
-                :on-click  (partial click open?)
-                :on-change (partial change search identity)
-                ; Needs a horrible amount of parameters, perhaps using wrap could help?
-                ; write selected -> check limits etc.
-                :on-key-down (partial key-down open? search results selected n find-by-selection cb)
-                ; FIXME: Is this possible while wrapping this inside a component?
-                ; :value (or (if @open?
-                ;              @search
-                ;              (value->text @value))
-                ;            "")
-                :class (if @open? "input-active dropdown-active")
-                :auto-complete false}]
-          :content [renderer results selected cb opts]])})))
+    (fn []
+      [dropdown-container
+       :open? open?
+       :el [:input.selectize-input
+            {:on-focus  (partial focus open? search)
+             :on-blur   (partial blur open? search)
+             :on-click  (partial click open?)
+             :on-change (partial change search identity)
+             :on-key-down (partial key-down open? search results selected n find-by-selection cb)
+             ; FIXME: Is this possible while wrapping this inside a component?
+             ; :value (or (if @open?
+             ;              @search
+             ;              (value->text @value))
+             ;            "")
+             :class (if @open? "input-active dropdown-active")
+             :auto-complete false}]
+       :content [renderer results selected cb opts]])))
