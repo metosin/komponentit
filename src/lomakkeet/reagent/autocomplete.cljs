@@ -97,7 +97,7 @@
         items (atom nil)
         n (atom -1)
         results (reaction (filter-results term-match? n @items @query))
-        value (reaction (get-in (:lomakkeet.core/value @form) ks))
+        value (reaction (get-in (:value @(:cursor form)) ks))
         selected (atom 0)
 
         cb

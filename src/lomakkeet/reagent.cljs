@@ -9,26 +9,29 @@
 
 ;; BUILD
 
+(defn form-group-com [form]
+  (:form-group form impl/default-form-group))
+
 (defn input [form label ks & [opts]]
-  [impl/default-form-group form impl/input* (assoc opts :label label :ks ks)])
+  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :label label :ks ks)])
 
 (defn textarea [form label ks & [opts]]
-  [impl/default-form-group form impl/input* (assoc opts :el impl/input-textarea :label label :ks ks)])
+  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-textarea :label label :ks ks)])
 
 (defn static [form label ks & [opts]]
-  [impl/default-form-group form impl/input* (assoc opts :el impl/input-static :label label :ks ks)])
+  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-static :label label :ks ks)])
 
 (defn checkbox [form label ks & [opts]]
-  [impl/default-form-group form impl/checkbox* (assoc opts :label label :ks ks)])
+  [(form-group-com form) form impl/checkbox* (assoc (merge (:opts form) opts) :label label :ks ks)])
 
 (defn select [form label ks options & [opts]]
-  [impl/default-form-group form impl/select* (assoc opts :label label :ks ks :options options)])
+  [(form-group-com form) form impl/select* (assoc (merge (:opts form) opts) :label label :ks ks :options options)])
 
 (defn date [form label ks & [opts]]
-  [impl/default-form-group form date/date* (assoc opts :label label :ks ks)])
+  [(form-group-com form) form date/date* (assoc (merge (:opts form) opts) :label label :ks ks)])
 
 (defn file [form label ks & [opts]]
-  [impl/default-form-group form file/file* (assoc opts :label label :ks ks)])
+  [(form-group-com form) form file/file* (assoc (merge (:opts form) opts) :label label :ks ks)])
 
 (def ->fs core/->fs)
 (def reset core/reset)
@@ -37,4 +40,3 @@
 (def update core/update)
 (def dirty? core/dirty?)
 (def errors? core/errors?)
-(def get-value core/get-value)

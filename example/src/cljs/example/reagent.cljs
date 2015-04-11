@@ -15,9 +15,12 @@
 (defonce app-state (atom {:example-page (-> (f/->fs d/empty-thing d/Thingie))}))
 
 (defn thing-view []
-  (let [form  (reagent/cursor app-state [:example-page])
-        start (reaction (f/get-value @form [:dates :start]))
-        end   (reaction (f/get-value @form [:dates :end]))]
+  (let [form-data  (reagent/cursor app-state [:example-page])
+        form  {:cursor form-data
+               :opts {:size 6}}
+        form-value (reaction (:value @form-data))
+        start (reaction (get-in @form-value [:dates :start]))
+        end   (reaction (get-in @form-value [:dates :end]))]
     (fn []
       [:div.tasks
        [:h2
@@ -58,9 +61,9 @@
           [:label "Autocomplete (tree):"]
           [:p.form-control-static "TODO"]]]]])))
 
-(defonce tree-state (atom {:example-page {:lomakkeet.core/value {}
-                                          :lomakkeet.core/initial-value {}
-                                          :lomakkeet.core/errors {}}}))
+(defonce tree-state (atom {:example-page {:value {:dates {}}
+                                          :initial-value {:dates {}}
+                                          :errors {}}}))
 
 (defn dev-view [app-state]
   (fn []

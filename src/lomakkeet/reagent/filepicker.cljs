@@ -15,7 +15,8 @@
 (defn file* [form {:keys [ks file-select-label]
                    :or {file-select-label "Select file"}}]
   (let [this (reagent/current-component)
-        value (reaction (get-in (:lomakkeet.core/value @form) ks))]
+        form-value (reaction (:value @(:cursor form)))
+        value (reaction (get-in @form-value ks))]
     (fn []
       [:div
        [:input

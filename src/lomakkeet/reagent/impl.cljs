@@ -3,27 +3,31 @@
             [lomakkeet.core :as l]))
 
 (defn cb [form ks value]
-  (swap! form l/change-value ks value))
+  (swap! (:cursor form) l/change-value ks value))
+
+(defn get-or-deref [x]
+  (if (satisfies? IDeref x) @x x))
 
 ;; FORM GROUP ("bootstrap")
 
 (defn default-form-group
-  [form real-el
-   {:keys [ks input label label-separator size help-text]
-    :or {size 6 label-separator ":"}
-    :as opts}]
-  (let [error (reaction (get-in (::l/errors @form) ks))
-        not-pristine (reaction (get-in (::l/not-pristine @form) ks))]
+  [form content {:keys [ks size label help-text]
+                 :or {size 6}
+                 :as opts}]
+  {:pre [(map? form) (satisfies? IDeref (:cursor form))]}
+  (let [form-errors (reaction (:errors @(:cursor form)))
+        form-not-pristine (reaction (:not-pristine @(:cursor form)))
+        error (reaction (get-in @form-errors ks))
+        pristine (reaction (not (get-in @form-not-pristine ks)))]
     (fn []
       [:div.form-group
-       {:class (cond-> ""
-                 (and @not-pristine @error) (str " has-error")
-                 size (str " col-md-" size))}
-       [:label label label-separator]
-       [real-el form opts]
+       {:class (str (if (and (not @pristine) @error) (str "has-error "))
+                    (if size (str " col-md-" size)))}
+       [:label label]
+       [content form opts]
        (if help-text
          [:span.help-block help-text])
-       (if (and @not-pristine @error)
+       (if (and (not @pristine) @error)
          [:span.help-block (str @error)])])))
 
 ;; BASIC INPUTS
@@ -47,7 +51,8 @@
   [form {:keys [ks transform-value el]
          :or {transform-value identity
               el input-input}}]
-  (let [value (reaction (get-in (::l/value @form) ks))]
+  (let [form-value (reaction (:value @(:cursor form)))
+        value (reaction (get-in @form-value ks))]
     (fn []
       (el (transform-value @value) #(cb form ks (.. % -target -value))))))
 
@@ -55,7 +60,8 @@
 
 (defn checkbox*
   [form {:keys [ks]}]
-  (let [value (reaction (get-in (::l/value @form) ks))]
+  (let [form-value (reaction (:value @(:cursor form)))
+        value (reaction (get-in @form-value ks))]
     (fn []
       [:input
        {:type "checkbox"
@@ -66,7 +72,8 @@
 
 (defn select*
   [form {:keys [ks options]}]
-  (let [value (reaction (get-in (::l/value @form) ks))]
+  (let [form-value (reaction (:value @(:cursor form)))
+        value (reaction (get-in @form-value ks))]
     (fn []
       [:select.form-control
        {:value @value
