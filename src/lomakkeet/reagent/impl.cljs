@@ -2,7 +2,7 @@
   (:require [reagent.ratom :refer-macros [reaction]]
             [lomakkeet.core :as l]))
 
-(defn cb[form ks value]
+(defn cb [form ks value]
   (swap! form l/change-value ks value))
 
 ;; FORM GROUP ("bootstrap")

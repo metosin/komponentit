@@ -3,8 +3,7 @@
                    lomakkeet.autocomplete)
   (:require [clojure.string :as string]
             [cljs.core.async :refer [put!]]
-            [lomakkeet.util :as util]
-            [lomakkeet.action :refer [action!]]))
+            [lomakkeet.util :as util]))
 
 ;;
 ;; Utils
