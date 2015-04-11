@@ -58,31 +58,31 @@
               (assoc v :i (swap! n inc))))
        vec))
 
-(defn get-by-class [el class-name]
-  (aget (.getElementsByClassName el class-name) 0))
+(defn choice-item [item selected cb {:keys [item->key item->text] :as opts}]
+  (reagent/create-class
+    {:component-did-mount
+     (fn [this]
+       (if (= (:i item) @selected)
+         (.scrollIntoView (reagent/dom-node this))))
+     :component-did-update
+     (fn [this]
+       (if (= (:i item) @selected)
+         (.scrollIntoView (reagent/dom-node this))))
+     :reagent-render
+     (fn []
+       [:div
+        {:key (item->key item)
+         :on-click #(cb item)
+         :class (if (= (:i item) @selected) "active")
+         :data-selectable true}
+        (item->text item)])}))
 
 (defn renderer
-  [coll query selected cb {:keys [item->key item->text] :as opts}]
-  (let []
-    (reagent/create-class
-      {:component-did-mount
-       (fn [this]
-         (run! (do
-                 (if-let [child (get-by-class (reagent/dom-node this) (str "item-" @selected))]
-                   (util/keep-visible! (reagent/dom-node this) child)))))
-
-       :reagent-render
-       (fn []
-         [:div.selectize-dropdown-content
-          ; FIXME: keep-visible!
-          (doall
-            (for [item @coll]
-              [:div
-               {:key (item->key item)
-                :on-click #(cb item)
-                :class (str (str "item-" (:i item)) " " (if (= (:i item) @selected) "active"))
-                :data-selectable true}
-               (ac/highlight-string (item->text item) @query)]))])})))
+  [coll selected cb {:keys [item->key] :as opts}]
+  [:div.selectize-dropdown-content
+   (for [item @coll]
+     ^{:key (item->key item)}
+     [choice-item item selected cb opts])])
 
 (defn autocomplete*
   [form {:keys [ks value->text item->key loading-el load-items term-match? ->query find-by-selection]
@@ -137,4 +137,4 @@
                 ;            "")
                 :class (if @open? "input-active dropdown-active")
                 :auto-complete false}]
-          :content [renderer results query selected cb opts]])})))
+          :content [renderer results selected cb opts]])})))
