@@ -7,7 +7,8 @@
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.reagent.impl :as impl]
-            [lomakkeet.reagent.mixins :as mixins]))
+            [lomakkeet.reagent.mixins :as mixins]
+            [lomakkeet.reagent.util :refer [dropdown-container]]))
 
 (defn blur [open? search e]
   (when (.-relatedTarget e)
@@ -91,7 +92,6 @@
               find-by-selection ac/default-find-by-selection}
          :as opts}]
   (let [open? (atom false)
-        closable (mixins/create-closable open?)
         search (atom nil)
         items (atom nil)
         value (reaction (get-in (:lomakkeet.core/value @form) ks))
@@ -117,25 +117,24 @@
     (reagent/create-class
       {:component-did-unmount
        (fn [_]
-         (close! search-chan)
-         (closable))
+         (close! search-chan))
        :reagent-render
        (fn []
-         [:div.selectize-control.single
-          [:input.selectize-input
-           {:on-focus  (partial focus open? search)
-            :on-blur   (partial blur open? search)
-            :on-click  (partial click open?)
-            :on-change (partial change search identity)
-            ; Needs a horrible amount of parameters, perhaps using wrap could help?
-            ; write selected -> check limits etc.
-            :on-key-down (partial key-down open? search results selected n find-by-selection cb)
-            :value (or (if @open?
-                         @search
-                         (value->text @value))
-                       "")
-            :class (if @open? "input-active dropdown-active")
-            :auto-complete false}]
-          (when @open?
-            [:div.selectize-dropdown.single
-             [renderer results query selected cb opts]])])})))
+         [dropdown-container
+          :open? open?
+          :el [:input.selectize-input
+               {:on-focus  (partial focus open? search)
+                :on-blur   (partial blur open? search)
+                :on-click  (partial click open?)
+                :on-change (partial change search identity)
+                ; Needs a horrible amount of parameters, perhaps using wrap could help?
+                ; write selected -> check limits etc.
+                :on-key-down (partial key-down open? search results selected n find-by-selection cb)
+                ; FIXME: Is this possible while wrapping this inside a component?
+                ; :value (or (if @open?
+                ;              @search
+                ;              (value->text @value))
+                ;            "")
+                :class (if @open? "input-active dropdown-active")
+                :auto-complete false}]
+          :content [renderer results query selected cb opts]])})))
