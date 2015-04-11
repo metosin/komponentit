@@ -56,10 +56,11 @@
 
         [:div.row
          [:div.col-sm-12 [:h2 "Autocomplete"]]
-         [eac/country-select form "Country" [:country]]
-         [:div.form-group.col-sm-6
-          [:label "Autocomplete (tree):"]
-          [:p.form-control-static "TODO"]]]]])))
+         [eac/country-select form "Country" [:country] {:size 3}]
+         [f/complete form "Select multiple" [:reasons]
+          {:items {:a "A", :b "B", :c "C"}
+           :multiple true
+           :size 3}]]]])))
 
 (defonce tree-state (atom {:example-page {:value {:dates {}}
                                           :initial-value {:dates {}}

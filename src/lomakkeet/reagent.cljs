@@ -5,7 +5,8 @@
             [lomakkeet.util :refer [dissoc-in]]
             [lomakkeet.reagent.impl :as impl]
             [lomakkeet.reagent.datepicker :as date]
-            [lomakkeet.reagent.filepicker :as file]))
+            [lomakkeet.reagent.filepicker :as file]
+            [lomakkeet.reagent.autocomplete :as autocomplete]))
 
 ;; BUILD
 
@@ -32,6 +33,9 @@
 
 (defn file [form label ks & [opts]]
   [(form-group-com form) form file/file* (assoc (merge (:opts form) opts) :label label :ks ks)])
+
+(defn complete [form label ks & [opts]]
+  [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)])
 
 (def ->fs core/->fs)
 (def reset core/reset)

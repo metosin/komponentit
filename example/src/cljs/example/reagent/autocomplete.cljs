@@ -5,18 +5,17 @@
             [lomakkeet.reagent :as f]
             [example.autocomplete :refer [countries]]))
 
-(defn country-code->name [code]
-  (:name (first (filter (comp (partial = code) :code) countries))))
+(defn country-code->name [items code]
+  (:name (first (filter (comp (partial = code) :code) items))))
 
 (def term-match? (ac/create-matcher [:code :name]))
 (def query-match? (partial ac/query-match? term-match?))
 
 (defn country-select [form label ks & [opts]]
-  [(f/form-group-com form)
-   form rac/autocomplete*
-   (assoc opts :label label :ks ks
+  [f/complete form label ks
+   (assoc opts
           :value->text country-code->name
-          :load-items (fn [_] countries)
+          :items countries
           :item->key :code
           :item->text :name
           :term-match? (ac/create-matcher [:code :name]))])

@@ -7,8 +7,7 @@
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.reagent.impl :as impl]
-            [lomakkeet.reagent.mixins :as mixins]
-            [lomakkeet.reagent.util :refer [dropdown-container]]))
+            [lomakkeet.reagent.mixins :as mixins]))
 
 (defn blur [open? search e]
   (when (.-relatedTarget e)
@@ -49,44 +48,46 @@
       "ArrowDown" (change-selection inc e)
       nil)))
 
-(defn filter-results [term-match? n items query]
+(defn filter-results [term-match? n items query {:keys [item->text]
+                                                 :or {item->text val}}]
   (reset! n -1)
-  (->> (if query
-         (filter #(ac/query-match? term-match? % query) items)
-         items)
-       (map (fn [v]
-              (assoc v :i (swap! n inc))))
-       vec))
+  (-> items
+      (cond-> query (->> (filter #(ac/query-match? term-match? % query))))
+      (->> (map (fn [v]
+                  (-> v
+                      (assoc ::ac/i (swap! n inc))
+                      (cond-> (seq query) (assoc ::text (ac/highlight-string (item->text v) query)))))))
+      vec))
 
-(defn choice-item [item selected cb {:keys [item->key item->text] :as opts}]
-  (reagent/create-class
-    {:component-did-mount
-     (fn [this]
-       (if (= (:i item) @selected)
-         (.scrollIntoView (reagent/dom-node this))))
-     :component-did-update
-     (fn [this]
-       (if (= (:i item) @selected)
-         (.scrollIntoView (reagent/dom-node this))))
-     :reagent-render
-     (fn []
+(defn choice-item [item selected cb {:keys [item->key item->text]
+                                     :or {item->key key
+                                          item->text val}
+                                     :as opts}]
+  ; (reagent/create-class
+  ;   {:component-did-mount
+  ;    (fn [this]
+  ;      (if (= (::ac/i item) @selected)
+  ;        (.scrollIntoView (reagent/dom-node this))))
+  ;    :component-did-update
+  ;    (fn [this]
+  ;      (if (= (::ac/i item) @selected)
+  ;        (.scrollIntoView (reagent/dom-node this))))
+  ;    :reagent-render
+  ;    (fn []
        [:div
         {:key (item->key item)
          :on-click #(cb item)
-         :class (if (= (:i item) @selected) "active")
-         :data-selectable true}
-        (item->text item)])}))
+         :class (str "option " (if (= (::ac/i item) @selected) "active"))}
+        (or (::text item) (item->text item))]);}))
 
-(defn renderer
-  [coll selected cb {:keys [item->key] :as opts}]
-  [:div.selectize-dropdown-content
-   (for [item @coll]
-     ^{:key (item->key item)}
-     [choice-item item selected cb opts])])
+(defn get-or-deref [x]
+  (if (satisfies? IDeref x) @x x))
 
 (defn autocomplete*
-  [form {:keys [ks value->text item->key load-items term-match? ->query find-by-selection]
-         :or {value->text identity
+  [form {:keys [items options ks value->text item->key term-match? ->query text-by-value find-by-selection clearable multiple]
+         :or {value->text get
+              item->key key
+              item->text val
               ->query ac/default->query
               find-by-selection ac/default-find-by-selection}
          :as opts}]
@@ -94,34 +95,59 @@
         closable (mixins/create-closable open?)
         search (atom nil)
         query (reaction (->query @search))
-        items (atom nil)
         n (atom -1)
-        results (reaction (filter-results term-match? n @items @query))
+        results (reaction (if term-match?
+                            (filter-results term-match? n (get-or-deref items) @query opts)
+                            (get-or-deref items)))
         value (reaction (get-in (:value @(:cursor form)) ks))
         selected (atom 0)
 
         cb
         (fn [v]
-          (impl/cb form ks (item->key v))
-          (reset! open? false))]
-    (swap! items load-items)
+          (impl/cb form ks (if multiple
+                             (conj @value (item->key v))
+                             (item->key v)))
+          (reset! open? false))
+        remove-cb
+        (fn [x _]
+          (impl/cb form ks (into (empty @value) (remove #(= % x) @value))))
+
+        input-attrs
+        {:on-focus  (partial focus open? search)
+         :on-blur   (partial blur open? search)
+         :on-click  (partial click open?)
+         :on-change (partial change search identity)
+         :on-key-down (partial key-down open? search results selected n find-by-selection cb)
+         :auto-complete false}]
     (reagent/create-class
       {:component-did-unmount
        (fn [] (closable))
        :reagent-render
        (fn []
-         [dropdown-container
-          :open? open?
-          :el [:input.selectize-input
-               {:on-focus  (partial focus open? search)
-                :on-blur   (partial blur open? search)
-                :on-click  (partial click open?)
-                :on-change (partial change search identity)
-                :on-key-down (partial key-down open? search results selected n find-by-selection cb)
-                :value (or (if @open?
-                             @search
-                             (value->text @value))
-                           "")
-                :class (if @open? "input-active dropdown-active" "")
-                :auto-complete false}]
-          :content [renderer results selected cb opts]])})))
+         [:div.selectize-control.plugin-remove_button
+          {:class (if multiple "multi" "single")}
+          (if multiple
+            [:div.selectize-input
+             {:class (str (if (seq (get-or-deref results)) "items ") (if (seq @value) "has-items "))
+              :on-click (partial focus open? search)}
+             (for [x @value]
+               ^{:key x}
+               [:div.item
+                (value->text (get-or-deref items) x)
+                [:a.remove {:on-click (partial remove-cb x)} "×"]])
+             [:input
+              (assoc input-attrs
+                     :type "text"
+                     :class (str (if @open? "input-active dropdown-active"))
+                     :value (str (if @open? @search)))]]
+            [:input.selectize-input
+             (assoc input-attrs
+                    :value (str (if @open? @search (value->text (get-or-deref items) @value)))
+                    :class (str (if @open? "input-active dropdown-active")))])
+          (if @open?
+            [:div.selectize-dropdown
+             {:class (if multiple "multi" "single")}
+             [:div.selectize-dropdown-content
+              (for [item @results]
+                ^{:key (item->key item)}
+                [choice-item item selected cb opts])]])])})))

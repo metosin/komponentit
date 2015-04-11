@@ -49,9 +49,10 @@
   (some-> search
     (.toLowerCase)
     (.split #" ")
-    (->> (remove empty?))))
+    (->> (remove empty?))
+    vec))
 
 (defn default-find-by-selection [data x]
-  (some (fn [{:keys [i] :as v}]
-          (if (= i x) v))
+  (some (fn [v]
+          (if (= (::i v) x) v))
         data))

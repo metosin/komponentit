@@ -11,13 +11,12 @@
                  [metosin/om-dev-tools "0.1.7"]
 
                  [org.webjars/bootstrap "3.3.2"]
-                 [org.webjars/selectize.js "0.11.2"]
 
                  [figwheel "0.2.4-SNAPSHOT"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
-  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "dev-src/cljs"]
+  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "dev-src/cljs" "checkouts/lomakkeet/test"]
                   :compiler {:main "example.figwheel"
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
@@ -31,7 +30,7 @@
                              :source-map "target/cljsbuild-adv/public/js/out.js.map"
                              :optimizations :advanced}}}}
 
-  :less {:source-paths ["src/less"]
+  :less {:source-paths ["src/less" "checkouts/lomakkeet/resources"]
          :target-path "target/generated/css/public"
          :source-map true}
 
