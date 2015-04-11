@@ -91,6 +91,7 @@
               find-by-selection ac/default-find-by-selection}
          :as opts}]
   (let [open? (atom false)
+        closable (mixins/create-closable open?)
         search (atom nil)
         query (reaction (->query @search))
         items (atom nil)
@@ -104,20 +105,23 @@
           (impl/cb form ks (item->key v))
           (reset! open? false))]
     (swap! items load-items)
-    (fn []
-      [dropdown-container
-       :open? open?
-       :el [:input.selectize-input
-            {:on-focus  (partial focus open? search)
-             :on-blur   (partial blur open? search)
-             :on-click  (partial click open?)
-             :on-change (partial change search identity)
-             :on-key-down (partial key-down open? search results selected n find-by-selection cb)
-             ; FIXME: Is this possible while wrapping this inside a component?
-             ; :value (or (if @open?
-             ;              @search
-             ;              (value->text @value))
-             ;            "")
-             :class (if @open? "input-active dropdown-active")
-             :auto-complete false}]
-       :content [renderer results selected cb opts]])))
+    (reagent/create-class
+      {:component-did-unmount
+       (fn [] (closable))
+       :reagent-render
+       (fn []
+         [dropdown-container
+          :open? open?
+          :el [:input.selectize-input
+               {:on-focus  (partial focus open? search)
+                :on-blur   (partial blur open? search)
+                :on-click  (partial click open?)
+                :on-change (partial change search identity)
+                :on-key-down (partial key-down open? search results selected n find-by-selection cb)
+                :value (or (if @open?
+                             @search
+                             (value->text @value))
+                           "")
+                :class (if @open? "input-active dropdown-active" "")
+                :auto-complete false}]
+          :content [renderer results selected cb opts]])})))
