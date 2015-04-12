@@ -8,9 +8,6 @@
                  [org.clojure/clojurescript "0.0-3126" :scope "provided"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [prismatic/schema "0.4.0"]
-                 [org.omcljs/om "0.8.8"]
-                 [sablono "0.3.3"]
-                 [reagent "0.5.0"]
                  [metosin/schema-tools "0.3.0"]
                  [com.andrewmcveigh/cljs-time "0.3.2"]
                  [cljsjs/pikaday "1.2.0-3"]]
@@ -34,4 +31,7 @@
   {:dev
    {:source-paths ["dev-src/clj"]
     :plugins [[lein-cljsbuild "1.0.4"]
-              [com.cemerick/clojurescript.test "0.3.3"]]}})
+              [com.cemerick/clojurescript.test "0.3.3"]]
+    :dependencies [[org.omcljs/om "0.8.8"]
+                   [sablono "0.3.3"]
+                   [deraen.forks/reagent "0.5.0"]]}})

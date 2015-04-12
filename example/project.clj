@@ -8,6 +8,9 @@
                  [org.clojure/clojurescript "0.0-3126"]
                  [metosin/lomakkeet "0.2.0-SNAPSHOT"]
                  [metosin/potpuri "0.2.1"]
+                 [deraen.forks/reagent "0.5.0"]
+                 [org.omcljs/om "0.8.8"]
+                 [sablono "0.3.3"]
                  [metosin/om-dev-tools "0.1.7"]
 
                  [org.webjars/bootstrap "3.3.2"]
