@@ -4,23 +4,25 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/clj"]
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3126"]
+  :dependencies [[org.clojure/clojure "1.7.0-beta3"]
+                 [org.clojure/clojurescript "0.0-3269"]
                  [metosin/lomakkeet "0.2.0-SNAPSHOT"]
-                 [metosin/potpuri "0.2.1"]
-                 [deraen.forks/reagent "0.5.0"]
+                 [metosin/potpuri "0.2.2"]
+                 [reagent "0.5.0"]
                  [org.omcljs/om "0.8.8"]
-                 [sablono "0.3.3"]
+                 [sablono "0.3.4"]
                  [metosin/om-dev-tools "0.1.7"]
 
-                 [org.webjars/bootstrap "3.3.2"]
+                 [org.webjars/bootstrap "3.3.4"]
 
-                 [figwheel "0.2.4-SNAPSHOT"]]
+                 [cljsjs/react "0.13.3-0"]
+                 [figwheel "0.3.1"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
-  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "dev-src/cljs" "checkouts/lomakkeet/test"]
-                  :compiler {:main "example.figwheel"
+  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "checkouts/lomakkeet/test"]
+                  :figwheel true
+                  :compiler {:main "example.main"
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
                              :output-dir "target/cljsbuild-dev/public/js/out"
@@ -44,7 +46,7 @@
 
   :profiles {:dev {:source-paths ["dev-src/clj"]
                    :plugins [[lein-cljsbuild "1.0.4"]
-                             [lein-figwheel "0.2.4-SNAPSHOT"]
+                             [lein-figwheel "0.3.1"]
                              [deraen/lein-less4j "0.2.1"]
                              [lein-pdo "0.1.1"]]
 
