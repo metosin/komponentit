@@ -20,7 +20,7 @@
   {:pre [(map? form) (satisfies? IDeref (:data form))]}
   (let [form-errors (reaction (:errors @(:data form)))
         error (reaction (get-in @form-errors ks))
-        pristine (reaction (not (get-in @(:not-pristine @(:data form)) ks)))]
+        pristine (reaction (not (get-in (:not-pristine @(:data form)) ks)))]
     (fn []
       [:div.form-group
        {:class (str (if (and (not @pristine) @error) (str "has-error "))

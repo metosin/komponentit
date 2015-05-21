@@ -19,17 +19,14 @@
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
-  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "checkouts/lomakkeet/test"]
+  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
                   :figwheel true
-                  :compiler {:main "example.main"
+                  :compiler {:main "example.reagent"
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
-                             :output-dir "target/cljsbuild-dev/public/js/out"
-                             :verbose true
-                             :source-map true
-                             :optimizations :none}}
+                             :output-dir "target/cljsbuild-dev/public/js/out"}}
             :adv {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
-                  :compiler {:main "example.main"
+                  :compiler {:main "example.reagent"
                              :output-to "target/cljsbuild-adv/public/js/app.js"
                              :output-dir "target/cljsbuild-adv/public/js/out"
                              :source-map "target/cljsbuild-adv/public/js/out.js.map"
@@ -45,7 +42,7 @@
              :repl false}
 
   :profiles {:dev {:source-paths ["dev-src/clj"]
-                   :plugins [[lein-cljsbuild "1.0.4"]
+                   :plugins [[lein-cljsbuild "1.0.6"]
                              [lein-figwheel "0.3.3"]
                              [deraen/lein-less4j "0.2.1"]
                              [lein-pdo "0.1.1"]]

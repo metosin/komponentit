@@ -50,10 +50,18 @@
       nil)))
 
 (defn filter-results [term-match-fn n items query value
-                      {:keys [item->text multiple? filter-current-out? item->value]
-                       :or {item->text val}}]
+                      {:keys [item->text multiple? filter-current-out? item->value item->key]
+                       :or {item->text val
+                            item->key key}}]
   (reset! n -1)
-  (let [filter-search
+  (let [map-to-seq
+        (if (map? items)
+          (map (fn [v] {:key   (item->key v)
+                        :value (item->text v)}))
+          identity)
+        item->text (if (map? items) :value item->text)
+
+        filter-search
         (if (and term-match-fn query)
           (filter (fn [item] (ac/query-match? term-match-fn item query)))
           identity)
@@ -74,7 +82,7 @@
           (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
           identity)]
 
-    (into [] (comp filter-search filter-current add-index add-highlighted-str) items)))
+    (into [] (comp map-to-seq filter-search filter-current add-index add-highlighted-str) items)))
 
 (defn choice-item [item selected cb {:keys [item->key item->text]
                                      :or {item->key key
@@ -120,8 +128,8 @@
            placeholder no-results-text
            ctrl-class input-class disabled?]
     :or {value->text get
-         item->key key
-         item->text val
+         item->key :key
+         item->text :value
          value->search identity
          ->query ac/default->query
          no-results-text "No results"}

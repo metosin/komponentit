@@ -17,13 +17,7 @@
   {:builds {:test {:source-paths ["src" "test"]
                    :notify-command ["phantomjs" :cljs.test/runner
                                     "test/phantomjs-shims.js"
-                                    "target/testable.js"]
-                   :compiler {:output-to  "target/testable.js"
-                              :output-dir "target/cljsbuild-test"
-                              :source-map "target/cljsbuild-test.js.map"
-                              :optimizations :whitespace
-                              :pretty-print  true
-                              :verbose true}}}
+                                    "target/testable.js"]}}
    :test-commands {"test" ["phantomjs" :runner
                            "test/phantomjs-shims.js"
                            "target/testable.js"]}}

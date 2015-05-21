@@ -3,8 +3,8 @@
             [lomakkeet.core :as f]))
 
 (defn form-status [form]
-  (let [errors? (reaction (f/errors? @(:cursor form)))
-        dirty?  (reaction (f/dirty? @(:cursor form)))]
+  (let [errors? (reaction (f/errors? @(:data form)))
+        dirty?  (reaction (f/dirty? @(:data form)))]
     (fn []
       [:span
        (cond
@@ -12,19 +12,20 @@
          @dirty?  "Form has unsaved edits")])))
 
 (defn cancel-btn [form]
-  (let [dirty? (reaction (f/dirty? @(:cursor form)))]
+  (let [dirty? (reaction (f/dirty? @(:data form)))]
     (fn []
       [:button.btn.btn-primary
        {:type "button"
         :disabled (not @dirty?)
-        :on-click identity}
+        :on-click (fn [_] (swap! (:data form) f/reset))}
        "Cancel"])))
 
 (defn save-btn [form]
-  (let [errors? (reaction (f/errors? @(:cursor form)))]
+  (let [dirty? (reaction (f/dirty? @(:data form)))
+        errors? (reaction (f/errors? @(:data form)))]
     (fn []
       [:button.btn.btn-primary
        {:type "button"
-        :disabled @errors?
-        :on-click identity}
+        :disabled (or (not @dirty?) @errors?)
+        :on-click (fn [_] (swap! (:data form) f/commit))}
        "Save"])))
