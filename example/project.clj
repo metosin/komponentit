@@ -15,8 +15,7 @@
 
                  [org.webjars/bootstrap "3.3.4"]
 
-                 [cljsjs/react "0.13.3-0"]
-                 [figwheel "0.3.1"]]
+                 [figwheel "0.3.3"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
@@ -47,7 +46,7 @@
 
   :profiles {:dev {:source-paths ["dev-src/clj"]
                    :plugins [[lein-cljsbuild "1.0.4"]
-                             [lein-figwheel "0.3.1"]
+                             [lein-figwheel "0.3.3"]
                              [deraen/lein-less4j "0.2.1"]
                              [lein-pdo "0.1.1"]]
 
