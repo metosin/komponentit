@@ -1,8 +1,5 @@
 (ns lomakkeet.reagent.autocomplete
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [clojure.string :as string]
-            [cljs.core.async :refer [put! chan close!]]
-            [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as reagent :refer [atom]]
             [reagent.ratom :refer-macros [run! reaction]]
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
@@ -50,16 +47,13 @@
       nil)))
 
 (defn filter-results [term-match-fn n items query value
-                      {:keys [item->text multiple? filter-current-out? item->value item->key]
-                       :or {item->text val
-                            item->key key}}]
+                      {:keys [item->text multiple? filter-current-out? item->value item->key]}]
   (reset! n -1)
   (let [map-to-seq
         (if (map? items)
-          (map (fn [v] {:key   (item->key v)
-                        :value (item->text v)}))
+          (map (fn [v] {:key   (key v)
+                        :value (val v)}))
           identity)
-        item->text (if (map? items) :value item->text)
 
         filter-search
         (if (and term-match-fn query)
@@ -84,10 +78,7 @@
 
     (into [] (comp map-to-seq filter-search filter-current add-index add-highlighted-str) items)))
 
-(defn choice-item [item selected cb {:keys [item->key item->text]
-                                     :or {item->key key
-                                          item->text val}
-                                     :as opts}]
+(defn choice-item [item selected cb {:keys [item->key item->text]}]
   ; (reagent/create-class
   ;   {:component-did-mount
   ;    (fn [this]
@@ -110,39 +101,75 @@
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))
 
+(def ^:private defaults
+  {:value->text get
+   :item->key :key
+   :item->text :value
+   :value->search identity
+   :->query ac/default->query
+   :not-results-text "No results"})
+
+(defn- assert-opts [{:keys [items load-items filter-current-out? value-is-search? multiple? value cb]
+                    :as opts}]
+  (assert (not (and items load-items)) ":items and :load-items are exclusive.")
+  (assert (if (or load-items filter-current-out?) (satisfies? IDeref value) true)
+          "Using either :load-items or :filter-current-out? requires dereffable value")
+  (assert (ifn? cb) "Callback function is required")
+  (assert (if value-is-search? (not multiple?) true)
+          ":value-is-search? doesn't work together with :multiple?")
+  opts)
+
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
    :remove-cb - For multiple?
    :on-blur - Input :on-blur. Might be useful for form pristine handling.
-   :value-is-search? - Save the search value using cb instantly and always display the value."
-  [{:keys [value cb remove-cb on-blur
-           items load-items
-           value->search value->text item->key item->value
-           value-is-search?
-           term-match-fn search-fields
-           ->query find-by-selection
-           clearable? multiple?
-           group-by groups
-           filter-current-out?
-           placeholder no-results-text
-           ctrl-class input-class disabled?]
-    :or {value->text get
-         item->key :key
-         item->text :value
-         value->search identity
-         ->query ac/default->query
-         no-results-text "No results"}
-    :as opts}]
-  {:pre [(not (and items load-items))
-         (if (or load-items filter-current-out?) (satisfies? IDeref value) true)
-         (ifn? cb)
-         (if value-is-search? (not multiple?) true)]}
-  (let [item->value (or item->value item->key)
-        find-by-selection (or find-by-selection (if group-by
-                                                  ac/default-group-find-by-selection
-                                                  ac/default-find-by-selection))
-        term-match-fn (or term-match-fn (if search-fields (ac/create-matcher* search-fields)))
+   :items
+   :load-items
+   :value->search
+   :value->text
+   :item->key
+   :item->value
+   :value-is-search? - Save the search value using cb instantly and always display the value.
+   :term-match-fn
+   :search-fields
+   :->query
+   :find-by-selection
+   :clearable?
+   :multiple?
+   :group-by
+   :groups
+   :filter-current-opt?
+
+   Localization
+   :placeholder
+   :no-results-text
+
+   Style
+   :ctrl-class
+   :input-class
+   :disabled?"
+  [opts]
+  (let [{:keys [value cb remove-cb on-blur
+                items load-items
+                value->search value->text item->key item->value
+                value-is-search?
+                term-match-fn search-fields
+                ->query find-by-selection
+                clearable? multiple?
+                group-by groups
+                filter-current-out?
+                placeholder no-results-text
+                ctrl-class input-class disabled?]
+         :as opts}
+        (assert-opts (merge defaults opts))
+
+        opts (merge {:item->value item->key
+                     :find-by-selection (if group-by
+                                          ac/default-group-find-by-selection
+                                          ac/default-find-by-selection)
+                     :term-match-fn (if search-fields (ac/create-matcher* search-fields))}
+                    opts)
 
         open? (atom false)
         closable (mixins/create-closable open?)
@@ -246,7 +273,6 @@
 
 (defn autocomplete*
   [form {:keys [ks item->value item->key multiple? cb search-is-value?]
-         :or {item->key key}
          :as opts}]
   (let [value (reaction (get-in (:value @(:data form)) ks))
         item->value (or item->value item->key)
