@@ -22,7 +22,8 @@
                               :output-dir "target/cljsbuild-test"
                               :source-map "target/cljsbuild-test.js.map"
                               :optimizations :whitespace
-                              :pretty-print  true}}}
+                              :pretty-print  true
+                              :verbose true}}}
    :test-commands {"test" ["phantomjs" :runner
                            "test/phantomjs-shims.js"
                            "target/testable.js"]}}

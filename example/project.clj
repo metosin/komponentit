@@ -26,6 +26,7 @@
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
                              :output-dir "target/cljsbuild-dev/public/js/out"
+                             :verbose true
                              :source-map true
                              :optimizations :none}}
             :adv {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
