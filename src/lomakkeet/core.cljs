@@ -1,6 +1,6 @@
 (ns lomakkeet.core
   (:refer-clojure :exclude [update])
-  (:require [schema.core :as s :include-macros true]
+  (:require [schema.core :as s]
             [schema.coerce :as sc]
             [schema.utils :as su]
             [schema-tools.core :as st]
@@ -18,7 +18,6 @@
    :errors s/Any
    :not-pristine s/Any
    :schema s/Any
-   :disabled s/Bool
    s/Keyword s/Any})
 
 (defn ->fs
@@ -28,8 +27,7 @@
     :initial-value value
     :errors (if schema (s/check schema value))
     :not-pristine nil
-    :schema schema
-    :disabled false}))
+    :schema schema}))
 
 ;;
 ;; Updating the state
@@ -74,22 +72,27 @@
         coerced))
     value))
 
+(defn extra-validation [fs validation-fn]
+  (if validation-fn
+    (update-in fs [:errors] merge (validation-fn (:value fs)))
+    fs))
+
 (defn change-value
   "Takes fs, schema, vector of keywords and new value.
 
    If new value is nil, schema is checked if value is in optional-key,
    value it is, instead of setting value to nil, the key is dissoced."
-  [fs ks value]
+  [fs ks value & [validation-fn]]
   (let [schema (:schema fs)
         value (coerce (st/get-in schema ks) value)]
-    (-> (if value
+    (-> (if (or (and (seq? value) (seq value)) value)
           (update-in fs [:value] assoc-in ks value)
           (let [parent-schema (st/get-in schema (butlast ks))]
             (if (contains? parent-schema (s/optional-key (last ks)))
               (update-in fs [:value] dissoc-in ks)
               (update-in fs [:value] assoc-in ks value))))
-        (update-in [:not-pristine] assoc-in ks true)
-        validate)))
+        validate
+        (extra-validation validation-fn))))
 
 ;;
 ;; Predicates

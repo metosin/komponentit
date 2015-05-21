@@ -8,10 +8,13 @@
             [lomakkeet.reagent.filepicker :as file]
             [lomakkeet.reagent.autocomplete :as autocomplete]))
 
+(defn create-form [data & opts]
+  (apply hash-map :data data opts))
+
 ;; BUILD
 
 (defn form-group-com [form]
-  (:form-group form impl/default-form-group))
+  (or (:form-group form) impl/default-form-group))
 
 (defn input [form label ks & [opts]]
   [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :label label :ks ks)])

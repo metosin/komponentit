@@ -15,9 +15,10 @@
     (reset! search nil))
   nil)
 
-(defn click [open? e]
-  (reset! open? true)
-  (.stopPropagation e)
+(defn click [open? disabled? e]
+  (when-not disabled?
+    (reset! open? true)
+    (.stopPropagation e))
   nil)
 
 (defn focus [open? search e]
@@ -29,12 +30,12 @@
 (defn change [search cb e]
   (let [v (.. e -target -value)]
     (reset! search v)
-    (cb v))
+    (if cb (cb v)))
   nil)
 
 (defn key-down [open? search results selected n find-by-selection cb e]
   (let [change-selection (fn change-selection  [f e]
-                           (swap! selected (comp (partial util/limit 0 n) f))
+                           (swap! selected (comp (partial util/limit 0 @n) f))
                            (.preventDefault e)
                            (.stopPropagation e))]
     (reset! open? true)
@@ -48,16 +49,32 @@
       "ArrowDown" (change-selection inc e)
       nil)))
 
-(defn filter-results [term-match? n items query {:keys [item->text]
-                                                 :or {item->text val}}]
+(defn filter-results [term-match-fn n items query value
+                      {:keys [item->text multiple? filter-current-out? item->value]
+                       :or {item->text val}}]
   (reset! n -1)
-  (-> items
-      (cond-> query (->> (filter #(ac/query-match? term-match? % query))))
-      (->> (map (fn [v]
-                  (-> v
-                      (assoc ::ac/i (swap! n inc))
-                      (cond-> (seq query) (assoc ::text (ac/highlight-string (item->text v) query)))))))
-      vec))
+  (let [filter-search
+        (if (and term-match-fn query)
+          (filter (fn [item] (ac/query-match? term-match-fn item query)))
+          identity)
+
+        filter-current
+        (if filter-current-out?
+          (let [value-set (set value)]
+            (remove (if multiple?
+                      (fn [item] (value-set (item->value item)))
+                      (fn [item] (= (item->value item) value)))))
+          identity)
+
+        add-index
+        (map (fn [v] (assoc v ::ac/i (swap! n inc))))
+
+        add-highlighted-str
+        (if (seq query)
+          (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
+          identity)]
+
+    (into [] (comp filter-search filter-current add-index add-highlighted-str) items)))
 
 (defn choice-item [item selected cb {:keys [item->key item->text]
                                      :or {item->key key
@@ -76,78 +93,179 @@
   ;    (fn []
        [:div
         {:key (item->key item)
-         :on-click #(cb item)
+         :on-click (fn [& _]
+                     (cb item)
+                     nil)
          :class (str "option " (if (= (::ac/i item) @selected) "active"))}
         (or (::text item) (item->text item))]);}))
 
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))
 
-(defn autocomplete*
-  [form {:keys [items options ks value->text item->key term-match? ->query text-by-value find-by-selection clearable multiple]
-         :or {value->text get
-              item->key key
-              item->text val
-              ->query ac/default->query
-              find-by-selection ac/default-find-by-selection}
-         :as opts}]
-  (let [open? (atom false)
+(defn autocomplete
+  ":value - (required) IDeref or value
+   :cb - (required) Function. [value]
+   :remove-cb - For multiple?
+   :on-blur - Input :on-blur. Might be useful for form pristine handling.
+   :value-is-search? - Save the search value using cb instantly and always display the value."
+  [{:keys [value cb remove-cb on-blur
+           items load-items
+           value->search value->text item->key item->value
+           value-is-search?
+           term-match-fn search-fields
+           ->query find-by-selection
+           clearable? multiple?
+           group-by groups
+           filter-current-out?
+           placeholder no-results-text
+           ctrl-class input-class disabled?]
+    :or {value->text get
+         item->key key
+         item->text val
+         value->search identity
+         ->query ac/default->query
+         no-results-text "No results"}
+    :as opts}]
+  {:pre [(not (and items load-items))
+         (if (or load-items filter-current-out?) (satisfies? IDeref value) true)
+         (ifn? cb)
+         (if value-is-search? (not multiple?) true)]}
+  (let [item->value (or item->value item->key)
+        find-by-selection (or find-by-selection (if group-by
+                                                  ac/default-group-find-by-selection
+                                                  ac/default-find-by-selection))
+        term-match-fn (or term-match-fn (if search-fields (ac/create-matcher* search-fields)))
+
+        open? (atom false)
         closable (mixins/create-closable open?)
         search (atom nil)
         query (reaction (->query @search))
-        n (atom -1)
-        results (reaction (if term-match?
-                            (filter-results term-match? n (get-or-deref items) @query opts)
-                            (get-or-deref items)))
-        value (reaction (get-in (:value @(:cursor form)) ks))
         selected (atom 0)
+
+        items (if load-items (atom nil) items)
+
+        n (atom -1)
+        results (reaction (filter-results term-match-fn n (get-or-deref items) @query (if filter-current-out? @value) opts))
+        ; FIXME: Hack?
+        results (if group-by (reaction (clojure.core/group-by group-by @results)) results)
+
+        select-cb
+        (fn [v]
+          (cb v)
+          (reset! open? false))
+
+        focus-input (fn [this]
+                      (if @open?
+                        (some-> this reagent/dom-node (.getElementsByTagName "input") (.item 0) (.focus)))
+                      nil)
+
+        input-attrs
+        {:on-focus  (partial focus open? search)
+         :on-blur   (fn [e]
+                      (blur open? search e)
+                      (if on-blur (on-blur e)))
+         :on-change (partial change search (if value-is-search? cb))
+         :on-key-down (partial key-down open? search results selected n find-by-selection select-cb)
+         :auto-complete false}]
+    (run! (swap! selected (partial util/limit 0 @n)))
+    (if load-items
+      (let [search-or-value (reaction (if (seq @search) @search (value->search (get-or-deref value))))]
+        (run! (if @open? (load-items items @search-or-value)))))
+    (reagent/create-class
+      {:component-did-unmount
+       (fn [] (closable))
+       :component-did-update focus-input
+       :component-did-mount focus-input
+       :reagent-render
+       (fn [{:keys [value disabled?]}]
+         [:div.selectize-control
+          {:class (str ctrl-class
+                       (if multiple? " multi" " single"))}
+          [:div.selectize-input
+           {:class (str input-class
+                        (if @open? " input-active dropdown-active ")
+                        (if disabled? " disabled ")
+                        (if (seq (get-or-deref results)) " items ")
+                        (if (seq (get-or-deref value)) " has-items "))
+            :on-click (partial click open? disabled?)}
+           (if multiple?
+             (doall
+               (for [x (get-or-deref value)]
+                 ^{:key x}
+                 [:div.item
+                  (value->text (get-or-deref items) x)
+                  [:a.remove {:on-click (partial remove-cb x)} "×"]])))
+           [:input
+            (assoc input-attrs
+                   :disabled disabled?
+                   :type "text"
+                   :placeholder placeholder
+                   :on-click (partial click open? disabled?)
+                   :value (if value-is-search?
+                            (get-or-deref value)
+                            (if @open?
+                              (str @search)
+                              (if-not multiple?
+                                (value->text (get-or-deref items) (get-or-deref value))))))]
+           (if clearable?
+             [:span.selectize-clear
+              {:on-click #(select-cb nil)}
+              "×"])]
+          (if @open?
+            [:div.selectize-dropdown
+             {:class (if multiple? "multi" "single")}
+             [:div.selectize-dropdown-content
+              ; FIXME: Hack?
+              (if (or group-by groups)
+                (let [r (doall
+                          (for [[k v] (or groups @results)
+                                :let [group-results (get @results k)]
+                                :when group-results]
+                            [:div.optgroup
+                             {:key k}
+                             [:div.optgroup-header (if groups v (name k))]
+                             (for [item group-results]
+                               ^{:key (item->key item)}
+                               [choice-item item selected cb opts])]))]
+                  (if (seq r)
+                    r
+                    [:div.option no-results-text]))
+                (if (seq @results)
+                  (for [item @results]
+                    ^{:key (item->key item)}
+                    [choice-item item selected select-cb opts])
+                  [:div.option no-results-text]))]])])})))
+
+(defn autocomplete*
+  [form {:keys [ks item->value item->key multiple? cb search-is-value?]
+         :or {item->key key}
+         :as opts}]
+  (let [value (reaction (get-in (:value @(:data form)) ks))
+        item->value (or item->value item->key)
 
         cb
         (fn [v]
-          (impl/cb form ks (if multiple
-                             (conj @value (item->key v))
-                             (item->key v)))
-          (reset! open? false))
+          (if cb (cb v))
+          (if (map? item->value)
+            ; FIXME: Hack
+            (doseq [[ks item->value] item->value]
+              (impl/cb form ks (if multiple?
+                                 (conj @value (item->value v))
+                                 (item->value v))))
+            (impl/cb form ks (if multiple?
+                               (conj @value (item->value v))
+                               (item->value v))))
+          nil)
+
         remove-cb
         (fn [x _]
           (impl/cb form ks (into (empty @value) (remove #(= % x) @value))))
 
-        input-attrs
-        {:on-focus  (partial focus open? search)
-         :on-blur   (partial blur open? search)
-         :on-click  (partial click open?)
-         :on-change (partial change search identity)
-         :on-key-down (partial key-down open? search results selected n find-by-selection cb)
-         :auto-complete false}]
-    (reagent/create-class
-      {:component-did-unmount
-       (fn [] (closable))
-       :reagent-render
-       (fn []
-         [:div.selectize-control.plugin-remove_button
-          {:class (if multiple "multi" "single")}
-          (if multiple
-            [:div.selectize-input
-             {:class (str (if (seq (get-or-deref results)) "items ") (if (seq @value) "has-items "))
-              :on-click (partial focus open? search)}
-             (for [x @value]
-               ^{:key x}
-               [:div.item
-                (value->text (get-or-deref items) x)
-                [:a.remove {:on-click (partial remove-cb x)} "×"]])
-             [:input
-              (assoc input-attrs
-                     :type "text"
-                     :class (str (if @open? "input-active dropdown-active"))
-                     :value (str (if @open? @search)))]]
-            [:input.selectize-input
-             (assoc input-attrs
-                    :value (str (if @open? @search (value->text (get-or-deref items) @value)))
-                    :class (str (if @open? "input-active dropdown-active")))])
-          (if @open?
-            [:div.selectize-dropdown
-             {:class (if multiple "multi" "single")}
-             [:div.selectize-dropdown-content
-              (for [item @results]
-                ^{:key (item->key item)}
-                [choice-item item selected cb opts])]])])})))
+        on-blur
+        (fn [e]
+          (impl/blur form ks))
+
+        attrs (:attrs form)
+        disabled (reaction (:disabled (get-or-deref attrs)))]
+    (fn []
+      [autocomplete (assoc opts :value value, :cb cb, :remove-cb remove-cb, :on-blur on-blur, :disabled? @disabled)])))

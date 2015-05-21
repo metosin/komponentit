@@ -12,7 +12,7 @@
 
 (defn date* [form {:keys [ks datepicker-i18n min-date max-date]}]
   (let [el (atom nil)
-        form-value (reaction (:value @(:cursor form)))
+        form-value (reaction (:value @(:data form)))
         value (reaction (get-in @form-value ks))]
     (if min-date
       (run! (if @el (.setMinDate @el (try-deref min-date)))))
@@ -31,7 +31,10 @@
        :reagent-render
        (fn []
          [:input.form-control
-          {:type "text"
-           :value (or (date->str @value) "")
-           ; To silence reagent warnings
-           :on-change identity}])})))
+          (merge
+            (impl/get-or-deref (:attrs form))
+            {:type "text"
+             :value (or (date->str @value) "")
+             ; To silence reagent warnings
+             :on-change identity
+             :on-blur #(impl/blur form ks)})])})))

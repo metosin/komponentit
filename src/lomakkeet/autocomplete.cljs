@@ -38,11 +38,11 @@
             r))))
     [:span s]))
 
-(defn- query-match? [term-match? v query]
-  (every? (partial term-match? v) query))
+(defn- query-match? [term-match-fn v query]
+  (every? (partial term-match-fn v) query))
 
-(defn matches [term-match? v query]
-  (let [m (group-by (partial term-match? v) query)]
+(defn matches [term-match-fn v query]
+  (let [m (group-by (partial term-match-fn v) query)]
     [(get m true) (get m false)]))
 
 (defn default->query [search]
@@ -56,3 +56,23 @@
   (some (fn [v]
           (if (= (::i v) x) v))
         data))
+
+(defn- default-group-find-by-selection [data x]
+  (some (fn [[_ data]]
+          (some (fn [v]
+                  (if (= (::i v) x) v))
+                data))
+        data))
+
+(defn create-matcher*
+  "Fields can be either collection containing multiple key for map,
+   or a single key.
+   If collection is given, returned function will go through keys using some."
+  [fields]
+  (if (sequential? fields)
+    (fn [item term]
+      (some (fn [field]
+              (some-> item (get field) (-> (.toLowerCase) (.indexOf term) (not= -1))))
+            fields))
+    (fn [item term]
+      (some-> item (get fields) (-> (.toLowerCase) (.indexOf term) (not= -1))))))

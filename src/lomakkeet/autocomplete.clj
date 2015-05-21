@@ -3,7 +3,7 @@
 (defmacro create-matcher [fields]
   `(fn [~'item ~'term]
      (or ~@(for [field fields]
-             `(some-> ~'item (get ~field) (.toLowerCase) (.indexOf ~'term) (not= -1)))
+             `(some-> ~'item (get ~field) (-> (.toLowerCase) (.indexOf ~'term) (not= -1))))
          false)))
 
 (comment
