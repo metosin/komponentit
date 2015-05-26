@@ -27,6 +27,4 @@
    {:source-paths ["dev-src/clj"]
     :plugins [[lein-cljsbuild "1.0.4"]
               [com.cemerick/clojurescript.test "0.3.3"]]
-    :dependencies [[org.omcljs/om "0.8.8"]
-                   [sablono "0.3.4"]
-                   [reagent "0.5.0"]]}})
+    :dependencies [[reagent "0.5.0"]]}})

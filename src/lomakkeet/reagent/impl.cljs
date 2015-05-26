@@ -6,7 +6,8 @@
   (swap! (:data form) l/change-value ks value (:validation-fn form)))
 
 (defn blur [form ks]
-  (swap! (:data form) update :not-pristine assoc-in ks {}))
+  ; https://github.com/reagent-project/reagent/issues/135
+  (swap! (:data form) update :not-pristine assoc-in ks {::hack true}))
 
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))

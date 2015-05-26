@@ -9,9 +9,6 @@
                  [metosin/lomakkeet "0.2.0-SNAPSHOT"]
                  [metosin/potpuri "0.2.2"]
                  [reagent "0.5.0"]
-                 [org.omcljs/om "0.8.8"]
-                 [sablono "0.3.4"]
-                 [metosin/om-dev-tools "0.1.7"]
 
                  [org.webjars/bootstrap "3.3.4"]
 
