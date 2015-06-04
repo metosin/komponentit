@@ -96,7 +96,7 @@
    If new value is nil, schema is checked if value is in optional-key,
    value it is, instead of setting value to nil, the key is dissoced."
   [value-cursor schema ks value]
-  (if value
+  (if-not (nil? value)
     (om/update! value-cursor ks value)
     (let [schema (st/get-in schema (butlast ks))]
       (if (contains? schema (s/optional-key (last ks)))
