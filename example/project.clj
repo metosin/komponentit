@@ -4,15 +4,15 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/clj"]
-  :dependencies [[org.clojure/clojure "1.7.0-beta3"]
-                 [org.clojure/clojurescript "0.0-3269"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojurescript "0.0-3308"]
                  [metosin/lomakkeet "0.2.0-SNAPSHOT"]
                  [metosin/potpuri "0.2.2"]
                  [reagent "0.5.0"]
 
                  [org.webjars/bootstrap "3.3.4"]
 
-                 [figwheel "0.3.3"]]
+                 [figwheel "0.3.5"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
@@ -40,7 +40,7 @@
 
   :profiles {:dev {:source-paths ["dev-src/clj"]
                    :plugins [[lein-cljsbuild "1.0.6"]
-                             [lein-figwheel "0.3.3"]
+                             [lein-figwheel "0.3.5"]
                              [deraen/lein-less4j "0.2.1"]
                              [lein-pdo "0.1.1"]]
 

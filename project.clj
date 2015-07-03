@@ -4,12 +4,12 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src"]
-  :dependencies [[org.clojure/clojure "1.7.0-beta3" :scope "provided"]
-                 [org.clojure/clojurescript "0.0-3269" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]
+                 [org.clojure/clojurescript "0.0-3308" :scope "provided"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [prismatic/schema "0.4.3"]
                  [metosin/schema-tools "0.4.1"]
-                 [com.andrewmcveigh/cljs-time "0.3.5"]
+                 [com.andrewmcveigh/cljs-time "0.3.10"]
                  [cljsjs/pikaday "1.3.2-0"]]
   :plugins [[lein-pprint "1.1.2"]]
 
