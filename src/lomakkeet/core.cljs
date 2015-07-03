@@ -1,166 +1,109 @@
 (ns lomakkeet.core
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require [cljs.core.async :refer [put! chan <!]]
-            [sablono.core :refer-macros [html]]
-            [schema.core :as s :include-macros true]
+  (:refer-clojure :exclude [update])
+  (:require [schema.core :as s]
             [schema.coerce :as sc]
             [schema.utils :as su]
-            [om.core :as om]
             [schema-tools.core :as st]
-            [lomakkeet.impl :as impl]
-            [lomakkeet.util :refer [chan? dissoc-in]]
-            [lomakkeet.file :as file]
-            [lomakkeet.datepicker :as date]))
+            [lomakkeet.util :refer [dissoc-in]]))
 
-;; BUILD
+(def ^:dynamic *coercion-matcher* sc/string-coercion-matcher)
 
-(defn build
-  [{:keys [fs form-group ks] :as opts}]
-  (let [{value ::value errors ::errors schema ::schema} fs]
-    (om/build form-group
-              {:value  (get-in @value ks)
-               :error  (if errors (get-in @errors ks))
-               :schema (if schema (st/get-in @schema ks))}
-              {:opts (dissoc opts :state)
-               :state (:state opts)})))
-
-(defn input [form label ks & [opts]]
-  (build (merge form opts {:input impl/input* :label label :ks ks})))
-
-(defn textarea [form label ks & [opts]]
-  (build (merge form opts {:input impl/input* :label label :ks ks :el impl/input-textarea})))
-
-(defn static [form label ks & [opts]]
-  (build (merge form opts {:input impl/input* :label label :ks ks :el impl/input-static})))
-
-(defn checkbox [form label ks & [opts]]
-  (build (merge form opts {:input impl/checkbox* :label label :ks ks})))
-
-(defn select [form label ks options & [opts]]
-  (build (merge form opts {:input impl/select* :label label :ks ks :options options})))
-
-(defn date [form label ks & [opts]]
-  (build (merge form opts {:input date/date* :label label :ks ks})))
-
-(defn file [form label ks & [opts]]
-  (build (merge form opts {:input file/file* :label label :ks ks})))
-
-;; FORM
-
-(defn- coerce [coercion-matcher schema value]
-  (if schema
-    (let [coerced ((sc/coercer schema coercion-matcher) value)]
-      (if (su/error? coerced)
-        value
-        coerced))
-    value))
+;;
+;; Form state
+;;
 
 (s/defschema FormState
-  {::value s/Any
-   ::initial-value s/Any
-   ::errors s/Any
-   ::schema s/Any
-   ::metadata s/Any
-   ::disabled s/Bool
+  {:value s/Any
+   :initial-value s/Any
+   :errors s/Any
+   :not-pristine s/Any
+   :schema s/Any
    s/Keyword s/Any})
 
 (defn ->fs
   ([value] (->fs value nil))
   ([value schema]
-   {::value value
-    ::initial-value value
-    ::errors (if schema (s/check schema value))
-    ::schema schema
-    ::metadata nil
-    ::disabled false}))
+   {:value value
+    :initial-value value
+    :errors (if schema (s/check schema value))
+    :not-pristine nil
+    :schema schema}))
 
-(defn reset [fs]
-  (assoc fs ::value (::initial-value fs)))
+;;
+;; Updating the state
+;;
 
-(defn save-form
-  ([{schema ::schema :as fs} value]
-   (assoc fs
-          ::value value
-          ::initial-value value
-          ::errors (if schema (s/check schema value)))))
+(defn reset
+  "Reset the value of form to initial value."
+  [fs]
+  (assoc fs :value (:initial-value fs)))
 
-(defn update-form
+(defn commit
+  "Commit the changes in value to the initial-value of the form."
+  [fs]
+  (assoc fs :initial-value (:value fs)))
+
+(defn validate
+  [fs]
+  (assoc fs :errors (if-let [schema (:schema fs)] (s/check schema (:value fs)))))
+
+(defn save
+  "Set a new value to form. This will trigger a schema validation for the value.
+   Doesn't trigger commit."
+  [fs value]
+  (-> fs (assoc :value value) validate))
+
+(defn update
+  "Use a function to set a new value to form. This changes both the value and the initial value.
+   The function is called with the value as the first parameter and rest of arguemtns
+   are passed to the function (Like update-in)."
   [fs f & args]
-  (let [value (::value fs)
+  (let [value (:value fs)
         new-value (apply f value args)]
-    (save-form fs new-value)))
+    (save fs new-value)))
 
-(defn- change-value
-  "Takes cursor, schema, vector of keywords and new value.
+(defn coerce
+  "Return either coerced or the original value if the coercion failed."
+  [schema value]
+  (if schema
+    (let [coerced ((sc/coercer schema *coercion-matcher*) value)]
+      (if (su/error? coerced)
+        value
+        coerced))
+    value))
+
+(defn extra-validation [fs validation-fn]
+  (if validation-fn
+    (update-in fs [:errors] merge (validation-fn (:value fs)))
+    fs))
+
+(defn change-value
+  "Takes fs, schema, vector of keywords and new value.
 
    If new value is nil, schema is checked if value is in optional-key,
    value it is, instead of setting value to nil, the key is dissoced."
-  [value-cursor schema ks value]
-  (if-not (nil? value)
-    (om/update! value-cursor ks value)
-    (let [schema (st/get-in schema (butlast ks))]
-      (if (contains? schema (s/optional-key (last ks)))
-        (om/transact! value-cursor #(dissoc-in % ks))
-        (om/update! value-cursor ks value)))))
+  [fs ks value & [validation-fn]]
+  (let [schema (:schema fs)
+        value (coerce (st/get-in schema ks) value)]
+    (-> (if (or (and (seq? value) (seq value)) (not (nil? value)))
+          (update-in fs [:value] assoc-in ks value)
+          (let [parent-schema (st/get-in schema (butlast ks))]
+            (if (contains? parent-schema (s/optional-key (last ks)))
+              (update-in fs [:value] dissoc-in ks)
+              (update-in fs [:value] assoc-in ks value))))
+        validate
+        (extra-validation validation-fn))))
 
-(s/defn form
-  [{value ::value initial-value ::initial-value :as fs} :- FormState
-   owner
-   {:keys [actions component form form-validation-fn after-change]
-    :as opts}]
-  (reify
-    om/IDisplayName
-    (display-name [_] "form")
-    om/IInitState
-    (init-state [_]
-      (assert (nil? (s/check FormState fs)))
-      (merge {:ch (chan)
-              :form-group impl/default-form-group
-              :coercion-matcher sc/json-coercion-matcher}
-             form))
-    om/IWillMount
-    (will-mount [_]
-      (let [schema (if (::schema fs) @(::schema fs))
-            {:keys [ch coercion-matcher]} (om/get-state owner)]
-        (go-loop []
-          (let [evt (<! ch)
-                prev-value @value]
-            (case (:type evt)
-              :action (if-let [action-fn (get actions (:action evt))]
-                        (let [next (action-fn @fs evt)]
-                          (if (chan? next)
-                            (go (om/update! fs (<! next)))
-                            (om/update! fs next)))
-                        (prn (str "WARNING: " (:action evt) " is unknown")))
+;;
+;; Predicates
+;;
 
-              :cancel (om/transact! fs reset)
+(defn dirty?
+  "Check if form-state is dirty, meaning that the value and the initial value are not identitcal."
+  [fs]
+  (not= (:value fs) (:initial-value fs)))
 
-              :change (let [{:keys [ks]} evt]
-                        (->> evt :value
-                             (coerce coercion-matcher (st/get-in schema ks))
-                             (change-value value schema ks)))
-              (prn (str "Unknown event-type: " (:type evt))))
-
-            ; FIXME:
-            (if after-change
-              (after-change {:fs fs
-                             :value @value
-                             :value-cursor value
-                             :prev-value prev-value})))
-
-          ; Update fs because :errors can be nil and (:errors fs) could return not-a-cursor
-          (om/update! fs ::errors (merge
-                                    ; FIXME:
-                                    (if form-validation-fn (form-validation-fn @value))
-                                    (if schema (s/check schema @value))))
-          (recur))))
-    om/IRender
-    (render [_ ]
-      (om/build component fs {:opts {:ch (om/get-state owner :ch)
-                                     :form (assoc (om/get-state owner) :fs fs)}}))))
-
-(defn dirty? [fs]
-  (not= (::value fs) (::initial-value fs)))
-
-(defn errors? [fs]
-  (seq (::errors fs)))
+(defn errors?
+  "Check if form has any errors."
+  [fs]
+  (seq (:errors fs)))

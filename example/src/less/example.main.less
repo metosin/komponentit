@@ -1,8 +1,23 @@
 @import "bootstrap/less/bootstrap.less";
-@import "selectize.js/less/selectize.default.less";
 @import (inline) "cljsjs/common/pikaday.css";
-@import "om-dev-tools/om-dev-tools.less";
+@import "lomakkeet/lomakkeet.less";
 
 .selectize-dropdown {
   width: 100%;
+}
+
+.needs-attention {
+  .form-control, .selectize-input, .selectize-control.single .selectize-input {
+    border-color: lighten(@state-warning-text, 30%);
+    box-shadow: 0 0 3px @state-warning-text;
+  }
+}
+
+.om-dev-tools-state-tree {
+  pre {
+    border: 0;
+    padding: 0;
+    background: none;
+    display: inline;
+  }
 }

@@ -4,34 +4,32 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src/clj"]
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3126"]
+  :dependencies [[org.clojure/clojure "1.7.0-beta3"]
+                 [org.clojure/clojurescript "0.0-3269"]
                  [metosin/lomakkeet "0.2.0-SNAPSHOT"]
-                 [metosin/potpuri "0.2.1"]
-                 [metosin/om-dev-tools "0.1.7"]
+                 [metosin/potpuri "0.2.2"]
+                 [reagent "0.5.0"]
 
-                 [org.webjars/bootstrap "3.3.2"]
-                 [org.webjars/selectize.js "0.11.2"]
+                 [org.webjars/bootstrap "3.3.4"]
 
-                 [figwheel "0.2.4-SNAPSHOT"]]
+                 [figwheel "0.3.3"]]
   :plugins [[lein-pprint "1.1.2"]]
 
   :cljsbuild
-  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src" "dev-src/cljs"]
-                  :compiler {:main "example.figwheel"
+  {:builds {:dev {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
+                  :figwheel true
+                  :compiler {:main "example.reagent"
                              :asset-path "js/out"
                              :output-to "target/cljsbuild-dev/public/js/app.js"
-                             :output-dir "target/cljsbuild-dev/public/js/out"
-                             :source-map true
-                             :optimizations :none}}
+                             :output-dir "target/cljsbuild-dev/public/js/out"}}
             :adv {:source-paths ["src/cljs" "checkouts/lomakkeet/src"]
-                  :compiler {:main "example.main"
+                  :compiler {:main "example.reagent"
                              :output-to "target/cljsbuild-adv/public/js/app.js"
                              :output-dir "target/cljsbuild-adv/public/js/out"
                              :source-map "target/cljsbuild-adv/public/js/out.js.map"
                              :optimizations :advanced}}}}
 
-  :less {:source-paths ["src/less"]
+  :less {:source-paths ["src/less" "checkouts/lomakkeet/resources"]
          :target-path "target/generated/css/public"
          :source-map true}
 
@@ -41,8 +39,8 @@
              :repl false}
 
   :profiles {:dev {:source-paths ["dev-src/clj"]
-                   :plugins [[lein-cljsbuild "1.0.4"]
-                             [lein-figwheel "0.2.4-SNAPSHOT"]
+                   :plugins [[lein-cljsbuild "1.0.6"]
+                             [lein-figwheel "0.3.3"]
                              [deraen/lein-less4j "0.2.1"]
                              [lein-pdo "0.1.1"]]
 

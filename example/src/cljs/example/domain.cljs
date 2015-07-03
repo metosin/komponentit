@@ -20,6 +20,7 @@
    :desc s/Str
    :file (s/maybe (s/both js/File (s/pred (fn [f] (if f (< (.-size f) 1000000))) 'large-file)))
    :country s/Str
+   :reasons #{s/Keyword}
    :gender s/Keyword})
 
 (defn ThingieDates [{{:keys [start end]} :dates}]
@@ -29,13 +30,14 @@
 
 ; Description of the state tree
 (def empty-thing
-  {:name "Luke Skywalker"
+  {:name ""
    :email "luke@rebel.gov"
    :dates {:start (t/today)
            :end   nil}
    :desc ""
    :file nil
    :country "FI"
+   :reasons #{:a :b}
    :gender :other})
 
 (def genders {:male   "Male"
