@@ -32,7 +32,7 @@
   [(form-group-com form) form impl/select* (assoc (merge (:opts form) opts) :label label :ks ks :options options)])
 
 (defn date [form label ks & [opts]]
-  [(form-group-com form) form date/date* (assoc (merge (:opts form) opts) :label label :ks ks)])
+  [(form-group-com form) form date/date* (merge (:opts form) opts {:label label :ks ks})])
 
 (defn file [form label ks & [opts]]
   [(form-group-com form) form file/file* (assoc (merge (:opts form) opts) :label label :ks ks)])

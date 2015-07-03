@@ -105,6 +105,7 @@
   {:value->text get
    :item->key :key
    :item->text :value
+   :item-removable? (constantly true)
    :value->search identity
    :->query ac/default->query
    :not-results-text "No results"})
@@ -130,6 +131,7 @@
    :value->text
    :item->key
    :item->value
+   :item-removable? - predicate function to determine if item is non-removable
    :value-is-search? - Save the search value using cb instantly and always display the value.
    :term-match-fn
    :search-fields
@@ -152,10 +154,11 @@
   [opts]
   (let [{:keys [value cb remove-cb on-blur
                 items load-items
-                value->search value->text item->key item->value
+                value->search value->text item->key
                 value-is-search?
-                term-match-fn search-fields
-                ->query find-by-selection
+                item-removable?
+                search-fields
+                ->query
                 clearable? multiple?
                 group-by groups
                 filter-current-out?
@@ -164,12 +167,14 @@
          :as opts}
         (assert-opts (merge defaults opts))
 
-        opts (merge {:item->value item->key
-                     :find-by-selection (if group-by
-                                          ac/default-group-find-by-selection
-                                          ac/default-find-by-selection)
-                     :term-match-fn (if search-fields (ac/create-matcher* search-fields))}
-                    opts)
+        {:keys [item->value find-by-selection term-match-fn]
+         :as opts}
+        (merge {:item->value item->key
+                :find-by-selection (if group-by
+                                     ac/default-group-find-by-selection
+                                     ac/default-find-by-selection)
+                :term-match-fn (if search-fields (ac/create-matcher* search-fields))}
+               opts)
 
         open? (atom false)
         closable (mixins/create-closable open?)
@@ -226,10 +231,12 @@
            (if multiple?
              (doall
                (for [x (get-or-deref value)]
-                 ^{:key x}
-                 [:div.item
-                  (value->text (get-or-deref items) x)
-                  [:a.remove {:on-click (partial remove-cb x)} "×"]])))
+                 (let [removable? (item-removable? x)]
+                   ^{:key x}
+                   [:div {:class (if removable? "item" "non-removable-item")}
+                    (value->text (get-or-deref items) x)
+                    (if removable?
+                      [:a.remove {:on-click (partial remove-cb x)} "×"])]))))
            [:input
             (assoc input-attrs
                    :disabled disabled?
@@ -272,7 +279,8 @@
                   [:div.option no-results-text]))]])])})))
 
 (defn autocomplete*
-  [form {:keys [ks item->value item->key multiple? cb search-is-value?]
+  [form {:keys [ks item->value item->key multiple? cb remove-cb]
+         :or {item->key key}
          :as opts}]
   (let [value (reaction (get-in (:value @(:data form)) ks))
         item->value (or item->value item->key)
@@ -280,19 +288,19 @@
         cb
         (fn [v]
           (if cb (cb v))
-          (if (map? item->value)
-            ; FIXME: Hack
+          ;; FIXME: hack
+          (let [item->value (if (map? item->value)
+                              item->value
+                              {ks item->value})]
             (doseq [[ks item->value] item->value]
               (impl/cb form ks (if multiple?
                                  (conj @value (item->value v))
-                                 (item->value v))))
-            (impl/cb form ks (if multiple?
-                               (conj @value (item->value v))
-                               (item->value v))))
+                                 (item->value v)))))
           nil)
 
         remove-cb
         (fn [x _]
+          (if remove-cb (remove-cb x))
           (impl/cb form ks (into (empty @value) (remove #(= % x) @value))))
 
         on-blur

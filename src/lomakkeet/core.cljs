@@ -85,7 +85,7 @@
   [fs ks value & [validation-fn]]
   (let [schema (:schema fs)
         value (coerce (st/get-in schema ks) value)]
-    (-> (if (or (and (seq? value) (seq value)) value)
+    (-> (if (or (and (seq? value) (seq value)) (not (nil? value)))
           (update-in fs [:value] assoc-in ks value)
           (let [parent-schema (st/get-in schema (butlast ks))]
             (if (contains? parent-schema (s/optional-key (last ks)))

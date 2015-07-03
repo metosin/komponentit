@@ -21,7 +21,7 @@
   {:pre [(map? form) (satisfies? IDeref (:data form))]}
   (let [form-errors (reaction (:errors @(:data form)))
         error (reaction (get-in @form-errors ks))
-        pristine (reaction (not (get-in (:not-pristine @(:data form)) ks)))]
+        pristine (reaction (not (get-in @(:not-pristine @(:data form)) ks)))]
     (fn []
       [:div.form-group
        {:class (str (if (and (not @pristine) @error) (str "has-error "))
@@ -83,13 +83,13 @@
 ;; SELECT
 
 (defn select*
-  [form {:keys [ks options]}]
+  [form {:keys [ks options attrs]}]
   (let [form-value (reaction (:value @(:data form)))
         value (reaction (get-in @form-value ks))]
     (fn []
       [:select.form-control
        (merge
-         (get-or-deref (:attrs form))
+         (merge (get-or-deref (:attrs form)) attrs)
          {:value @value
           :on-change #(cb form ks (.. % -target -value))
           :on-blur #(blur form ks)})
