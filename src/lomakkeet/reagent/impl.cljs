@@ -12,6 +12,14 @@
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))
 
+(defn error-explanation
+  "Should convert error from e.g. predicate to single word.
+
+   (not (required \"\")) => \"required\""
+  [validation-error]
+  (if (instance? schema.utils.ValidationError validation-error)
+    (pr-str (first @(.-expectation-delay validation-error)))))
+
 ;; FORM GROUP ("bootstrap")
 
 (defn default-form-group
@@ -21,17 +29,18 @@
   {:pre [(map? form) (satisfies? IDeref (:data form))]}
   (let [form-errors (reaction (:errors @(:data form)))
         error (reaction (get-in @form-errors ks))
-        pristine (reaction (not (get-in @(:not-pristine @(:data form)) ks)))]
+        pristine (reaction (not (get-in (:not-pristine @(:data form)) ks)))]
     (fn []
       [:div.form-group
-       {:class (str (if (and (not @pristine) @error) (str "has-error "))
-                    (if size (str " col-md-" size)))}
+       {:class (str (if (and (not @pristine) @error) "has-error ")
+                    (if (and @pristine @error) "needs-attention ")
+                    (if size (str " col-md-" size " ")))}
        [:label label]
        [content form opts]
        (if help-text
          [:span.help-block help-text])
        (if (and (not @pristine) @error)
-         [:span.help-block (str @error)])])))
+         [:span.help-block (error-explanation @error)])])))
 
 ;; BASIC INPUTS
 

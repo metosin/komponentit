@@ -16,8 +16,7 @@
 
 (defn thing-view []
   (let [form-data  (reagent/cursor app-state [:example-page])
-        form  {:data form-data
-               :opts {:size 6}}
+        form  (f/create-form form-data :opts {:size 6})
         form-value (reaction (:value @form-data))
         start (reaction (get-in @form-value [:dates :start]))
         end   (reaction (get-in @form-value [:dates :end]))]
