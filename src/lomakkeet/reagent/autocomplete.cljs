@@ -130,6 +130,7 @@
    :on-blur - Input :on-blur. Might be useful for form pristine handling.
    :items
    :load-items
+   :max-results
    :value->search
    :value->text
    :item->key
@@ -156,7 +157,7 @@
    :disabled?"
   [opts]
   (let [{:keys [value cb remove-cb on-blur
-                items load-items
+                items load-items max-results
                 value->search value->text item->key
                 value-is-search?
                 item-removable?
@@ -276,7 +277,9 @@
                     r
                     [:div.option no-results-text]))
                 (if (seq @results)
-                  (for [item @results]
+                  (for [item (if max-results
+                               (take max-results @results)
+                               @results)]
                     ^{:key (item->key item)}
                     [choice-item item selected select-cb opts])
                   [:div.option no-results-text]))]])])})))
