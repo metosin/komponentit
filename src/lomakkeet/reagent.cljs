@@ -8,37 +8,59 @@
             [lomakkeet.reagent.filepicker :as file]
             [lomakkeet.reagent.autocomplete :as autocomplete]))
 
-(defn create-form [data & opts]
-  (apply hash-map :data data opts))
+(defn create-form
+  ([data] (create-form data nil))
+  ([data opts] (assoc opts :data data)))
 
 ;; BUILD
 
 (defn form-group-com [form]
   (or (:form-group form) impl/default-form-group))
 
-(defn input [form label ks & [opts]]
-  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :label label :ks ks)])
+(defn input
+  ([form label ks] (input form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
-(defn textarea [form label ks & [opts]]
-  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-textarea :label label :ks ks)])
+(defn password
+  ([form label ks] (password form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-password :label label :ks ks)]))
 
-(defn static [form label ks & [opts]]
-  [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-static :label label :ks ks)])
+(defn textarea
+  ([form label ks] (textarea form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-textarea :label label :ks ks)]))
 
-(defn checkbox [form label ks & [opts]]
-  [(form-group-com form) form impl/checkbox* (assoc (merge (:opts form) opts) :label label :ks ks)])
+(defn static
+  ([form label ks] (static form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form impl/input* (assoc (merge (:opts form) opts) :el impl/input-static :label label :ks ks)]))
 
-(defn select [form label ks options & [opts]]
-  [(form-group-com form) form impl/select* (assoc (merge (:opts form) opts) :label label :ks ks :options options)])
+(defn checkbox
+  ([form label ks] (checkbox form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form impl/checkbox* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
-(defn date [form label ks & [opts]]
-  [(form-group-com form) form date/date* (merge (:opts form) opts {:label label :ks ks})])
+(defn select
+  ([form label ks options] (select form label ks options nil))
+  ([form label ks options opts]
+   [(form-group-com form) form impl/select* (assoc (merge (:opts form) opts) :label label :ks ks :options options)]))
 
-(defn file [form label ks & [opts]]
-  [(form-group-com form) form file/file* (assoc (merge (:opts form) opts) :label label :ks ks)])
+(defn date
+  ([form label ks] (date form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form date/date* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
-(defn complete [form label ks & [opts]]
-  [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)])
+(defn file
+  ([form label ks] (file form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form file/file* (assoc (merge (:opts form) opts) :label label :ks ks)]))
+
+(defn complete
+  ([form label ks] (complete form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
 (def ->fs core/->fs)
 (def reset core/reset)
