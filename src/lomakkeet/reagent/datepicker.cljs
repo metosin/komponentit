@@ -3,17 +3,18 @@
             [reagent.ratom :refer-macros [reaction run!]]
             [goog.string :as gs]
             [lomakkeet.core :as l]
-            [lomakkeet.date :refer [date->str jsdate->local-date]]
+            [lomakkeet.date :refer [date->str jsdate->local-date jsdate->date-time]]
             [lomakkeet.reagent.impl :as impl]
             cljsjs.pikaday.with-moment))
 
 (defn try-deref [x]
   (if (satisfies? IDeref x) @x x))
 
-(defn date* [form {:keys [ks datepicker-i18n min-date max-date]}]
+(defn date* [form {:keys [ks datepicker-i18n min-date max-date date-time?]}]
   (let [el (atom nil)
         form-value (reaction (:value @(:data form)))
-        value (reaction (get-in @form-value ks))]
+        value (reaction (get-in @form-value ks))
+        coerce (if date-time? jsdate->date-time jsdate->local-date)]
     (if min-date
       (run! (if @el (.setMinDate @el (try-deref min-date)))))
     (if max-date
@@ -25,7 +26,7 @@
                                       ; NOTE: This requires MomentJS
                                       :format "D.M.YYYY"
                                       :firstDay 1
-                                      :onSelect #(impl/cb form ks (jsdate->local-date %))}
+                                      :onSelect #(impl/cb form ks (coerce %))}
                                      (cond-> datepicker-i18n (assoc :i18n datepicker-i18n))
                                      clj->js))))
        :reagent-render
