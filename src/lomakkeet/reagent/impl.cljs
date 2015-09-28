@@ -41,7 +41,15 @@
   [:input.form-control
    (merge attrs
           {:type "text"
-           :value (or value "")
+           :value (or (str value) "")
+           :on-change cb
+           :on-blur blur})])
+
+(defn input-password [attrs value cb blur]
+  [:input.form-control
+   (merge attrs
+          {:type "password"
+           :value (or (str value) "")
            :on-change cb
            :on-blur blur})])
 
