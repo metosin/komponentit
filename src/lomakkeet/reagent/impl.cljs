@@ -103,7 +103,8 @@
          {:value @value
           :on-change #(cb form ks (.. % -target -value))
           :on-blur #(blur form ks)})
-       (cond
-         (map? options)
-         (for [[k v] options]
-           [:option {:value k :key v} v]))])))
+       (for [option options
+             :let [[k v] (if (map? option)
+                           [(:key option) (:value option)]
+                           option)]]
+           [:option {:value k :key v} v])])))
