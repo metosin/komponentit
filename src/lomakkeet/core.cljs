@@ -43,6 +43,9 @@
     :not-pristine nil
     :schema schema}))
 
+(defn value [fs & kws]
+  (get-in fs (into [:value] kws)))
+
 ;;
 ;; Updating the state
 ;;

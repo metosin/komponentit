@@ -1,10 +1,11 @@
 (ns lomakkeet.reagent
-  (:refer-clojure :exclude [update])
+  (:refer-clojure :exclude [update time])
   (:require [reagent.ratom :as ratom]
             [lomakkeet.core :as core]
             [lomakkeet.util :refer [dissoc-in]]
             [lomakkeet.reagent.impl :as impl]
             [lomakkeet.reagent.datepicker :as date]
+            [lomakkeet.reagent.timepicker :as time]
             [lomakkeet.reagent.filepicker :as file]
             [lomakkeet.reagent.autocomplete :as autocomplete]))
 
@@ -52,6 +53,11 @@
   ([form label ks opts]
    [(form-group-com form) form date/date* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
+(defn time
+  ([form label ks] (time form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form time/time* (merge (:opts form) opts {:label label :ks ks})]))
+
 (defn file
   ([form label ks] (file form label ks nil))
   ([form label ks opts]
@@ -65,6 +71,7 @@
 (def validation-error->str core/validation-error->str)
 (def default-explain-error core/default-explain-error)
 (def ->fs core/->fs)
+(def value core/value)
 (def reset core/reset)
 (def commit core/commit)
 (def save core/save)
