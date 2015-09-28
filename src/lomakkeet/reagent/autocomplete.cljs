@@ -38,10 +38,13 @@
     (reset! open? true)
 
     (case (.-key e)
-      "Enter" (when-let [v (find-by-selection @results @selected)]
-                (cb v)
-                (reset! open? false)
-                (reset! search nil))
+      "Enter" (do
+                (.preventDefault e)
+                (.stopPropagation e)
+                (when-let [v (find-by-selection @results @selected)]
+                  (cb v)
+                  (reset! open? false)
+                  (reset! search nil)))
       "ArrowUp" (change-selection dec e)
       "ArrowDown" (change-selection inc e)
       nil)))
