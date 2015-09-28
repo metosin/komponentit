@@ -106,4 +106,4 @@
 (defn errors?
   "Check if form has any errors."
   [fs]
-  (seq (:errors fs)))
+  (boolean (:errors fs)))
