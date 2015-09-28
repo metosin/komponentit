@@ -62,10 +62,13 @@
   ([form label ks opts]
    [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
+(def validation-error->str core/validation-error->str)
+(def default-explain-error core/default-explain-error)
 (def ->fs core/->fs)
 (def reset core/reset)
 (def commit core/commit)
 (def save core/save)
+(def validate core/validate)
 (def update core/update)
 (def dirty? core/dirty?)
 (def errors? core/errors?)

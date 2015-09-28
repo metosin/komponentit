@@ -6,7 +6,21 @@
             [schema-tools.core :as st]
             [lomakkeet.util :refer [dissoc-in]]))
 
-(def ^:dynamic *coercion-matcher* sc/string-coercion-matcher)
+;;
+;; Schema error utils
+;;
+
+(defn validation-error->str [v]
+  (if (instance? schema.utils.ValidationError v)
+    (first @(.-expectation-delay v))))
+
+(defn default-explain-error
+  "Should convert error from e.g. predicate to single word.
+
+   (not (required \"\")) => \"required\""
+  [error]
+  (if-let [v (validation-error->str error)]
+    (pr-str v)))
 
 ;;
 ;; Form state
@@ -64,9 +78,9 @@
 
 (defn coerce
   "Return either coerced or the original value if the coercion failed."
-  [schema value]
+  [schema value coercion-matcher]
   (if schema
-    (let [coerced ((sc/coercer schema *coercion-matcher*) value)]
+    (let [coerced ((sc/coercer schema coercion-matcher) value)]
       (if (su/error? coerced)
         value
         coerced))
@@ -82,17 +96,19 @@
 
    If new value is nil, schema is checked if value is in optional-key,
    value it is, instead of setting value to nil, the key is dissoced."
-  [fs ks value & [validation-fn]]
-  (let [schema (:schema fs)
-        value (coerce (st/get-in schema ks) value)]
-    (-> (if (or (and (seq? value) (seq value)) (not (nil? value)))
-          (update-in fs [:value] assoc-in ks value)
-          (let [parent-schema (st/get-in schema (butlast ks))]
-            (if (contains? parent-schema (s/optional-key (last ks)))
-              (update-in fs [:value] dissoc-in ks)
-              (update-in fs [:value] assoc-in ks value))))
-        validate
-        (extra-validation validation-fn))))
+  ([fs ks value] (change-value fs ks value nil))
+  ([fs ks value {:keys [validation-fn coercion-matcher]
+                 :or {coercion-matcher sc/string-coercion-matcher}}]
+   (let [schema (:schema fs)
+         value (coerce (st/get-in schema ks) value coercion-matcher)]
+     (-> (if (or (and (seq? value) (seq value)) (not (nil? value)))
+           (update-in fs [:value] assoc-in ks value)
+           (let [parent-schema (st/get-in schema (butlast ks))]
+             (if (contains? parent-schema (s/optional-key (last ks)))
+               (update-in fs [:value] dissoc-in ks)
+               (update-in fs [:value] assoc-in ks value))))
+         validate
+         (extra-validation validation-fn)))))
 
 ;;
 ;; Predicates

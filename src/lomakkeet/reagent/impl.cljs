@@ -3,28 +3,21 @@
             [lomakkeet.core :as l]))
 
 (defn cb [form ks value]
-  (swap! (:data form) l/change-value ks value (:validation-fn form)))
+  (swap! (:data form) l/change-value ks value (select-keys form [:validation-fn :coercion-matcher])))
 
 (defn blur [form ks]
   ; https://github.com/reagent-project/reagent/issues/135
-  (swap! (:data form) update :not-pristine assoc-in ks {::hack true}))
+  (swap! (:data form) update :not-pristine assoc-in ks {}))
 
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))
 
-(defn error-explanation
-  "Should convert error from e.g. predicate to single word.
-
-   (not (required \"\")) => \"required\""
-  [validation-error]
-  (if (instance? schema.utils.ValidationError validation-error)
-    (pr-str (first @(.-expectation-delay validation-error)))))
-
 ;; FORM GROUP ("bootstrap")
 
 (defn default-form-group
-  [form content {:keys [ks size label help-text]
-                 :or {size 6}
+  [form content {:keys [ks size label help-text explain-error]
+                 :or {size 6
+                      explain-error l/default-explain-error}
                  :as opts}]
   {:pre [(map? form) (satisfies? IDeref (:data form))]}
   (let [form-errors (reaction (:errors @(:data form)))
@@ -40,7 +33,7 @@
        (if help-text
          [:span.help-block help-text])
        (if (and (not @pristine) @error)
-         [:span.help-block (error-explanation @error)])])))
+         [:span.help-block (explain-error @error)])])))
 
 ;; BASIC INPUTS
 
