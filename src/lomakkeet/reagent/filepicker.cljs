@@ -5,6 +5,8 @@
             [reagent.ratom :refer-macros [reaction]]
             [lomakkeet.reagent.impl :as impl]))
 
+; Directory support: https://github.com/enyo/dropzone/blob/master/dist/dropzone.js#L908-L933
+
 (defn humanize-filesize
   [bytes & [fmt]]
   (let [units ["bytes" "kB" "MB" "GB" "TB" "PB"]
@@ -13,6 +15,9 @@
                (js/Math.floor (/ (js/Math.log bytes) (js/Math.log 1000))))
         size (/ bytes (js/Math.pow 1000 unit))]
     (gs/format (or fmt "%0.1f %s") size (get units unit))))
+
+(defn file-list->vec [file-list]
+  (vec (mapv #(.item file-list %) (range (.-length file-list)))))
 
 (def noop (constantly nil))
 
@@ -48,6 +53,46 @@
        (if @value
          [:span.selected-file
           " " (.-name @value) ", " (humanize-filesize (.-size @value))])])))
+
+;;
+;; Drag and drop utilities
+;;
+
+(defn on-drag-over-handler [active?]
+  (fn [e]
+    ; Chrome bug - drop even doesn't fire without this
+    (.preventDefault e)
+    (.stopPropagation e)
+    (if active? (reset! active? true))
+    nil))
+
+(defn on-drag-leave-handler [active?]
+  (fn [e]
+    (if active? (reset! active? false))
+    nil))
+
+(defn on-drop-handler
+  "Create handler when can be used for file drag'n'drop.
+
+   Options:
+
+   - :files - The IReactiveAtom containing vector of Files.
+   - :active? - (optional) IReactiveAtom containing status if the drag'n'drop
+     is active."
+  [{:keys [files active?]}]
+  (fn [e]
+    (.preventDefault e)
+    (.stopPropagation e)
+    (if active? (reset! active? false))
+    (swap! files into (file-list->vec (.. e -dataTransfer -files)))
+    nil))
+
+(defn drop-area
+  "Create attribute map for drop area."
+  [{:keys [files active?] :as opts}]
+  {:on-drag-over  (on-drag-over-handler active?)
+   :on-drag-leave (on-drag-leave-handler active?)
+   :on-drop       (on-drop-handler opts)})
 
 ;;
 ;; Form integration
