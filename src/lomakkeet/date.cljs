@@ -1,6 +1,7 @@
 (ns lomakkeet.date
   (:require [goog.string :as gs]
-            [goog.date :as date]))
+            [goog.date :as date])
+  (:import [goog.i18n DateTimeFormat DateTimeParse]))
 
 (defn jsdate->local-date [v]
   (if v
@@ -42,3 +43,13 @@
 (defn date->str [v]
   (if v
     (gs/format "%d.%d.%d" (.getDate v) (inc (.getMonth v)) (.getFullYear v))))
+
+(defn date-format [d f]
+  (if d
+    (.format (DateTimeFormat. f) d)))
+
+(defn date-read [s f]
+  (let [date (date/Date. 0 0 0)]
+    (.strictParse (DateTimeParse. f) s date)
+    (if (not= 0 (.getYear date))
+      date)))
