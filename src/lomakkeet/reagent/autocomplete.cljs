@@ -1,5 +1,5 @@
 (ns lomakkeet.reagent.autocomplete
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as r]
             [reagent.ratom :refer-macros [run! reaction]]
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
@@ -180,15 +180,15 @@
                 :term-match-fn (if search-fields (ac/create-matcher* search-fields))}
                opts)
 
-        open? (atom false)
+        open? (r/atom false)
         closable (mixins/create-closable open?)
-        search (atom nil)
+        search (r/atom nil)
         query (reaction (->query @search))
-        selected (atom 0)
+        selected (r/atom 0)
 
-        items (if load-items (atom nil) items)
+        items (if load-items (r/atom nil) items)
 
-        n (atom -1)
+        n (r/atom -1)
         results (reaction (filter-results term-match-fn n (get-or-deref items) @query (if filter-current-out? @value) opts))
         ; FIXME: Hack?
         results (if group-by (reaction (clojure.core/group-by group-by @results)) results)
@@ -200,7 +200,7 @@
 
         focus-input (fn [this]
                       (if @open?
-                        (some-> this reagent/dom-node (.getElementsByTagName "input") (.item 0) (.focus)))
+                        (some-> this r/dom-node (.getElementsByTagName "input") (.item 0) (.focus)))
                       nil)
 
         input-attrs
@@ -214,8 +214,9 @@
     (run! (swap! selected (partial util/limit 0 @n)))
     (if load-items
       (let [search-or-value (reaction (if (seq @search) @search (value->search (get-or-deref value))))]
-        (run! (if @open? (load-items items @search-or-value)))))
-    (reagent/create-class
+        ; FIXME changed this to make value visible to the user in edit dialog (run! (if @open? (load-items items @search-or-value)))))
+        (run! (load-items items @search-or-value))))
+    (r/create-class
       {:component-did-unmount
        (fn [] (closable))
        :component-did-update focus-input
