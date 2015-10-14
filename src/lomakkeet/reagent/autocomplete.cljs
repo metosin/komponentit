@@ -4,7 +4,8 @@
             [lomakkeet.util :as util]
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.reagent.impl :as impl]
-            [lomakkeet.reagent.mixins :as mixins]))
+            [lomakkeet.reagent.mixins :as mixins]
+            [goog.dom.classes :as classes]))
 
 (defn blur [open? search e]
   (when (.-relatedTarget e)
@@ -123,6 +124,58 @@
           ":value-is-search? doesn't work together with :multiple?")
   opts)
 
+(defn- find-container [el]
+  (loop [el el]
+    (if el
+      ; FIXME:
+      (if (classes/has el "scroll")
+        (let [rect (.getBoundingClientRect el)]
+          {:top (.-top rect) :bottom (.-bottom rect)})
+        (recur (.-offsetParent el)))
+      ; FIXME: Is this window height or content height? Does this work correctly with non absolute positioned page?
+      {:top 0 :bottom (.-innerHeight js/window)})))
+
+(defn autocomplete-contents [_ container-state _ _ _]
+  (let [top? (r/atom false)]
+    (r/create-class
+      {:component-did-mount
+       (fn [this]
+         (let [el (r/dom-node this)
+               rect (.getBoundingClientRect el)
+               height (.-offsetHeight el)
+               top (.-top rect)
+               container (find-container el)]
+           (reset! top? (and (> (+ top height) (:bottom container))
+                             (> (- top (:height container-state) height) (:top container))))))
+       :reagent-render
+       (fn [results container-state selected select-cb {:keys [multiple? group-by groups no-results-text cb max-results item->key] :as opts}]
+         [:div
+          {:class (str "selectize-dropdown " (if multiple? "multi " "single ") (if @top? "above "))
+           :style (if @top? {:bottom (str (:height container-state) "px")})}
+          [:div.selectize-dropdown-content
+           ; FIXME: Hack?
+           (if (or group-by groups)
+             (let [r (doall
+                       (for [[k v] (or groups results)
+                             :let [group-results (get results k)]
+                             :when group-results]
+                         [:div.optgroup
+                          {:key k}
+                          [:div.optgroup-header (if groups v (name k))]
+                          (for [item group-results]
+                            ^{:key (item->key item)}
+                            [choice-item item selected cb opts])]))]
+               (if (seq r)
+                 r
+                 [:div.option no-results-text]))
+             (if (seq results)
+               (for [item (if max-results
+                            (take max-results results)
+                            results)]
+                 ^{:key (item->key item)}
+                 [choice-item item selected select-cb opts])
+               [:div.option no-results-text]))]])})))
+
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
@@ -210,17 +263,24 @@
                       (if on-blur (on-blur e)))
          :on-change (partial change search (if value-is-search? cb))
          :on-key-down (partial key-down open? search results selected n find-by-selection select-cb)
-         :auto-complete false}]
+         :auto-complete false}
+
+        state (r/atom nil)]
     (run! (swap! selected (partial util/limit 0 @n)))
     (if load-items
       (let [search-or-value (reaction (if (seq @search) @search (value->search (get-or-deref value))))]
         ; FIXME changed this to make value visible to the user in edit dialog (run! (if @open? (load-items items @search-or-value)))))
         (run! (load-items items @search-or-value))))
     (r/create-class
-      {:component-did-unmount
-       (fn [] (closable))
-       :component-did-update focus-input
-       :component-did-mount focus-input
+      {:component-did-unmount (fn [_] (closable))
+       :component-did-update (fn [this]
+                              (let [el (r/dom-node this)]
+                                (reset! state {:width (.-offsetWidth el) :height (.-offsetHeight el)}))
+                               (focus-input this))
+       :component-did-mount (fn [this]
+                              (let [el (r/dom-node this)]
+                                (reset! state {:width (.-offsetWidth el) :height (.-offsetHeight el)}))
+                              (focus-input this))
        :reagent-render
        (fn [{:keys [value disabled?]}]
          [:div.selectize-control
@@ -259,31 +319,7 @@
               {:on-click #(select-cb nil)}
               "×"])]
           (if @open?
-            [:div.selectize-dropdown
-             {:class (if multiple? "multi" "single")}
-             [:div.selectize-dropdown-content
-              ; FIXME: Hack?
-              (if (or group-by groups)
-                (let [r (doall
-                          (for [[k v] (or groups @results)
-                                :let [group-results (get @results k)]
-                                :when group-results]
-                            [:div.optgroup
-                             {:key k}
-                             [:div.optgroup-header (if groups v (name k))]
-                             (for [item group-results]
-                               ^{:key (item->key item)}
-                               [choice-item item selected cb opts])]))]
-                  (if (seq r)
-                    r
-                    [:div.option no-results-text]))
-                (if (seq @results)
-                  (for [item (if max-results
-                               (take max-results @results)
-                               @results)]
-                    ^{:key (item->key item)}
-                    [choice-item item selected select-cb opts])
-                  [:div.option no-results-text]))]])])})))
+            [autocomplete-contents @results @state selected select-cb opts])])})))
 
 (defn autocomplete*
   [form {:keys [ks item->value item->key multiple? cb remove-cb disabled?]
