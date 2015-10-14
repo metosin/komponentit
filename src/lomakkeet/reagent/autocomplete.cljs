@@ -286,7 +286,7 @@
                   [:div.option no-results-text]))]])])})))
 
 (defn autocomplete*
-  [form {:keys [ks item->value item->key multiple? cb remove-cb]
+  [form {:keys [ks item->value item->key multiple? cb remove-cb disabled?]
          :or {item->key key}
          :as opts}]
   (let [value (reaction (get-in (:value @(:data form)) ks))
@@ -315,6 +315,6 @@
           (impl/blur form ks))
 
         attrs (:attrs form)
-        disabled (reaction (:disabled (get-or-deref attrs)))]
+        disabled (reaction (or (get-or-deref disabled?) (:disabled (get-or-deref attrs))))]
     (fn []
       [autocomplete (assoc opts :value value, :cb cb, :remove-cb remove-cb, :on-blur on-blur, :disabled? @disabled)])))
