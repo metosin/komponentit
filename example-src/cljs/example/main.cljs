@@ -4,7 +4,8 @@
             [devcards.core :as dc :include-macros true]
             example.datepicker
             example.filepicker
-            example.autocomplete))
+            example.autocomplete
+            example.calendar))
 
 (defn restart! []
   (dc/start-devcard-ui!))

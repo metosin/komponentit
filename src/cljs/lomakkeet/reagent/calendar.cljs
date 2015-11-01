@@ -61,10 +61,10 @@
             {:date date
              :out (not (= (t/month day) (t/month date)))}))))))
 
-(defn month-calendar [{:keys [start end text value on-change]}]
+(defn month-calendar [{:keys [value start end text value on-change]}]
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
-    (fn [{:keys [start end text value on-change]}]
+    (fn [{:keys [value start end text value on-change]}]
       ; HACK: Is there any better way to reset month to default when value changes?
       (if (not= value @prev-val)
         (reset! month-x nil))
@@ -111,9 +111,10 @@
                 (for [day week]
                   [:td
                    {:class (str (if (:out day) "out ")
-                                (if (or (and start end (<= start (:date day) end))
-                                        (.equals (:date day) start)
-                                        (.equals (:date day) end))
+                                (if (or (and value (.equals value (:date day)))
+                                        (and start end (<= start (:date day) end))
+                                        (and start (.equals (:date day) start))
+                                        (and end (.equals (:date day) end)))
                                   "selected ")
                                 (if (.equals (:date day) start) "start ")
                                 (if (.equals (:date day) end) "end "))}

@@ -4,8 +4,6 @@
             [devcards.core :as dc :include-macros true])
   (:import [goog.date Date]))
 
-(defonce value1 (r/atom nil))
-
 (dc/defcard-rg datepicker
   (fn [date _]
     [datepicker/date {:value @date
