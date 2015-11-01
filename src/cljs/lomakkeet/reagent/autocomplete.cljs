@@ -109,7 +109,8 @@
   (if (satisfies? IDeref x) @x x))
 
 (def ^:private defaults
-  {:value->text get
+  {:value->text (fn [_ x] x)
+   :search-fields [:value]
    :item->key :key
    :item->text :value
    :item-removable? (constantly true)
@@ -304,7 +305,10 @@
                    [:div {:class (if removable? "item" "non-removable-item")}
                     (value->text (get-or-deref items) x)
                     (if removable?
-                      [:a.remove {:on-click (partial remove-cb x)} "×"])]))))
+                      [:a.remove {:on-click (fn [e]
+                                              (remove-cb x)
+                                              nil)}
+                       "×"])]))))
            [:input
             (assoc input-attrs
                    :disabled disabled?
