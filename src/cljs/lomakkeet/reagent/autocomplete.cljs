@@ -54,7 +54,7 @@
       nil)))
 
 (defn filter-results [term-match-fn n items query value
-                      {:keys [item->text multiple? filter-current-out? item->value item->key]}]
+                      {:keys [item->text multiple? filter-current-out? item->value item->key min-search-length]}]
   (reset! n -1)
   (let [map-to-seq
         (if (map? items)
@@ -63,7 +63,9 @@
           identity)
 
         filter-search
-        (if (and term-match-fn query)
+        (if (and (or (and min-search-length (>= (count (apply str query)) min-search-length))
+                     (not min-search-length))
+                 (and term-match-fn query))
           (filter (fn [item] (ac/query-match? term-match-fn item query)))
           identity)
 
@@ -196,6 +198,7 @@
    :value-is-search? - Save the search value using cb instantly and always display the value.
    :term-match-fn
    :search-fields
+   :min-search-length - Required number of characters in search string before results are filtered.
    :->query
    :find-by-selection
    :clearable?
