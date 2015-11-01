@@ -3,17 +3,17 @@
   :resource-paths #{"src/cljs" "src/less"}
   :dependencies '[[org.clojure/clojure    "1.7.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.7.145" :scope "provided"]
-                  [boot/core              "2.3.0"      :scope "test"]
+                  [boot/core              "2.4.2"      :scope "test"]
                   [adzerk/boot-cljs       "1.7.48-6"   :scope "test"]
                   [adzerk/boot-cljs-repl  "0.2.0"      :scope "test"]
-                  [adzerk/boot-reload     "0.4.0"      :scope "test"]
+                  [adzerk/boot-reload     "0.4.1"      :scope "test"]
                   [deraen/boot-less       "0.4.2"      :scope "test"]
                   [pandeiro/boot-http     "0.7.0"      :scope "test"]
 
                   [org.clojure/core.async "0.2.371"]
-                  [prismatic/schema "0.4.3"]
-                  [metosin/schema-tools "0.4.1"]
-                  [com.andrewmcveigh/cljs-time "0.3.10"]
+                  [prismatic/schema "1.0.3"]
+                  [metosin/schema-tools "0.6.2"]
+                  [com.andrewmcveigh/cljs-time "0.3.14"]
                   [cljsjs/pikaday "1.3.2-0"]
                   [reagent "0.5.1"]
 
@@ -40,7 +40,7 @@
   (comp
     (watch)
     (less)
-    (reload)
+    (reload :on-jsload 'example.reagent/restart!)
     (cljs-repl)
     (cljs)
     (serve :resource-root "")))

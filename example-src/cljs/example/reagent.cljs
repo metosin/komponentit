@@ -1,4 +1,4 @@
-(ns ^:figwheel-always example.reagent
+(ns example.reagent
   (:require [reagent.core :as reagent :refer [atom]]
             [reagent.ratom :refer-macros [reaction run!]]
             [schema.coerce :as sc]
