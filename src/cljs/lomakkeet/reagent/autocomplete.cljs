@@ -46,6 +46,9 @@
                   (cb v)
                   (reset! open? false)
                   (reset! search nil)))
+      "Escape" (do
+                 (reset! open? false)
+                 (reset! search nil))
       "ArrowUp" (change-selection dec e)
       "ArrowDown" (change-selection inc e)
       nil)))
