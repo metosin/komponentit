@@ -1,5 +1,5 @@
 (ns lomakkeet.reagent.datepicker
-  (:require [reagent.core :as reagent :refer [atom]]
+  (:require [reagent.core :as reagent]
             [reagent.ratom :refer-macros [reaction run!]]
             [goog.string :as gs]
             [lomakkeet.core :as l]
@@ -7,35 +7,49 @@
             [lomakkeet.reagent.impl :as impl]
             cljsjs.pikaday.with-moment))
 
-(defn try-deref [x]
-  (if (satisfies? IDeref x) @x x))
-
-(defn date* [form {:keys [ks datepicker-i18n min-date max-date date-time?]}]
+(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs]}]
   (let [el (atom nil)
-        form-value (reaction (:value @(:data form)))
-        value (reaction (get-in @form-value ks))
         coerce (if date-time? jsdate->date-time jsdate->local-date)]
-    (if min-date
-      (run! (if @el (.setMinDate @el (try-deref min-date)))))
-    (if max-date
-      (run! (if @el (.setMaxDate @el (try-deref max-date)))))
     (reagent/create-class
       {:component-did-mount
        (fn [this]
-         (reset! el (js/Pikaday. (-> {:field (reagent/dom-node this)
-                                      ; NOTE: This requires MomentJS
-                                      :format "D.M.YYYY"
-                                      :firstDay 1
-                                      :onSelect #(impl/cb form ks (coerce %))}
-                                     (cond-> datepicker-i18n (assoc :i18n datepicker-i18n))
-                                     clj->js))))
+         (reset! el (doto (js/Pikaday. (-> {:field (reagent/dom-node this)
+                                            ; NOTE: This requires MomentJS
+                                            :format "D.M.YYYY"
+                                            :firstDay 1
+                                            :onSelect (fn [date] (on-select (coerce date)))}
+                                           (cond->
+                                             datepicker-i18n (assoc :i18n datepicker-i18n))
+                                           clj->js))
+                      ; For some reason setting these at constructor didn't work
+                      (.setMinDate min-date)
+                      (.setMaxDate max-date))))
+       :component-did-update
+       (fn [this _]
+         (let [{:keys [min-date max-date]} (reagent/props this)]
+           (.setMinDate @el min-date)
+           (.setMaxDate @el max-date)))
        :reagent-render
-       (fn []
+       (fn [{:keys [value on-blur attrs]}]
          [:input.form-control
           (merge
-            (impl/get-or-deref (:attrs form))
+            attrs
             {:type "text"
-             :value (or (date->str @value) "")
+             :value (or (date->str value) "")
              ; To silence reagent warnings
              :on-change identity
-             :on-blur #(impl/blur form ks)})])})))
+             :on-blur on-blur})])})))
+
+(defn date* [form {:keys [ks datepicker-i18n min-date max-date date-time?]}]
+  (let [this       (reagent/current-component)
+        form-value (reaction (:value @(:data form)))
+        value      (reaction (get-in @form-value ks))]
+    (fn [_]
+      [date {:value value
+             :on-blur #(impl/blur form ks)
+             :on-select (fn [date]
+                          (impl/cb form ks date))
+             :datepicker-i18n datepicker-i18n
+             :min-date min-date
+             :max-date max-date
+             :date-time? date-time?}])))

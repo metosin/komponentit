@@ -50,25 +50,25 @@
         {:type "button"
          :on-click #(clear)}
         "×"])
-     (if @value
+     (if value
        [:span.selected-file
-        " " (.-name @value) ", " (humanize-filesize (.-size @value))])]))
+        " " (.-name value) ", " (humanize-filesize (.-size value))])]))
 
 ;;
 ;; Drag and drop utilities
 ;;
 
-(defn on-drag-over-handler [active?]
+(defn on-drag-over-handler [{:keys [on-active-change]}]
   (fn [e]
     ; Chrome bug - drop even doesn't fire without this
     (.preventDefault e)
     (.stopPropagation e)
-    (if active? (reset! active? true))
+    (if on-active-change (on-active-change true))
     nil))
 
-(defn on-drag-leave-handler [active?]
+(defn on-drag-leave-handler [{:keys [on-active-change]}]
   (fn [e]
-    (if active? (reset! active? false))
+    (if on-active-change (on-active-change false))
     nil))
 
 (defn on-drop-handler
@@ -79,19 +79,19 @@
    - :files - The IReactiveAtom containing vector of Files.
    - :active? - (optional) IReactiveAtom containing status if the drag'n'drop
      is active."
-  [{:keys [files active?]}]
+  [{:keys [on-file-drop on-active-change]}]
   (fn [e]
     (.preventDefault e)
     (.stopPropagation e)
-    (if active? (reset! active? false))
-    (swap! files into (file-list->vec (.. e -dataTransfer -files)))
+    (if on-active-change (on-active-change false))
+    (on-file-drop (file-list->vec (.. e -dataTransfer -files)))
     nil))
 
 (defn drop-area
   "Create attribute map for drop area."
-  [{:keys [files active?] :as opts}]
-  {:on-drag-over  (on-drag-over-handler active?)
-   :on-drag-leave (on-drag-leave-handler active?)
+  [{:keys [on-file-drop on-active-change] :as opts}]
+  {:on-drag-over  (on-drag-over-handler opts)
+   :on-drag-leave (on-drag-leave-handler opts)
    :on-drop       (on-drop-handler opts)})
 
 ;;

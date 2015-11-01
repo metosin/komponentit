@@ -21,6 +21,7 @@
    :reasons #{s/Keyword}
    :gender s/Keyword})
 
+; FIXME: Use s/constrained on Thingie
 (defn ThingieDates [{{:keys [start end]} :dates}]
   (-> Thingie
       (update-in [:dates :start]  (fn [s] (s/constrained s #(inside-date-range? (t/today) end %))))
