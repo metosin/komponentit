@@ -21,38 +21,38 @@
 
 (def noop (constantly nil))
 
-(defn filepicker [{:keys [on-select on-blur value file-select-label clear clearable?]
-              :or {file-select-label "Select file"}}]
+(defn filepicker [{:keys [on-select on-blur value file-select-label clear clearable?]}]
   (let [this      (reagent/current-component)
-        value     (or value (atom nil))
         on-select (or on-select noop)
         clear     (if clearable? (or clear (fn [] (on-select nil))) noop)
-        on-blur   (or on-blur noop)]
-    (fn []
-      [:div
-       {:style {:display "inline-block"}}
-       [:input
-        {:style {:display "none"}
-         :type "file"
-         :on-change (fn [e]
-                      (if-let [file (.item e.target.files 0)]
-                        (on-select file)))
-         :on-blur on-blur}]
-       [:button.btn.btn-primary
+        on-blur   (or on-blur noop)
+        file-select-label (or file-select-label "Select file")]
+    [:div
+     {:style {:display "inline-block"}}
+     [:input
+      {:style {:display "none"}
+       :type "file"
+       :on-change (fn [e]
+                    (if-let [file (.item e.target.files 0)]
+                      (on-select file)))
+       :on-blur on-blur}]
+     [:button.btn.btn-primary
+      {:type "button"
+       :on-click (fn [e]
+                   (-> (reagent/dom-node this)
+                       (.getElementsByTagName "input")
+                       (.item 0)
+                       (.click))
+                   nil)}
+      file-select-label]
+     (if clearable?
+       [:button.btn.btn-default
         {:type "button"
-         :on-click #(-> (reagent/dom-node this)
-                        (.getElementsByTagName "input")
-                        (.item 0)
-                        (.click))}
-        file-select-label]
-       (if clearable?
-         [:button.btn.btn-default
-          {:type "button"
-           :on-click #(clear)}
-          "×"])
-       (if @value
-         [:span.selected-file
-          " " (.-name @value) ", " (humanize-filesize (.-size @value))])])))
+         :on-click #(clear)}
+        "×"])
+     (if @value
+       [:span.selected-file
+        " " (.-name @value) ", " (humanize-filesize (.-size @value))])]))
 
 ;;
 ;; Drag and drop utilities
