@@ -7,8 +7,7 @@
             [lomakkeet.reagent :as f]
             [example.domain :as d]
             [example.reagent.autocomplete :as eac]
-            [example.reagent.forms :as forms]
-            [example.reagent.dev-tools :as dev]))
+            [example.reagent.forms :as forms]))
 
 (enable-console-print!)
 
@@ -16,7 +15,7 @@
 
 (defn thing-view []
   (let [form-data  (reagent/cursor app-state [:example-page])
-        form  (f/create-form form-data :opts {:size 6})
+        form  (f/create-form form-data {:opts {:size 6}})
         form-value (reaction (:value @form-data))
         start (reaction (get-in @form-value [:dates :start]))
         end   (reaction (get-in @form-value [:dates :end]))]
@@ -65,18 +64,11 @@
                                           :initial-value {:dates {}}
                                           :errors {}}}))
 
-(defn dev-view [app-state]
-  (fn []
-    [:div.om-dev-tools-state-tree
-     (dev/tree tree-state @tree-state @app-state [])]))
-
 (defn app-view []
   [:div
    [:h1 "Example Reagent form "
     [:a {:href "https://github.com/metosin/lomakkeet/blob/master/example/src/cljs/example/main.cljs"} "(Code)"]]
-   [thing-view]
-   [:h1 "Reagent state"]
-   [dev-view app-state]])
+   [thing-view]])
 
 (defn restart! []
   (if-let [root (js/document.getElementById "reagent")]

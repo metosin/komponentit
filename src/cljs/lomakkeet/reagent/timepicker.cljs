@@ -2,8 +2,7 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [reagent.ratom :refer-macros [reaction run!]]
             [lomakkeet.date :refer [date->str jsdate->local-date jsdate->date-time]]
-            [lomakkeet.reagent.impl :as impl]
-            [potpuri.core :as p]))
+            [lomakkeet.reagent.impl :as impl]))
 
 (defn- allow-only-numbers [e]
   (if-not (<= 48 (.-which e) 57)

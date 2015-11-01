@@ -5,26 +5,22 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths ["src"]
   :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]
-                 [org.clojure/clojurescript "0.0-3308" :scope "provided"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/clojurescript "1.7.145" :scope "provided"]
                  [prismatic/schema "0.4.3"]
                  [metosin/schema-tools "0.4.1"]
                  [com.andrewmcveigh/cljs-time "0.3.10"]
-                 [cljsjs/pikaday "1.3.2-0"]]
+                 [cljsjs/pikaday "1.3.2-0"]
+                 [reagent "0.5.1"]
+                 ]
   :plugins [[lein-pprint "1.1.2"]]
 
-  :cljsbuild
-  {:builds {:test {:source-paths ["src" "test"]
-                   :notify-command ["phantomjs" :cljs.test/runner
-                                    "test/phantomjs-shims.js"
-                                    "target/testable.js"]}}
-   :test-commands {"test" ["phantomjs" :runner
-                           "test/phantomjs-shims.js"
-                           "target/testable.js"]}}
+  :cljsbuild {:builds {:test {:source-paths ["src" "test"]
+                              :notify-command ["phantomjs" :cljs.test/runner
+                                               "test/phantomjs-shims.js"
+                                               "target/testable.js"]}}}
 
-  :profiles
-  {:dev
-   {:source-paths ["dev-src/clj"]
-    :plugins [[lein-cljsbuild "1.0.4"]
-              [com.cemerick/clojurescript.test "0.3.3"]]
-    :dependencies [[reagent "0.5.0"]]}})
+  :profiles {:dev {:source-paths ["dev-src/clj"]
+                   :plugins [[lein-cljsbuild "1.1.0"]
+                             [lein-figwheel "0.3.5"]
+                             [org.webjars/bootstrap "3.3.4"]]
+                   :dependencies [[figwheel "0.3.5"]]}})

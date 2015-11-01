@@ -1,0 +1,2 @@
+{:require [example.reagent]
+ :asset-path "main.out"}
