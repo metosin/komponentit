@@ -11,14 +11,10 @@ cd gh-pages
 git pull
 )
 
-(
-cd example
-lein cljsbuild once adv
-)
+boot build-example
 
-cp -r example/resources/public/* gh-pages
-cp -r example/target/cljsbuild-adv/public/* gh-pages
-cp -r example/target/generated/css/public/* gh-pages
+rm -r gh-pages/*
+cp -r target/* gh-pages
 
 cd gh-pages
 git add --all

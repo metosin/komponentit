@@ -36,8 +36,7 @@
   cljs {:source-map true}
   less {:source-map true})
 
-(deftask dev
-  []
+(deftask dev []
   (comp
     (watch)
     (less)
@@ -45,3 +44,10 @@
     (cljs-repl)
     (cljs)
     (serve :resource-root "")))
+
+(deftask build-example []
+  (comp
+    (less)
+    (cljs :optimizations :advanced)
+    (sift :to-resource #{#"^index\.html"})
+    (sift :include #{#"^(main.js|example.css|index.html)"})))
