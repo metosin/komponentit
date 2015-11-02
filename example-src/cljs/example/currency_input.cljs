@@ -27,7 +27,10 @@
   (is (= 100000000 (currency-input/str->currency "1 000 000")))
   (is (= 10 (currency-input/str->currency ".10")))
   (is (= 10 (currency-input/str->currency ",10")))
-  (is (= -1055 (currency-input/str->currency "-10,55"))))
+  (is (= -1055 (currency-input/str->currency "-10,55")))
+  (is (= nil (currency-input/str->currency "")))
+  (is (= nil (currency-input/str->currency "  	")))
+  )
 
 (dc/deftest currency->str-test
   (is (= "10,00" (currency-input/currency->str 1000 ",")))

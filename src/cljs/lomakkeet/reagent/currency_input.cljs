@@ -6,9 +6,11 @@
             [lomakkeet.reagent.impl :as impl]))
 
 (defn str->currency [s]
-  (let [[_ minus? a _ b] (re-find #"([-])?(\d*)([,.](\d*))?" (str/replace s #"\s" ""))
-        f (if (seq minus?) - identity)]
-    (f (+ (long (* 100 a)) (some-> b (.substring 0 2) long)))))
+  (if (str/blank? s)
+    nil
+    (let [[_ minus? a _ b] (re-find #"([-])?(\d*)([,.](\d*))?" (str/replace s #"\s" ""))
+          f (if (seq minus?) - identity)]
+      (f (+ (long (* 100 a)) (some-> b (.substring 0 2) long))))))
 
 (defn padded-value [value]
   (if (= 1 (count value))
