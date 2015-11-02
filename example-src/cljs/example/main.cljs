@@ -6,7 +6,8 @@
             example.filepicker
             example.autocomplete
             example.calendar
-            example.timepicker))
+            example.timepicker
+            example.currency-input))
 
 (defn restart! []
   (dc/start-devcard-ui!))

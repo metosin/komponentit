@@ -7,7 +7,8 @@
             [lomakkeet.reagent.datepicker :as date]
             [lomakkeet.reagent.timepicker :as time]
             [lomakkeet.reagent.filepicker :as file]
-            [lomakkeet.reagent.autocomplete :as autocomplete]))
+            [lomakkeet.reagent.autocomplete :as autocomplete]
+            [lomakkeet.reagent.currency-input :as currency-input]))
 
 (defn create-form
   ([data] (create-form data nil))
@@ -67,6 +68,11 @@
   ([form label ks] (complete form label ks nil))
   ([form label ks opts]
    [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)]))
+
+(defn currency-input
+  ([form label ks] (currency-input form label ks nil))
+  ([form label ks opts]
+   [(form-group-com form) form currency-input/currency-input* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
 (def validation-error->str core/validation-error->str)
 (def default-explain-error core/default-explain-error)
