@@ -23,7 +23,7 @@
   (let [form-errors (reaction (:errors @(:data form)))
         error (reaction (get-in @form-errors ks))
         pristine (reaction (not (get-in (:not-pristine @(:data form)) ks)))]
-    (fn []
+    (fn [form content opts]
       [:div.form-group
        {:class (str (if (and (not @pristine) @error) "has-error ")
                     (if (and @pristine @error) "needs-attention ")
@@ -96,7 +96,7 @@
   [form {:keys [ks options attrs]}]
   (let [form-value (reaction (:value @(:data form)))
         value (reaction (get-in @form-value ks))]
-    (fn []
+    (fn [form {:keys [ks options attrs]}]
       [:select.form-control
        (merge
          (merge (get-or-deref (:attrs form)) attrs)
