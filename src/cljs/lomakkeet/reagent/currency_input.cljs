@@ -18,9 +18,11 @@
     value))
 
 (defn currency->str [value delimiter]
-  (str (long (/ value 100))
-       delimiter
-       (padded-value (str (mod (js/Math.abs value) 100)))))
+  (if (nil? value)
+    ""
+    (str (long (/ value 100))
+         delimiter
+         (padded-value (str (mod (js/Math.abs value) 100))))))
 
 (defn currency-input [{:keys [value on-change on-blur currency-symbol delimiter]}]
   (let [temp (r/atom nil)]

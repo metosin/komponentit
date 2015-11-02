@@ -39,4 +39,5 @@
   (is (= "-10,00" (currency-input/currency->str -1000 ",")))
   (is (= "-10,45" (currency-input/currency->str -1045 ",")))
   (is (= "1,00" (currency-input/currency->str 100 ",")))
+  (is (= "" (currency-input/currency->str nil ",")))
   )
