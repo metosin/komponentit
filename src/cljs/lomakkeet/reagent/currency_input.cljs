@@ -5,12 +5,17 @@
             [lomakkeet.core :as l]
             [lomakkeet.reagent.impl :as impl]))
 
+(defn- zero-to-end [s]
+  (if (= 1 (count s))
+    (str s "0")
+    s))
+
 (defn str->currency [s]
   (if (str/blank? s)
     nil
     (let [[_ minus? a _ b] (re-find #"([-])?(\d*)([,.](\d*))?" (str/replace s #"\s" ""))
           f (if (seq minus?) - identity)]
-      (f (+ (long (* 100 a)) (some-> b (.substring 0 2) long))))))
+      (f (+ (long (* 100 a)) (some-> b (.substring 0 2) zero-to-end long))))))
 
 (defn padded-value [value]
   (if (= 1 (count value))
