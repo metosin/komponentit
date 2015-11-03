@@ -1,12 +1,12 @@
 (ns example.dropdown
-  (:require [lomakkeet.reagent.dropdown :refer [dropdown-button dropdown-li]]
+  (:require [lomakkeet.reagent.dropdown :refer [dropdown ->menu-item dropdown-button dropdown-li]]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]
             [example.options :as options])
   (:import [goog.date Date]))
 
-(dc/defcard
+(dc/defcard (str
 "# Dropdowns
 
 There are currently two types of dropdowns on the basis of their container elements:
@@ -18,26 +18,14 @@ Dropdowns can be used for several use cases:
 - As select box
 
 ## Options
-
-- `:text` Text for dropdown toggle element.
-- `:content` Used to pass in dropdown elements as collection of item-maps.
-- `:children` (replaces `:content`) Used to pass in dropdown elements as Reagent hiccup form. Most of other options
-do not work with this option.
-- `:on-change` (Optional, supported by content) Called with item-map when dropdown item is selected.
-- `:value` (Optional, supported by content) Current value, marks list item with equivalent value as active.
-- `:close-on-click` (Default `true`) Close dropdown when any item is selected.
-- `:caret?` (Default `true`) Whether to automatically append caret to text.
+" (:doc (meta #'dropdown)) "
 
 ## Item maps
-
-- `:key` React key
-- `:value` (Optional) Current value
-- `:href` (Optional) A href
-- `:text` Text
+" (:doc (meta #'->menu-item)) "
 
 ## Notes
 
-If item doesn't `:href` attribute, `:on-click` default action is prevented.")
+If item doesn't `:href` attribute, `:on-click` default action is prevented."))
 
 (dc/defcard-rg navbar-links
   "If you want to stay on this page, do not click on the items."

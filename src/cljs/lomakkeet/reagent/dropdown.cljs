@@ -10,9 +10,15 @@
 
 ;; TODO: Key handlers, Up/down, enter, esc
 
-(defn ->menu-item [open?
-                   {:keys [on-change close-on-click?] :as dropdown-opts}
-                   {:keys [separator key text value href] :as item-opts}]
+(defn ->menu-item
+  "- `:key` React key
+  - `:value` (Optional) Current value
+  - `:href` (Optional) A href
+  - `:text` Text
+  "
+  [open?
+   {:keys [on-change close-on-click?] :as dropdown-opts}
+   {:keys [separator key text value href] :as item-opts}]
   (cond
     separator [:li.divider]
     :else
@@ -27,12 +33,14 @@
       text]]))
 
 (defn dropdown
-  "- :el          Component used to render dropdown container
-   - :children    Used to pass in dropdown elements
-   - :content     Used to pass in dropdown contents as collection of item-maps, will be rendered using ->menu-item.
-   - :on-change   (Supported by :content) Called with item-map when dropdown item is selected.
-   - :value       (Supported by :content) Current :value, sets list item as active.
-   - :caret?      Whether to automatically append caret to text."
+  "- `:text` Text for dropdown toggle element.
+  - `:content` Used to pass in dropdown elements as collection of item-maps.
+  - `:children` (replaces `:content`) Used to pass in dropdown elements as Reagent hiccup form. Most of other options
+  do not work with this option.
+  - `:on-change` (Optional, supported by content) Called with item-map when dropdown item is selected.
+  - `:value` (Optional, supported by content) Current value, marks list item with equivalent value as active.
+  - `:close-on-click?` (Default `true`) Close dropdown when any item is selected.
+  - `:caret?` (Default `true`) Whether to automatically append caret to text."
   [{:keys [el content children]}]
   (let [open?  (r/atom false)
         listener (atom nil)]
