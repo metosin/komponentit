@@ -10,30 +10,31 @@
 ;;
 
 (defn normalize [s]
-  ; FIXME:
+  ; FIXME: Normalize unicode characters
   (some-> s string/lower-case))
 
 (defn highlight-string
   ([s query] (highlight-string s query (fn [s] [:span.highlight s])))
   ([s query wrapper]
-   ; FIXME: If normalized strings length is different, this will break!
+   ; Warning: this persumes that the normalization doesn't change the length of string
    (loop [rst s
           r [:span]]
      ; Find first matching term
-     (if-let [[i term] (and (seq rst)
-                            (some (fn [t]
-                                    (let [i (.indexOf (normalize rst) t)]
-                                      (if (not= i -1)
-                                        [i t])))
-                                  query))]
-       ; If match found, recurse the rest of str
-       (let [a (subs rst 0 i)
-             b (subs rst i (+ i (count term)))
-             c (subs rst (+ i (count term)))]
-         (recur c (if (seq a)
-                    (conj r a (wrapper b))
-                    (conj r (wrapper b)))))
-       (conj r rst)))))
+     (let [normalized-rst (normalize rst)]
+       (if-let [[i term] (and (seq rst)
+                              (some (fn [t]
+                                      (let [i (.indexOf normalized-rst t)]
+                                        (if (not= i -1)
+                                          [i t])))
+                                    query))]
+         ; If match found, recurse the rest of str
+         (let [a (subs rst 0 i)
+               b (subs rst i (+ i (count term)))
+               c (subs rst (+ i (count term)))]
+           (recur c (if (seq a)
+                      (conj r a (wrapper b))
+                      (conj r (wrapper b)))))
+         (conj r rst))))))
 
 (defn- query-match? [term-match-fn v query]
   (every? (partial term-match-fn v) query))
