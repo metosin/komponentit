@@ -11,7 +11,7 @@
 ;; TODO: Key handlers, Up/down, enter, esc
 
 (defn ->menu-item [open?
-                   {:keys [on-change close-on-click] :as dropdown-opts}
+                   {:keys [on-change close-on-click?] :as dropdown-opts}
                    {:keys [separator key text value href] :as item-opts}]
   (cond
     separator [:li.divider]
@@ -21,7 +21,7 @@
      [:a {:href (or href "#")
           :on-click (fn [e]
                       (if-not href (.preventDefault e))
-                      (if-not (false? close-on-click) (reset! open? false))
+                      (if-not (false? close-on-click?) (reset! open? false))
                       (if on-change (on-change item-opts))
                       nil)}
       text]]))
@@ -31,7 +31,8 @@
    - :children    Used to pass in dropdown elements
    - :content     Used to pass in dropdown contents as collection of item-maps, will be rendered using ->menu-item.
    - :on-change   (Supported by :content) Called with item-map when dropdown item is selected.
-   - :value       (Supported by :content) Current :value, sets list item as active."
+   - :value       (Supported by :content) Current :value, sets list item as active.
+   - :caret?      Whether to automatically append caret to text."
   [{:keys [el content children]}]
   (let [open?  (r/atom false)
         listener (atom nil)]
@@ -61,7 +62,7 @@
   (swap! open? not)
   nil)
 
-(defn dropdown-li' [open? dropdown {:keys [text]}]
+(defn dropdown-li' [open? dropdown {:keys [text caret?]}]
   [:li {:class (str "dropdown " (if @open? "open "))}
    [:a.dropdown-toggle
     {:href "#"
@@ -69,14 +70,15 @@
      :aria-haspopup true
      :aria-expanded @open?}
     text
-    " "
-    [:span.caret]]
+    (if-not (false? caret?)
+      [:span " "
+       [:span.caret]])]
    dropdown])
 
 (defn dropdown-li [opts]
   [dropdown (assoc opts :el dropdown-li')])
 
-(defn dropdown-button' [open? dropdown {:keys [text]}]
+(defn dropdown-button' [open? dropdown {:keys [text caret?]}]
   [:div
    {:class (str "btn-group " (if @open? "open "))}
    [:button.btn.btn-default.dropdown-toggle
@@ -85,8 +87,9 @@
      :aria-haspopup true
      :aria-expanded @open?}
     text
-    " "
-    [:span.caret]]
+    (if-not (false? caret?)
+      [:span " "
+       [:span.caret]])]
    dropdown])
 
 (defn dropdown-button [opts]
