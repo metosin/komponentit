@@ -12,6 +12,7 @@
   {:inspect-data true})
 
 (dc/defcard-rg datepicker-min-and-max
+  "The selectable date can be limited with min and max dates."
   (fn [date _]
     [datepicker/date {:value @date
                       :on-select (fn [x] (reset! date x))
@@ -21,7 +22,7 @@
   {:inspect-data true})
 
 (dc/defcard-rg datepicker-min-and-max-two-fields
-  "The min and max dates depend on the value of the other field."
+  "The min and max dates can be se reactively based on other inputs."
   (fn [state _]
     [:div
      [:label "Start"]
@@ -34,4 +35,12 @@
                        :min-date (:start @state)}] ])
   (r/atom {:start (Date. 2015 9 22)
            :end   (Date. 2015 9 25)})
+  {:inspect-data true})
+
+(dc/defcard-rg clearable
+  (fn [date _]
+    [datepicker/date {:value @date
+                      :on-select (fn [x] (reset! date x))
+                      :clearable? true}])
+  (r/atom nil)
   {:inspect-data true})

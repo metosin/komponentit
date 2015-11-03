@@ -69,7 +69,7 @@
   ([form label ks opts]
    [(form-group-com form) form autocomplete/autocomplete* (assoc (merge (:opts form) opts) :label label :ks ks)]))
 
-(defn currency-input
+(defn currency
   ([form label ks] (currency-input form label ks nil))
   ([form label ks opts]
    [(form-group-com form) form currency-input/currency-input* (assoc (merge (:opts form) opts) :label label :ks ks)]))

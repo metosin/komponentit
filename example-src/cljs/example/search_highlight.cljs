@@ -11,7 +11,7 @@
 (dc/defcard-rg highlight-example
   [:ul
    [:li [ac/highlight-string "Pekka" ["pek"] wrapper]]
-   [:li [ac/highlight-string "Tämä on joku merkkijono" ["tämä" "merkki"] wrapper]]])
+   [:li [ac/highlight-string "This is a string" ["this" "str"] wrapper]]])
 
 (def lorem "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
 
@@ -31,8 +31,8 @@
   (is (= [:span [:span.foo "Pek"] "ka"]
          (ac/highlight-string "Pekka" ["pek"] (fn [s] [:span.foo s])))
       "wrapper")
-  (is (= [:span "Joo tässä " [:span.highlight "on"] ". Tekstiä " [:span.highlight "okei"] " moi kivaa!"]
-         (ac/highlight-string "Joo tässä on. Tekstiä okei moi kivaa!" ["on" "okei"])))
+  (is (= [:span [:span.highlight "Yeah"] " " [:span.highlight "okay"] ", here is some text."]
+         (ac/highlight-string "Yeah okay, here is some text." ["yeah" "okay"])))
 
   (is (= [:span "Matches terms " [:span.highlight "in"] " " [:span.highlight "any"] " " [:span.highlight "order"] ""]
          (ac/highlight-string "Matches terms in any order"
