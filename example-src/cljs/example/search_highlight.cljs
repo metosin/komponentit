@@ -36,4 +36,4 @@
 
   (is (= [:span "Matches terms " [:span.highlight "in"] " " [:span.highlight "any"] " " [:span.highlight "order"] ""]
          (ac/highlight-string "Matches terms in any order"
-                              ["in" "any" "order"]))))
+                              ["order" "any" "in"]))))
