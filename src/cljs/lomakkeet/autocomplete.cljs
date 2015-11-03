@@ -15,28 +15,23 @@
 
 (defn highlight-string [s query]
   ; FIXME: If normalized strings length is different, this will break!
-  (if query
-    (loop [rst s
-           r [:span]]
-      ; Find first matching term
-      (let [[i match]
-            (reduce (fn [[i :as acc] term]
-                      (let [x (.indexOf (normalize rst) term)]
-                        (if (and (not= x -1) (or (= i -1) (< x i)))
-                          [x (subs rst x (+ x (count term)))]
-                          acc)))
-                    [-1 nil]
-                    query)
-            pre (subs rst 0 i)]
-        (if (not= i -1)
-          (recur (subs rst (+ i (count match)))
-                 (if (seq pre)
-                   (conj r pre [:span.highlight match])
-                   (conj r [:span.highlight match])))
-          (if (seq rst)
-            (conj r rst)
-            r))))
-    [:span s]))
+  (loop [rst s
+         r [:span]]
+    ; Find first matching term
+    (if-let [[i term] (and (seq rst)
+                           (some (fn [t]
+                                   (let [i (.indexOf (normalize rst) t)]
+                                     (if (not= i -1)
+                                       [i t])))
+                                 query))]
+      ; If match found, recurse the rest of str
+      (let [a (subs rst 0 i)
+            b (subs rst i (+ i (count term)))
+            c (subs rst (+ i (count term)))]
+        (recur c (if (seq a)
+                   (conj r a [:span.highlight b])
+                   (conj r [:span.highlight b]))))
+      (conj r rst))))
 
 (defn- query-match? [term-match-fn v query]
   (every? (partial term-match-fn v) query))
