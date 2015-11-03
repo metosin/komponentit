@@ -32,4 +32,8 @@
          (ac/highlight-string "Pekka" ["pek"] (fn [s] [:span.foo s])))
       "wrapper")
   (is (= [:span "Joo tässä " [:span.highlight "on"] ". Tekstiä " [:span.highlight "okei"] " moi kivaa!"]
-         (ac/highlight-string "Joo tässä on. Tekstiä okei moi kivaa!" ["on" "okei"]))))
+         (ac/highlight-string "Joo tässä on. Tekstiä okei moi kivaa!" ["on" "okei"])))
+
+  (is (= [:span "Matches terms " [:span.highlight "in"] " " [:span.highlight "any"] " " [:span.highlight "order"] ""]
+         (ac/highlight-string "Matches terms in any order"
+                              ["in" "any" "order"]))))
