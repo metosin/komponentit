@@ -2,9 +2,9 @@
   :source-paths #{"example-src/cljs" "example-src/less" "example-src/html"}
   :resource-paths #{"src/cljs" "src/less"}
   :dependencies '[[org.clojure/clojure    "1.7.0"      :scope "provided"]
-                  [org.clojure/clojurescript "1.7.145" :scope "provided"]
+                  [org.clojure/clojurescript "1.7.166" :scope "provided"]
                   [boot/core              "2.4.2"      :scope "test"]
-                  [adzerk/boot-cljs       "1.7.48-6"   :scope "test"]
+                  [adzerk/boot-cljs       "1.7.166-1"  :scope "test"]
                   [adzerk/boot-cljs-repl  "0.2.0"      :scope "test"]
                   [adzerk/boot-reload     "0.4.1"      :scope "test"]
                   [deraen/boot-less       "0.4.2"      :scope "test"]
