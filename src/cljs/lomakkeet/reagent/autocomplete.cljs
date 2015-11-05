@@ -56,16 +56,17 @@
 (defn filter-results [term-match-fn n items query value
                       {:keys [item->text multiple? filter-current-out? item->value item->key min-search-length]}]
   (reset! n -1)
-  (let [map-to-seq
+  (let [search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
+                    (not min-search-length))
+
+        map-to-seq
         (if (map? items)
           (map (fn [v] {:key   (key v)
                         :value (val v)}))
           identity)
 
         filter-search
-        (if (and (or (and min-search-length (>= (count (apply str query)) min-search-length))
-                     (not min-search-length))
-                 (and term-match-fn query))
+        (if (and search?  (and term-match-fn query))
           (filter (fn [item] (ac/query-match? term-match-fn item query)))
           identity)
 
@@ -81,7 +82,7 @@
         (map (fn [v] (assoc v ::ac/i (swap! n inc))))
 
         add-highlighted-str
-        (if (seq query)
+        (if (and search? (seq query))
           (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
           identity)]
 
