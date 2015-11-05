@@ -297,7 +297,8 @@
                         (if @open? " input-active dropdown-active ")
                         (if disabled? " disabled ")
                         (if (seq (get-or-deref results)) " items ")
-                        (if (seq (get-or-deref value)) " has-items "))
+                        (let [v (get-or-deref value)]
+                          (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
             :on-click (partial click open? disabled?)}
            (if multiple?
              (doall
