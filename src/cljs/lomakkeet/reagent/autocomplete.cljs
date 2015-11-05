@@ -111,8 +111,7 @@
   (if (satisfies? IDeref x) @x x))
 
 (def ^:private defaults
-  {:value->text (fn [_ x] x)
-   :search-fields [:value]
+  {:value->text get
    :item->key :key
    :item->text :value
    :item-removable? (constantly true)
