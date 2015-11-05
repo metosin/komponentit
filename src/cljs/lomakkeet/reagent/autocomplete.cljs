@@ -53,17 +53,21 @@
       "ArrowDown" (change-selection inc e)
       nil)))
 
+(defn prepare-items [items {:keys [prepare-xform] :as opts}]
+  (let [map-to-seq
+        (if (map? items)
+          (map (fn [v] {:key   (key v)
+                        :value (val v)}))
+          identity)
+
+        prepare-xform (or prepare-xform identity)]
+    (into [] (comp map-to-seq prepare-xform) items)))
+
 (defn filter-results [term-match-fn n items query value
                       {:keys [item->text multiple? filter-current-out? item->value item->key min-search-length max-results]}]
   (reset! n -1)
   (let [search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
                     (not min-search-length))
-
-        map-to-seq
-        (if (map? items)
-          (map (fn [v] {:key   (key v)
-                        :value (val v)}))
-          identity)
 
         filter-search
         (if (and search?  (and term-match-fn query))
@@ -90,7 +94,7 @@
           (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
           identity)]
 
-    (into [] (comp map-to-seq filter-search filter-current limit add-index add-highlighted-str) items)))
+    (into [] (comp filter-search filter-current limit add-index add-highlighted-str) items)))
 
 (defn choice-item [item selected cb {:keys [item->key item->text]}]
   ; (reagent/create-class
@@ -249,9 +253,10 @@
         selected (r/atom 0)
 
         items (if load-items (r/atom nil) items)
+        prepared-items (reaction (prepare-items (get-or-deref items) opts))
 
         n (r/atom -1)
-        results (reaction (filter-results term-match-fn n (get-or-deref items) @query (if filter-current-out? @value) opts))
+        results (reaction (filter-results term-match-fn n @prepared-items @query (if filter-current-out? @value) opts))
         ; FIXME: Hack?
         results (if group-by (reaction (clojure.core/group-by group-by @results)) results)
 
