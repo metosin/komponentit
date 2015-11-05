@@ -1,18 +1,18 @@
 (ns lomakkeet.date
   (:require [goog.string :as gs]
-            [goog.date :as date])
+            goog.date.Date)
   (:import [goog.i18n DateTimeFormat DateTimeParse]))
 
 (defn jsdate->local-date [v]
   (if v
-    (doto (date/Date.)
+    (doto (goog.date.Date.)
       (.setYear (.getFullYear v))
       (.setMonth (.getMonth v))
       (.setDate (.getDate v)))))
 
 (defn jsdate->date-time [v]
   (if v
-    (doto (date/UtcDateTime.)
+    (doto (goog.date.UtcDateTime.)
       (.setYear (.getFullYear v))
       (.setMonth (.getMonth v))
       (.setDate (.getDate v))
@@ -49,7 +49,7 @@
     (.format (DateTimeFormat. f) d)))
 
 (defn date-read [s f]
-  (let [date (date/Date. 0 0 0)]
+  (let [date (goog.date.Date. 0 0 0)]
     (.strictParse (DateTimeParse. f) s date)
     (if (not= 0 (.getYear date))
       date)))
