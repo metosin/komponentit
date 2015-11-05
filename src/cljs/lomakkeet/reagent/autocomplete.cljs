@@ -54,7 +54,7 @@
       nil)))
 
 (defn filter-results [term-match-fn n items query value
-                      {:keys [item->text multiple? filter-current-out? item->value item->key min-search-length]}]
+                      {:keys [item->text multiple? filter-current-out? item->value item->key min-search-length max-results]}]
   (reset! n -1)
   (let [search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
                     (not min-search-length))
@@ -78,6 +78,10 @@
                       (fn [item] (= (item->value item) value)))))
           identity)
 
+        limit (if max-results
+                (take max-results)
+                identity)
+
         add-index
         (map (fn [v] (assoc v ::ac/i (swap! n inc))))
 
@@ -86,7 +90,7 @@
           (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
           identity)]
 
-    (into [] (comp map-to-seq filter-search filter-current add-index add-highlighted-str) items)))
+    (into [] (comp map-to-seq filter-search filter-current limit add-index add-highlighted-str) items)))
 
 (defn choice-item [item selected cb {:keys [item->key item->text]}]
   ; (reagent/create-class
@@ -154,7 +158,7 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected select-cb {:keys [multiple? group-by groups no-results-text cb max-results item->key] :as opts}]
+       (fn [results container-state selected select-cb {:keys [multiple? group-by groups no-results-text cb item->key] :as opts}]
          [:div
           {:class (str "selectize-dropdown " (if multiple? "multi " "single ") (if @top? "above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
@@ -175,9 +179,7 @@
                  r
                  [:div.option no-results-text]))
              (if (seq results)
-               (for [item (if max-results
-                            (take max-results results)
-                            results)]
+               (for [item results]
                  ^{:key (item->key item)}
                  [choice-item item selected select-cb opts])
                [:div.option no-results-text]))]])})))
