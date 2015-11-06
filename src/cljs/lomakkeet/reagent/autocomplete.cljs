@@ -129,7 +129,7 @@
    :not-results-text "No results"})
 
 (defn- assert-opts [{:keys [items load-items filter-current-out? value-is-search? multiple? value cb]
-                    :as opts}]
+                     :as opts}]
   (assert (not (and items load-items)) ":items and :load-items are exclusive.")
   (assert (if (or load-items filter-current-out?) (satisfies? IDeref value) true)
           "Using either :load-items or :filter-current-out? requires dereffable value")
