@@ -12,7 +12,8 @@
    :week-short "W"
    :start "Start"
    :end "End"
-   :date-format "d.M.yyyy"})
+   :date-format "d.M.yyyy"
+   :date-placeholder "dd.mm.yyyy"})
 
 (def default-icons
   {:previous "<"
@@ -56,7 +57,7 @@
                        (on-change (date/date-read @input-value (loc i18n :date-format))))
                      (reset! input-value nil)
                      nil)
-          :placeholder (loc i18n :date-format)
+          :placeholder (loc i18n :date-placeholder)
           :value (str (or @input-value
                           (date/date-format value (loc i18n :date-format))))}]
         (if (and @input-value (not (date/date-read @input-value (loc i18n :date-format))))
