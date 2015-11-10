@@ -30,7 +30,7 @@
      [calendar/date-range
       {:start (:start @state)
        :end (:end @state)
-       :on-change #(reset! state %)
+       :on-change #(swap! state merge %)
        :week-numbers? (:week-numbers? @state)
        :quicklist? (:quicklist? @state)
        :date-input? (:date-input? @state)}]
