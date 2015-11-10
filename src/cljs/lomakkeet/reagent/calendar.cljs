@@ -4,20 +4,41 @@
             [lomakkeet.date :as date]
             [cljs-time.core :as t]))
 
+(def default-i18n
+  {:today "Today"
+   :this-week "This week"
+   :this-month "This month"
+   :start "Start"
+   :end "End"})
+
+(def default-icons
+  {:previous "<"
+   :next ">"
+   :warning "!"
+   :submit ">"})
+
+(defn loc [i18n k]
+  (or (get i18n k)
+      (get default-i18n k)))
+
+(defn icon [icons k]
+  (or (get icons k)
+      (get default-icons k)))
+
 (defn first-day-of-the-week [day]
   (t/minus day (t/days (dec (t/day-of-week day)))))
 
 (defn last-day-of-the-week [day]
   (t/plus day (t/days (- 7 (t/day-of-week day)))))
 
-(defn create-quicklist []
-  (into [{:name "Tämä päivä"
+(defn create-quicklist [{:keys [i18n]}]
+  (into [{:name  (loc i18n :today)
           :start (t/today)
           :end   (t/today)}
-         {:name "Tämä viikko"
+         {:name  (loc i18n :this-week)
           :start (first-day-of-the-week (t/today))
           :end   (last-day-of-the-week (t/today))}
-         {:name "Tämä kuukausi"
+         {:name  (loc i18n :this-month)
           :start (t/first-day-of-the-month (t/today))
           :end   (t/last-day-of-the-month (t/today))}]
         (for [i (range 1 6)
@@ -26,7 +47,7 @@
            :start (t/first-day-of-the-month month)
            :end   (t/last-day-of-the-month month)})))
 
-(defn date-input [value type on-change]
+(defn date-input [value type on-change {:keys [icons]}]
   (let [input-value (r/atom nil)]
     (fn [value type on-change]
       [:form
@@ -46,8 +67,8 @@
                                (reset! input-value (if (seq x) x nil))))
           :value (str (or @input-value
                           (date/date-format value "dd.MM.yyyy")))}]
-        (if (and @input-value (not (date/date-read @input-value "dd.MM.yyyy"))) [:span.input-group-btn [:span.btn.btn-danger [:i.fa.fa-warning]]])
-        (if (and @input-value (date/date-read @input-value "dd.MM.yyyy")) [:span.input-group-btn [:button.btn.btn-success {:type "submit"} [:i.fa.fa-check]]])
+        (if (and @input-value (not (date/date-read @input-value "dd.MM.yyyy"))) [:span.input-group-btn [:span.btn.btn-danger (icon icons :warning) #_[:i.fa.fa-warning]]])
+        (if (and @input-value (date/date-read @input-value "dd.MM.yyyy")) [:span.input-group-btn [:button.btn.btn-success {:type "submit"} (icon icons :submit) #_ [:i.fa.fa-check]]])
         ]])))
 
 (defn- build-month [day]
@@ -61,10 +82,10 @@
             {:date date
              :out (not (= (t/month day) (t/month date)))}))))))
 
-(defn month-calendar [{:keys [value start end text value on-change]}]
+(defn month-calendar [{:keys [value start end text value on-change icons] :as opts}]
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
-    (fn [{:keys [value start end text value on-change]}]
+    (fn [{:keys [value start end text value on-change icons]}]
       ; HACK: Is there any better way to reset month to default when value changes?
       (if (not= value @prev-val)
         (reset! month-x nil))
@@ -86,14 +107,16 @@
              [:button.btn.btn-date.prev
               {:type "button"
                :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
-              [:i.fa.fa-caret-left]]]
+              (icon icons :previous)
+              #_[:i.fa.fa-caret-left]]]
             [:th {:col-span 6}
-             [date-input value text on-change]]
+             [date-input value text on-change opts]]
             [:th.next
              [:button.btn.btn-date.next
               {:type "button"
                :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
-              [:i.fa.fa-caret-right]]]]
+              (icon icons :next)
+              #_[:i.fa.fa-caret-right]]]]
            [:tr
             [:th.text-center {:col-span 8}
              (string/capitalize (date/date-format date "LLLL"))]]
@@ -123,7 +146,7 @@
                      :on-click (fn [_] (on-change (:date day)))}
                     (date/date-format (:date day) "d")]]))))]]))))
 
-(defn quicklist [{:keys [start end on-change]}]
+(defn quicklist [{:keys [start end on-change] :as opts}]
   [:div.month-calendar
    [:h4 "Pikavalinnat"]
    [:ul
@@ -134,7 +157,7 @@
           {:on-click (fn [_] (on-change (select-keys item [:start :end])))
            :class (str (if (and (.equals (:start item) start) (.equals (:end item) end)) "active "))}
           (:name item)]])
-      (create-quicklist))]])
+      (create-quicklist opts))]])
 
 (defn set-start [{:keys [end]} x]
   {:start x :end (if (> x end) x end)})
@@ -142,16 +165,16 @@
 (defn set-end [{:keys [start]} x]
   {:end x :start (if (< x start) x start)})
 
-(defn date-range [{:keys [start end on-change] :as opts}]
+(defn date-range [{:keys [start end on-change i18n] :as opts}]
   [:div.date-range
    [month-calendar
     (assoc opts
-           :text "Alku"
+           :text (loc i18n :start)
            :value start
            :on-change (fn [x] (on-change (set-start {:end end} x))))]
    [month-calendar
     (assoc opts
-           :text "Loppu"
+           :text (loc i18n :end)
            :value end
            :on-change (fn [x] (on-change (set-end {:start start} x))))]
    [quicklist

@@ -7,7 +7,6 @@
 (dc/defcard "# Work in progress")
 
 (dc/defcard-rg month-calendar
-  "*FIXME*: Depends on font-awesome."
   (fn [date _]
     [:div
      [calendar/month-calendar
@@ -18,7 +17,6 @@
   {:inspect-data true})
 
 (dc/defcard-rg date-range
-  "*TODO*: Localization."
   (fn [state _]
     [:div
      [calendar/date-range
