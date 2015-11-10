@@ -57,7 +57,7 @@
 (defn time
   ([form label ks] (time form label ks nil))
   ([form label ks opts]
-   [(form-group-com form) form time/time* (merge (:opts form) opts {:label label :ks ks})]))
+   [(form-group-com form) form time/timepicker* (merge (:opts form) opts {:label label :ks ks})]))
 
 (defn file
   ([form label ks] (file form label ks nil))
