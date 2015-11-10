@@ -5,7 +5,8 @@
             [cljs-time.core :as t]))
 
 (def default-i18n
-  {:today "Today"
+  {:quicklist "Quicklist"
+   :today "Today"
    :this-week "This week"
    :this-month "This month"
    :start "Start"
@@ -30,22 +31,6 @@
 
 (defn last-day-of-the-week [day]
   (t/plus day (t/days (- 7 (t/day-of-week day)))))
-
-(defn create-quicklist [{:keys [i18n]}]
-  (into [{:name  (loc i18n :today)
-          :start (t/today)
-          :end   (t/today)}
-         {:name  (loc i18n :this-week)
-          :start (first-day-of-the-week (t/today))
-          :end   (last-day-of-the-week (t/today))}
-         {:name  (loc i18n :this-month)
-          :start (t/first-day-of-the-month (t/today))
-          :end   (t/last-day-of-the-month (t/today))}]
-        (for [i (range 1 6)
-              :let [month (t/minus (t/today) (t/months i))]]
-          {:name (string/capitalize (date/date-format month "LLLL"))
-           :start (t/first-day-of-the-month month)
-           :end   (t/last-day-of-the-month month)})))
 
 (defn date-input [value type on-change {:keys [icons]}]
   (let [input-value (r/atom nil)]
@@ -146,18 +131,32 @@
                      :on-click (fn [_] (on-change (:date day)))}
                     (date/date-format (:date day) "d")]]))))]]))))
 
-(defn quicklist [{:keys [start end on-change] :as opts}]
+(defn quicklist-item [{:keys [start end on-change i18n]} item]
+  [:li
+   [:a
+    {:on-click (fn [_] (on-change (select-keys item [:start :end])))
+     :class (str (if (and (.equals (:start item) start) (.equals (:end item) end)) "active "))}
+    (:name item)]] )
+
+(defn quicklist [{:keys [start end on-change i18n] :as opts}]
   [:div.month-calendar
-   [:h4 "Pikavalinnat"]
+   [:h4 (loc i18n :quicklist)]
    [:ul
-    (map-indexed
-      (fn [i item]
-        [:li {:key i}
-         [:a
-          {:on-click (fn [_] (on-change (select-keys item [:start :end])))
-           :class (str (if (and (.equals (:start item) start) (.equals (:end item) end)) "active "))}
-          (:name item)]])
-      (create-quicklist opts))]])
+    [quicklist-item opts {:name  (loc i18n :today)
+                          :start (t/today)
+                          :end   (t/today)}]
+    [quicklist-item opts {:name  (loc i18n :this-week)
+                          :start (first-day-of-the-week (t/today))
+                          :end   (last-day-of-the-week (t/today))}]
+    [quicklist-item opts {:name  (loc i18n :this-month)
+                          :start (t/first-day-of-the-month (t/today))
+                          :end   (t/last-day-of-the-month (t/today))}]
+    (for [i (range 1 6)
+              :let [month (t/minus (t/today) (t/months i))]]
+      ^{:key i}
+      [quicklist-item opts {:name (string/capitalize (date/date-format month "LLLL"))
+                            :start (t/first-day-of-the-month month)
+                            :end   (t/last-day-of-the-month month)}])]])
 
 (defn set-start [{:keys [end]} x]
   {:start x :end (if (> x end) x end)})
