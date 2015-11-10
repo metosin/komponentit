@@ -9,8 +9,10 @@
    :today "Today"
    :this-week "This week"
    :this-month "This month"
+   :week-short "W"
    :start "Start"
-   :end "End"})
+   :end "End"
+   :date-format "d.M.yyyy"})
 
 (def default-icons
   {:previous "<"
@@ -32,28 +34,35 @@
 (defn last-day-of-the-week [day]
   (t/plus day (t/days (- 7 (t/day-of-week day)))))
 
-(defn date-input [value type on-change {:keys [icons]}]
+(defn date-input [value type on-change {:keys [icons i18n]}]
   (let [input-value (r/atom nil)]
     (fn [value type on-change]
       [:form
        {:on-submit (fn [e]
                      (.preventDefault e)
                      (.stopPropagation e)
-                     (js/console.log @input-value)
-                     (js/console.log (date/date-read @input-value "dd.MM.yyyy"))
-                     (on-change (date/date-read @input-value "dd.MM.yyyy"))
+                     (on-change (date/date-read @input-value (loc i18n :date-format)))
                      (reset! input-value nil)
                      nil)}
        [:div.input-group.input-group-sm
         [:span.input-group-addon type]
         [:input.form-control
          {:type "text"
-          :on-change (fn [e] (let [x (string/trim (.. e -target -value))]
-                               (reset! input-value (if (seq x) x nil))))
+          :on-change (fn [e]
+                       (let [x (string/trim (.. e -target -value))]
+                         (reset! input-value x)))
+          :on-blur (fn [e]
+                     (if (seq @input-value)
+                       (on-change (date/date-read @input-value (loc i18n :date-format))))
+                     (reset! input-value nil)
+                     nil)
+          :placeholder (loc i18n :date-format)
           :value (str (or @input-value
-                          (date/date-format value "dd.MM.yyyy")))}]
-        (if (and @input-value (not (date/date-read @input-value "dd.MM.yyyy"))) [:span.input-group-btn [:span.btn.btn-danger (icon icons :warning) #_[:i.fa.fa-warning]]])
-        (if (and @input-value (date/date-read @input-value "dd.MM.yyyy")) [:span.input-group-btn [:button.btn.btn-success {:type "submit"} (icon icons :submit) #_ [:i.fa.fa-check]]])
+                          (date/date-format value (loc i18n :date-format))))}]
+        (if (and @input-value (not (date/date-read @input-value (loc i18n :date-format))))
+          [:span.input-group-btn [:span.btn.btn-danger (icon icons :warning) #_[:i.fa.fa-warning]]])
+        (if (and @input-value (date/date-read @input-value (loc i18n :date-format)))
+          [:span.input-group-btn [:button.btn.btn-success {:type "submit"} (icon icons :submit) #_ [:i.fa.fa-check]]])
         ]])))
 
 (defn- build-month [day]
@@ -67,7 +76,7 @@
             {:date date
              :out (not (= (t/month day) (t/month date)))}))))))
 
-(defn month-calendar [{:keys [value start end text value on-change icons] :as opts}]
+(defn month-calendar [{:keys [value start end text value on-change i18n icons] :as opts}]
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
     (fn [{:keys [value start end text value on-change icons]}]
@@ -107,7 +116,7 @@
              (string/capitalize (date/date-format date "LLLL"))]]
            [:tr
             (into
-              [:th "Vk"]
+              [:th (loc i18n :week-short)]
               (for [day (first month)]
                 [:th
                  (date/date-format (:date day) "E")]))]]
