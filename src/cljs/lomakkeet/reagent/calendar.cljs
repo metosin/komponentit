@@ -20,9 +20,9 @@
          {:name "Tämä kuukausi"
           :start (t/first-day-of-the-month (t/today))
           :end   (t/last-day-of-the-month (t/today))}]
-        (for [i (range 6)
+        (for [i (range 1 6)
               :let [month (t/minus (t/today) (t/months i))]]
-          {:name (date/date-format month "MMMM")
+          {:name (string/capitalize (date/date-format month "LLLL"))
            :start (t/first-day-of-the-month month)
            :end   (t/last-day-of-the-month month)})))
 
@@ -96,7 +96,7 @@
               [:i.fa.fa-caret-right]]]]
            [:tr
             [:th.text-center {:col-span 8}
-             (date/date-format date "MMMM")]]
+             (string/capitalize (date/date-format date "LLLL"))]]
            [:tr
             (into
               [:th "Vk"]
