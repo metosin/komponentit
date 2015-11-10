@@ -20,5 +20,6 @@
    [:tbody
     (for [[k type] options]
       [:tr
+       {:key k}
        [:td [:code ":" (name k)]]
        [:td [field k (get current k) type (fn [v] (cb k v))]]])]])

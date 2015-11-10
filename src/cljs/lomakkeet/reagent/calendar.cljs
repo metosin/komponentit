@@ -13,6 +13,7 @@
    :start "Start"
    :end "End"
    :date-format "d.M.yyyy"
+   :month-format "LLLL yyyy"
    :date-placeholder "dd.mm.yyyy"})
 
 (def default-icons
@@ -77,10 +78,10 @@
             {:date date
              :out (not (= (t/month day) (t/month date)))}))))))
 
-(defn month-calendar [{:keys [value start end text value on-change i18n icons] :as opts}]
+(defn month-calendar [_]
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
-    (fn [{:keys [value start end text value on-change icons]}]
+    (fn [{:keys [value start end text value on-change icons week-numbers? date-input? i18n] :as opts}]
       ; HACK: Is there any better way to reset month to default when value changes?
       (if (not= value @prev-val)
         (reset! month-x nil))
@@ -95,37 +96,56 @@
                         (on-change x))
             month (build-month date)]
         [:div.month-calendar
-         [:table.table
+         [:table
+          {:class (str "table " (if week-numbers? "with-week-numbers "))}
           [:thead
-           [:tr.head1
-            [:th.prev
-             [:button.btn.btn-date.prev
-              {:type "button"
-               :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
-              (icon icons :previous)
-              #_[:i.fa.fa-caret-left]]]
-            [:th {:col-span 6}
-             [date-input value text on-change opts]]
-            [:th.next
-             [:button.btn.btn-date.next
-              {:type "button"
-               :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
-              (icon icons :next)
-              #_[:i.fa.fa-caret-right]]]]
+           (if (or (true? date-input?) (nil? date-input?))
+             [:tr.head1
+              [:th.prev
+               [:button.btn.btn-date.prev
+                {:type "button"
+                 :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
+                (icon icons :previous)
+                #_[:i.fa.fa-caret-left]]]
+              [:th {:col-span (if week-numbers? 6 5)}
+               [date-input value text on-change opts]]
+              [:th.next
+               [:button.btn.btn-date.next
+                {:type "button"
+                 :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
+                (icon icons :next)
+                #_[:i.fa.fa-caret-right]]]])
+           (if (or (true? date-input?) (nil? date-input?))
+             [:tr
+              [:th.text-center {:col-span (if week-numbers? 8 7)}
+               (string/capitalize (date/date-format date (loc i18n :month-format)))]]
+             [:tr
+              [:th.prev
+               [:button.btn.btn-date.prev
+                {:type "button"
+                 :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
+                (icon icons :previous)
+                #_[:i.fa.fa-caret-left]]]
+              [:th.text-center {:col-span (if week-numbers? 6 5)}
+               (string/capitalize (date/date-format date (loc i18n :month-format)))]
+              [:th.next
+               [:button.btn.btn-date.next
+                {:type "button"
+                 :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
+                (icon icons :next)
+                #_[:i.fa.fa-caret-right]]] ])
            [:tr
-            [:th.text-center {:col-span 8}
-             (string/capitalize (date/date-format date "LLLL"))]]
-           [:tr
-            (into
-              [:th (loc i18n :week-short)]
-              (for [day (first month)]
-                [:th
-                 (date/date-format (:date day) "E")]))]]
+            (if week-numbers? [:th (loc i18n :week-short)])
+            (for [day (first month)
+                  :let [w (date/date-format (:date day) "E")]]
+              [:th {:key w} w])]]
           (into
             [:tbody]
             (for [week month]
               (into
-                [:tr [:td.week (date/date-format (:date (first week)) "w")]]
+                [:tr
+                 (if week-numbers?
+                   [:td.week (date/date-format (:date (first week)) "w")])]
                 (for [day week]
                   [:td
                    {:class (str (if (:out day) "out ")
@@ -174,7 +194,7 @@
 (defn set-end [{:keys [start]} x]
   {:end x :start (if (or (not start) (< x start)) x start)})
 
-(defn date-range [{:keys [start end on-change i18n] :as opts}]
+(defn date-range [{:keys [start end on-change i18n quicklist?] :as opts}]
   [:div.date-range
    [month-calendar
     (assoc opts
@@ -186,7 +206,8 @@
            :text (loc i18n :end)
            :value end
            :on-change (fn [x] (on-change (set-end {:start start} x))))]
-   [quicklist
-    (assoc opts
-           :on-change (fn [{:keys [start end] :as x}]
-                        (on-change x)))]])
+   (if (or (true? quicklist?) (nil? quicklist?))
+     [quicklist
+      (assoc opts
+             :on-change (fn [{:keys [start end] :as x}]
+                          (on-change x)))])])
