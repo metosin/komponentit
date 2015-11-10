@@ -22,7 +22,11 @@
      [calendar/date-range
       {:start (:start @state)
        :end (:end @state)
-       :on-change #(reset! state %)}]])
+       :on-change #(reset! state %)}]
+     [:button
+      {:type "button"
+       :on-click (fn [_] (swap! state assoc :start nil :end nil) nil)}
+      "Reset"]])
   (r/atom {:start nil
            :end nil})
   {:inspect-data true})

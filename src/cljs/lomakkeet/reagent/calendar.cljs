@@ -76,10 +76,10 @@
         (reset! month-x nil))
       (reset! prev-val value)
 
-      (let [value (or value (t/today))
+      (let [value' (or value (t/today))
             date  (if @month-x
-                    (t/plus value (t/months @month-x))
-                    value)
+                    (t/plus value' (t/months @month-x))
+                    value')
             on-change (fn [x]
                         (reset! month-x nil)
                         (on-change x))
@@ -159,10 +159,10 @@
                             :end   (t/last-day-of-the-month month)}])]])
 
 (defn set-start [{:keys [end]} x]
-  {:start x :end (if (> x end) x end)})
+  {:start x :end (if (or (not end)  (> x end)) x end)})
 
 (defn set-end [{:keys [start]} x]
-  {:end x :start (if (< x start) x start)})
+  {:end x :start (if (or (not start) (< x start)) x start)})
 
 (defn date-range [{:keys [start end on-change i18n] :as opts}]
   [:div.date-range
