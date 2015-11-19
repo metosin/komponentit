@@ -109,7 +109,6 @@
      (fn [this]
        (let [i (::ac/i (r/props this))
              [selected] (r/children this)]
-         (js/console.log i selected)
          (if (= i selected)
            (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :reagent-render
