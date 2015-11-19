@@ -269,6 +269,7 @@
         select-cb
         (fn [v]
           (cb v)
+          (reset! search nil)
           (reset! open? false))
 
         focus-input (fn [this]
