@@ -5,7 +5,8 @@
             [lomakkeet.autocomplete :as ac]
             [lomakkeet.reagent.impl :as impl]
             [lomakkeet.reagent.mixins :as mixins]
-            [goog.dom.classes :as classes]))
+            [goog.dom.classes :as classes]
+            [goog.style :refer [scrollIntoContainerView]]))
 
 (defn blur [open? search e]
   (when (.-relatedTarget e)
@@ -97,24 +98,24 @@
     (into [] (comp filter-search filter-current limit add-index add-highlighted-str) items)))
 
 (defn choice-item [item selected cb {:keys [item->key item->text]}]
-  ; (reagent/create-class
-  ;   {:component-did-mount
-  ;    (fn [this]
-  ;      (if (= (::ac/i item) @selected)
-  ;        (.scrollIntoView (reagent/dom-node this))))
-  ;    :component-did-update
-  ;    (fn [this]
-  ;      (if (= (::ac/i item) @selected)
-  ;        (.scrollIntoView (reagent/dom-node this))))
-  ;    :reagent-render
-  ;    (fn []
+  (r/create-class
+    {:component-did-mount
+     (fn [this]
+       (if (= (::ac/i item) @selected)
+         (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true)))
+     :component-did-update
+     (fn [this]
+       (if (= (::ac/i item) @selected)
+         (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true)))
+     :reagent-render
+     (fn [item selected cb {:keys [item->key item->text]}]
        [:div
         {:key (item->key item)
          :on-click (fn [& _]
                      (cb item)
                      nil)
          :class (str "option " (if (= (::ac/i item) @selected) "active"))}
-        (or (::text item) (item->text item))]);}))
+        (or (::text item) (item->text item))])}))
 
 (defn get-or-deref [x]
   (if (satisfies? IDeref x) @x x))
