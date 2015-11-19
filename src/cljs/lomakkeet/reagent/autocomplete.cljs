@@ -127,7 +127,7 @@
    :item-removable? (constantly true)
    :value->search identity
    :->query ac/default->query
-   :not-results-text "No results"})
+   :no-results-text "No results"})
 
 (defn- assert-opts [{:keys [items load-items filter-current-out? value-is-search? multiple? value cb]
                      :as opts}]
