@@ -108,11 +108,11 @@
        (if (= (::ac/i item) @selected)
          (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true)))
      :reagent-render
-     (fn [item selected cb {:keys [item->key item->text]}]
+     (fn [item selected select-cb {:keys [item->key item->text]}]
        [:div
         {:key (item->key item)
          :on-click (fn [& _]
-                     (cb item)
+                     (select-cb item)
                      nil)
          :class (str "option " (if (= (::ac/i item) @selected) "active"))}
         (or (::text item) (item->text item))])}))
