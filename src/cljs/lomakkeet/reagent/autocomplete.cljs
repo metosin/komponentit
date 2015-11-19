@@ -97,16 +97,21 @@
 
     (into [] (comp filter-search filter-current limit add-index add-highlighted-str) items)))
 
-(defn choice-item [item selected cb {:keys [item->key item->text]}]
+(defn choice-item [_ _ _ _]
   (r/create-class
     {:component-did-mount
      (fn [this]
-       (if (= (::ac/i item) @selected)
-         (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true)))
+       (let [i (::ac/i (r/props this))
+             [selected] (r/children this)]
+         (if (= i selected)
+           (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :component-did-update
      (fn [this]
-       (if (= (::ac/i item) @selected)
-         (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true)))
+       (let [i (::ac/i (r/props this))
+             [selected] (r/children this)]
+         (js/console.log i selected)
+         (if (= i selected)
+           (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :reagent-render
      (fn [item selected select-cb {:keys [item->key item->text]}]
        [:div
@@ -114,7 +119,7 @@
          :on-click (fn [& _]
                      (select-cb item)
                      nil)
-         :class (str "option " (if (= (::ac/i item) @selected) "active"))}
+         :class (str "option " (if (= (::ac/i item) selected) "active"))}
         (or (::text item) (item->text item))])}))
 
 (defn get-or-deref [x]
@@ -338,7 +343,7 @@
               {:on-click #(select-cb nil)}
               "×"])]
           (if @open?
-            [autocomplete-contents @results @state selected select-cb opts])])})))
+            [autocomplete-contents @results @state @selected select-cb @search opts])])})))
 
 (defn autocomplete*
   [form {:keys [ks item->value item->key multiple? cb remove-cb disabled?]
