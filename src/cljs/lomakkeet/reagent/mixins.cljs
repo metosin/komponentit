@@ -9,15 +9,17 @@
 
 (defn create-closable
   "Returns a function which can be called to remove the event handlers."
-  [open?]
-  (let [click-handler (fn [e]
-                        (reset! open? false))
-        key-handler (fn [e]
-                      (case (.-key e)
-                        "Esc" (reset! open? false)
-                        nil))]
-    (events/listen js/window EventType.CLICK click-handler)
-    (events/listen js/window EventType.KEYUP key-handler)
+  [close-cb]
+  (let [click-handler
+        (events/listen js/window EventType.CLICK (fn [e]
+                                                   (close-cb)
+                                                   nil))
+        key-handler
+        (events/listen js/window EventType.KEYUP (fn [e]
+                                                   (case (.-key e)
+                                                     "Esc" (close-cb)
+                                                     nil)
+                                                   nil))]
     (fn []
-      (events/unlisten js/window EventType.CLICK click-handler)
-      (events/unlisten js/window EventType.KEYUP key-handler))))
+      (events/unlistenByKey click-handler)
+      (events/unlistenByKey key-handler))))

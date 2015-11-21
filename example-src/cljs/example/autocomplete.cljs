@@ -3,10 +3,11 @@
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]))
 
-(def simple-items (into (sorted-map)
-                        (map (fn [i]
-                               [i (str "Option " i)])
-                             (range 50))))
+(defn simple-items [n]
+  (into (sorted-map)
+        (map (fn [i]
+               [i (str "Option " i)])
+             (range n))))
 
 (dc/defcard
 "# Autocomplete
@@ -34,7 +35,8 @@ Items can be provided as:
     [autocomplete/autocomplete
      {:value @value
       :cb (fn [item] (reset! value (:key item)))
-      :items simple-items}])
+      :search-fields [:value]
+      :items (simple-items 50)}])
   (r/atom nil)
   {:inspect-data true})
 
@@ -45,7 +47,27 @@ Items can be provided as:
       :cb (fn [item] (swap! value conj (:key item)))
       ; FIXME: Remove-cb is called with value, not item
       :remove-cb (fn [x] (swap! value disj x))
-      :items simple-items
+      :search-fields [:value]
+      :items (simple-items 50)
       :multiple? true}])
   (r/atom #{})
   {:inspect-data true})
+
+(dc/defcard-rg create-new-items
+  (fn [state _]
+    [autocomplete/autocomplete
+     {:value (:value @state)
+      :cb (fn [item] (swap! state assoc :value (:key item)))
+      :search-fields [:value]
+      :items (:items @state)
+      :create (fn [s]
+                (swap! state assoc-in [:items (long s)] (str "Option " s))
+                (swap! state assoc :value (long s)))}])
+  (r/atom {:items (simple-items 5)
+           :value nil})
+  {:inspect-data true})
+
+(dc/defcard
+"# TODO
+
+- Long search text doesn't show as the input element is small")
