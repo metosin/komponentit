@@ -141,7 +141,8 @@
            :on-click (fn [& _]
                        (cb item)
                        nil)
-           :class (str "option " (if (= (::ac/i item) selected) "active"))}
+           :class (str "option " (if (or (= (::ac/i item) selected)
+                                         (= value (item->value item))) "active"))}
           (or (::text item) (item->text item))]))}))
 
 (def ^:private defaults
