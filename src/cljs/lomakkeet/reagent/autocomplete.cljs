@@ -48,7 +48,7 @@
     (if cb (cb v)))
   nil)
 
-(defn key-down [this find-by-selection cb e]
+(defn key-down [this find-by-selection cb opts e]
   (let [{:keys [results selected n]} (r/state this)
         change-selection (fn change-selection  [f e]
                            (r/set-state this {:selected (util/limit 0 n (f (:selected (r/state this))))})
@@ -64,6 +64,8 @@
                   (cb v)
                   (r/set-state this {:open? false :search nil})))
       "Escape" (r/set-state this {:open? false :search nil})
+      "Backspace" (if-let [remove-cb (:remove-cb opts)]
+                    (remove-cb (last (:value opts))))
       "ArrowUp" (change-selection dec e)
       "ArrowDown" (change-selection inc e)
       nil)))
@@ -380,7 +382,7 @@
                           (blur this opts e)
                           (if on-blur (on-blur e)))
              :on-change (partial change this nil opts)
-             :on-key-down (partial key-down this find-by-selection select-cb)
+             :on-key-down (partial key-down this find-by-selection select-cb opts)
              :auto-complete false
              :disabled disabled?
              :type "text"

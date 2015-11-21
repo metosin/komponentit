@@ -18,6 +18,7 @@
 - Item is selected by mouse or enter.
 - Closes when unfocused, with ESC or when clicked outside.
 - Selection can be moved with up and down arrows.
+- In multiple selection mode, selected items can be removed with Backspace.
 - Searchable. Matches are highlighted.
 - Multiple selection
 - Items provided to component can be updated during the components lifecycle
