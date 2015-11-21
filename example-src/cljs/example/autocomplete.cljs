@@ -20,6 +20,10 @@
 - Selection can be moved with up and down arrows.
 - Searchable. Matches are highlighted.
 - Multiple selection
+- Items provided to component can be updated during the components lifecycle
+- Possible to add new items based on search
+- Implemented using Reagent's lowlevel React utilities, should be possible to
+eventually implement using pure React + Sablono to support all React wrappers.
 
 ## Items
 
