@@ -120,29 +120,29 @@
   (let [{:keys [prepared-items query]} (r/state this)]
     (filter-results' prepared-items query opts)))
 
-(defn choice-item [_ _ _ _]
+(defn choice-item [_]
   (r/create-class
     {:component-did-mount
      (fn [this]
-       (let [i (::ac/i (r/props this))
-             [selected] (r/children this)]
-         (if (= i selected)
+       (let [{:keys [item selected]} (r/props this)]
+         (if (= (::ac/i item) selected)
            (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :component-did-update
      (fn [this]
-       (let [i (::ac/i (r/props this))
-             [selected] (r/children this)]
-         (if (= i selected)
+       (let [{:keys [item selected]} (r/props this)]
+         (if (= (::ac/i item) selected)
            (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
-     :reagent-render
-     (fn [item selected select-cb {:keys [item->key item->text]}]
-       [:div
-        {:key (item->key item)
-         :on-click (fn [& _]
-                     (select-cb item)
-                     nil)
-         :class (str "option " (if (= (::ac/i item) selected) "active"))}
-        (or (::text item) (item->text item))])}))
+     :render
+     (fn [this]
+       (let [{:keys [item selected cb opts]} (r/props this)
+             {:keys [value item->key item->text item->value]} opts]
+         [:div
+          {:key (item->key item)
+           :on-click (fn [& _]
+                       (cb item)
+                       nil)
+           :class (str "option " (if (= (::ac/i item) selected) "active"))}
+          (or (::text item) (item->text item))]))}))
 
 (def ^:private defaults
   {:value->text get
@@ -207,14 +207,20 @@
                           [:div.optgroup-header (if groups v (name k))]
                           (for [item group-results]
                             ^{:key (item->key item)}
-                            [choice-item item selected cb opts])]))]
+                            [choice-item {:item item
+                                          :selected selected
+                                          :cb cb
+                                          :opts opts}])]))]
                (if (seq r)
                  r
                  [:div.option no-results-text]))
              (if (seq results)
                (for [item results]
                  ^{:key (item->key item)}
-                 [choice-item item selected select-cb opts])
+                 [choice-item {:item item
+                               :selected selected
+                               :cb cb
+                               :opts opts}])
                [:div.option no-results-text]))]])})))
 
 (defn update-el-dimensions

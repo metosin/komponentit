@@ -37,7 +37,7 @@ Items can be provided as:
       :cb (fn [item] (reset! value (:key item)))
       :search-fields [:value]
       :items (simple-items 50)}])
-  (r/atom nil)
+  (r/atom 5)
   {:inspect-data true})
 
 (dc/defcard-rg autocomplete-multiple
