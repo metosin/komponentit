@@ -138,7 +138,7 @@
              {:keys [value item->key item->text item->value]} opts]
          [:div
           {:key (item->key item)
-           :on-click (fn [& _]
+           :on-click (fn [_]
                        (cb item)
                        nil)
            :class (str "option " (if (or (= (::ac/i item) selected)
