@@ -103,7 +103,7 @@
         form-value (reaction (:value @(:data form)))
         value      (reaction (get-in @form-value ks))]
     (fn [_]
-      [filepicker {:value value
+      [filepicker {:value @value
                    :on-blur #(impl/blur form ks)
                    :on-select (fn [file]
                                 (impl/cb form ks file))
