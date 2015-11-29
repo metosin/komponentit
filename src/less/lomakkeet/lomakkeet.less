@@ -20,6 +20,8 @@
 @selectize-font-smoothing: inherit;
 @selectize-font-size: 13px;
 @selectize-line-height: 18px;
+@selectize-font-size-large: 18px;
+@selectize-line-height-large: 24px;
 
 @selectize-color-text: #303030;
 @selectize-color-border: #d0d0d0;
@@ -115,6 +117,11 @@
   -webkit-font-smoothing: @selectize-font-smoothing;
 }
 
+.selectize-input.large {
+  font-size: @selectize-font-size-large;
+  line-height: @selectize-line-height-large;
+}
+
 .selectize-input, .selectize-control.single .selectize-input.input-active {
   background: @selectize-color-input;
   cursor: text;
@@ -144,7 +151,7 @@
     background-color: @selectize-color-input-full;
   }
   &.disabled, &.disabled * {
-    cursor: default !important;
+    cursor: not-allowed !important;
   }
   &.focus {
     .selectize-box-shadow(@selectize-shadow-input-focus);
@@ -189,6 +196,7 @@
     padding: 0 !important;
     min-height: 0 !important;
     max-height: none !important;
+    width: 100%;
     max-width: 100% !important;
     margin: @selectize-caret-margin !important;
     text-indent: 0 !important;
@@ -270,6 +278,8 @@
   &, input { cursor: pointer; }
   &.input-active, &.input-active input { cursor: text; }
 
+  padding-right: @selectize-padding-x + @selectize-arrow-offset + @selectize-arrow-size;
+
   &:after {
     content: ' ';
     display: block;
@@ -301,8 +311,8 @@
 }
 
 .selectize-control .selectize-input.disabled {
-  opacity: @selectize-opacity-disabled;
-  background-color: @selectize-color-disabled;
+  // opacity: @selectize-opacity-disabled;
+  // background-color: @selectize-color-disabled;
 }
 
 @selectize-color-item: #1da7ee;
@@ -377,7 +387,15 @@
 .selectize-control {
   .item {
     position: relative;
+    padding-left: 8px !important;
     padding-right: 24px !important;
+  }
+  .non-removable-item {
+    background: gray !important;
+    cursor: not-allowed !important;
+    position: relative;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
   .item .remove {
     z-index: 1; /* fixes ie bug (see #392) */
@@ -409,6 +427,30 @@
   }
   .disabled .item .remove {
     border-left-color: lighten(desaturate(@selectize-color-item-border, 100%), @selectize-lighten-disabled-item-border);
+  }
+}
+
+.selectize-dropdown {
+  width: 100%;
+}
+
+// Clear
+
+.selectize-control.single .selectize-input {
+  .selectize-clear {
+    font-size: 16px;
+    line-height: 24px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -12px;
+    height: 24px;
+    width: 20px;
+    right: 2 * @selectize-arrow-offset;
+
+    &:hover {
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    }
   }
 }
 
