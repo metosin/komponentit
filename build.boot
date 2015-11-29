@@ -33,7 +33,7 @@
 
 (task-options!
   pom {:project 'metosin/lomakkeet
-       :version "0.2.1-SNAPSHOT"
+       :version "0.2.1"
        :description "Proof of concept: Form library for Reagent"
        :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}}
   cljs {:source-map true}

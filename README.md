@@ -4,6 +4,8 @@
 
 [DEMO](http://metosin.github.io/lomakkeet)
 
+[![Clojars Project](http://clojars.org/metosin/lomakkeet/latest-version.svg)](http://clojars.org/metosin/lomakkeet)
+
 Unlike more general of our libraries (like
 [compojure-api](https://github.com/metosin/compojure-api) and
 [ring-swagger](https://github.com/metosin/ring-swagger)) this project is
