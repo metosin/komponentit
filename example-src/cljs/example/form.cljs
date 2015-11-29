@@ -5,8 +5,11 @@
             [devcards.core :as dc :include-macros true]))
 
 (s/defschema SimpleForm
-  {:name s/Str
-   :email s/Str})
+  {:name (s/constrained s/Str seq 'required)
+   :email (s/constrained s/Str seq 'required)
+   :postalcode (s/maybe
+                 {:code s/Str
+                  :name s/Str})})
 
 (defn simple-form' [state]
   (let [form (l/create-form state)]
@@ -14,10 +17,17 @@
       [:div.container-fluid
        [:div.row
         [l/input form "Name" [:name]]
-        [l/input form "Email" [:email]]]])))
+        [l/input form "Email" [:email]]]
+       [:div.row
+        [l/complete form "Postalcode" [:postalcode] {:item->value #(select-keys % [:code :name])
+                                                     :item->text #(str (:code %) " - " (:name %))
+                                                     :value->text (fn [_ v] (if v (str (:code v) " - " (:name v))))
+                                                     :search-fields [:code :name]
+                                                     :items [{:code "33720" :name "Tampere"}
+                                                             {:code "33100" :name "Tampere"}]}]]])))
 
 (dc/defcard-rg simple-form
   (fn [state _]
     [simple-form' state])
-  (r/atom (l/->fs {:name nil :email nil} nil))
+  (r/atom (l/->fs {:name "Foo" :email "Bar" :postalcode nil} SimpleForm))
   {:inspect-data true})
