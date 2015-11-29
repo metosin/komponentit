@@ -401,8 +401,7 @@
 
 (defn autocomplete*
   [form {:keys [ks item->value item->key multiple? cb remove-cb disabled?]
-         :or {item->key key}
-         :as opts}]
+         :or {item->key key}}]
   (let [value (reaction (get-in (:value @(:data form)) ks))
         item->value (or item->value item->key)
 
@@ -430,5 +429,5 @@
 
         attrs (:attrs form)
         disabled (reaction (or disabled? (:disabled attrs)))]
-    (fn []
+    (fn [form opts]
       [autocomplete (assoc opts :value @value, :cb cb, :remove-cb remove-cb, :on-blur on-blur :disabled? @disabled)])))
