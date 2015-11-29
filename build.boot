@@ -31,9 +31,11 @@
   '[deraen.boot-less      :refer [less]]
   '[pandeiro.boot-http    :refer [serve]])
 
+(def +version+ "0.2.1")
+
 (task-options!
   pom {:project 'metosin/lomakkeet
-       :version "0.2.1"
+       :version +version+
        :description "Proof of concept: Form library for Reagent"
        :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}}
   cljs {:source-map true}
@@ -54,3 +56,16 @@
     (cljs :optimizations :advanced)
     (sift :to-resource #{#"^index\.html"})
     (sift :include #{#"^(main.js|example.css|index.html)"})))
+
+(deftask build []
+  (comp
+    (pom)
+    (jar)
+    (install)))
+
+(deftask deploy []
+  (comp
+    (build)
+    (push :gpg-sign (not (.endsWith +version+ "-SNAPSHOT"))
+          :repo "clojars"
+          :repo-map {:username :gpg :password :gpg})))
