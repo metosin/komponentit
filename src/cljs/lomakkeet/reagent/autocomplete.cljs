@@ -431,4 +431,4 @@
         attrs (:attrs form)
         disabled (reaction (or disabled? (:disabled attrs)))]
     (fn []
-      [autocomplete (assoc opts :value value, :cb cb, :remove-cb remove-cb, :on-blur on-blur :disabled? @disabled)])))
+      [autocomplete (assoc opts :value @value, :cb cb, :remove-cb remove-cb, :on-blur on-blur :disabled? @disabled)])))
