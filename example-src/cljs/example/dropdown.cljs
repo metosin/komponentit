@@ -25,7 +25,7 @@ Dropdowns can be used for several use cases:
 
 ## Notes
 
-If item doesn't `:href` attribute, `:on-click` default action is prevented."))
+If item doesn't have `:href` attribute, `:on-click` default action is prevented."))
 
 (dc/defcard-rg navbar-links
   "If you want to stay on this page, do not click on the items."
@@ -49,6 +49,15 @@ If item doesn't `:href` attribute, `:on-click` default action is prevented."))
       :on-change #(reset! value (:value %))}])
   (r/atom nil)
   {:inspect-data true})
+
+(dc/defcard-rg selectbox-2
+  "List items with on-click handlers"
+  (fn [value _]
+    [dropdown-button
+     {:text "A button with dropdown"
+      :content (map (fn [i]
+                      {:key i :on-click #(js/alert (str "Option " i)) :text (str "Option " i)})
+                    (range 5))}]))
 
 (dc/defcard-rg options
   (fn [options _]

@@ -14,11 +14,12 @@
   "- `:key` React key
   - `:value` (Optional) Current value
   - `:href` (Optional) A href
+  - `:on-click` (Optional) callback
   - `:text` Text
   "
   [open?
    {:keys [on-change close-on-click?] :as dropdown-opts}
-   {:keys [separator key text value href] :as item-opts}]
+   {:keys [separator key text value href on-click] :as item-opts}]
   (cond
     separator [:li.divider]
     :else
@@ -28,6 +29,7 @@
           :on-click (fn [e]
                       (if-not href (.preventDefault e))
                       (if-not (false? close-on-click?) (reset! open? false))
+                      (if on-click (on-click e))
                       (if on-change (on-change item-opts))
                       nil)}
       text]]))
