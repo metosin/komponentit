@@ -37,7 +37,9 @@
   pom {:project 'metosin/lomakkeet
        :version +version+
        :description "Proof of concept: Form library for Reagent"
-       :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}}
+       :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}
+       :url "https://github.com/metosin/lomakkeet"
+       :scm {"url" "https://github.com/metosin/lomakkeet"}}
   cljs {:source-map true}
   less {:source-map true})
 
