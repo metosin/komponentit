@@ -18,7 +18,7 @@
                   [prismatic/schema "1.0.3"]
                   [metosin/schema-tools "0.7.0"]
                   [com.andrewmcveigh/cljs-time "0.3.14"]
-                  [cljsjs/pikaday "1.3.2-0"]
+                  [cljsjs/pikaday "1.4.0-1"]
                   [reagent "0.5.1"]
 
                   ; LESS
