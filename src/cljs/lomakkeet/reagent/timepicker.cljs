@@ -55,7 +55,7 @@
                       (if-let [x (validate-hours (.. e -target -value))]
                         (reset! hours x)))
          :on-blur (fn [e]
-                    (if @hours
+                    (if-not (js/isNaN @hours)
                       (on-select (doto (clone-date value)
                                    (.setHours @hours))))
                     (reset! hours nil)
@@ -64,8 +64,9 @@
          :on-key-press (fn [e]
                          (case (.-key e)
                            "Enter" (do
-                                     (on-select (doto (clone-date value)
-                                                  (.setHours @hours)))
+                                     (if-not (js/isNaN @hours)
+                                       (on-select (doto (clone-date value)
+                                                    (.setHours @hours))))
                                      (reset! hours nil))
                            nil)
                          (allow-only-numbers e))}]
@@ -80,7 +81,7 @@
                       (if-let [x (validate-minutes (.. e -target -value))]
                         (reset! minutes x)))
          :on-blur (fn [e]
-                    (if @minutes
+                    (if-not (js/isNaN @minutes)
                       (on-select (doto (clone-date value)
                                    (.setMinutes @minutes))))
                     (reset! minutes nil)
@@ -89,8 +90,9 @@
          :on-key-press (fn [e]
                          (case (.-key e)
                            "Enter" (do
-                                     (on-select (doto (clone-date value)
-                                                  (.setMinutes @minutes)))
+                                     (if-not (js/isNaN @hours)
+                                       (on-select (doto (clone-date value)
+                                                    (.setMinutes @minutes))))
                                      (reset! minutes nil))
                            nil)
                          (allow-only-numbers e))}]
