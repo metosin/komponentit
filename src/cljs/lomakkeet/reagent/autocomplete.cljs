@@ -300,7 +300,7 @@
          (r/set-state this {:prepared-items (prepare-items items opts)})
          (reset-search this opts)))
 
-     :component-did-unmount
+     :component-will-unmount
      (fn [this]
        (if-let [closable (:closable (r/state this))]
          (closable)))
