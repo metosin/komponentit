@@ -104,7 +104,7 @@
         form-value (reaction (:value @(:data form)))
         value      (reaction (get-in @form-value ks))]
     (fn [_]
-      [timepicker {:value value
+      [timepicker {:value @value
                    :on-blur #(impl/blur form ks)
                    :on-select (fn [date]
                                 (impl/cb form ks date))
