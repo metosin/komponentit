@@ -1,8 +1,9 @@
 (ns example.datepicker
   (:require [lomakkeet.reagent.datepicker :as datepicker]
+            [lomakkeet.reagent.timepicker :as timepicker]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true])
-  (:import [goog.date Date]))
+  (:import [goog.date Date UtcDateTime]))
 
 (dc/defcard-rg datepicker
   (fn [date _]
@@ -43,4 +44,16 @@
                       :on-select (fn [x] (reset! date x))
                       :clearable? true}])
   (r/atom nil)
+  {:inspect-data true})
+
+(dc/defcard-rg date-and-time
+  (fn [date _]
+    [:div
+     [datepicker/date {:value @date
+                       :on-select (fn [x] (reset! date x))
+                       :date-time? true
+                       :clearable? true}]
+     [timepicker/timepicker {:value @date
+                             :on-select (fn [x] (reset! date x))}]])
+  (r/atom (UtcDateTime.))
   {:inspect-data true})

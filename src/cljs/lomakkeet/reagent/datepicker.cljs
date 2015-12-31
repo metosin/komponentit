@@ -5,10 +5,24 @@
             [lomakkeet.core :as l]
             [lomakkeet.date :as date]
             [lomakkeet.reagent.impl :as impl]
-            cljsjs.pikaday.with-moment))
+            cljsjs.pikaday.with-moment)
+  (:import [goog.date Date UtcDateTime]))
 
-(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear]}]
+(defn- clone-date [{:keys [date-time?]} value]
+  (if value
+    (.clone value)
+    (if date-time?
+      (doto (UtcDateTime.)
+        (.setHours 0)
+        (.setMinutes 0)
+        (.setSeconds 0))
+      (Date.))))
+
+(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear]
+             :as opts}]
   (let [el (atom nil)
+        ; Hack to access current value from onSelect
+        current-val (atom nil)
         coerce (if date-time? date/jsdate->date-time date/jsdate->local-date)]
     (r/create-class
       {:component-did-mount
@@ -17,21 +31,26 @@
                                             ; NOTE: This requires MomentJS
                                             :format "D.M.YYYY"
                                             :firstDay 1
-                                            :onSelect (fn [date] (on-select (coerce date)))}
+                                            :onSelect (fn [date]
+                                                        (on-select (doto (clone-date opts @current-val)
+                                                                     (.setYear (.getFullYear date))
+                                                                     (.setMonth (.getMonth date))
+                                                                     (.setDate (.getDate date)))))}
                                            (cond->
                                              datepicker-i18n (assoc :i18n datepicker-i18n))
                                            clj->js))
                       ; For some reason setting these at constructor didn't work
                       (.setDate (date/date-format value "yyyy-MM-dd"))
-                      (.setMinDate min-date)
-                      (.setMaxDate max-date))))
+                      (cond-> min-date (.setMinDate min-date))
+                      (cond-> max-date (.setMaxDate max-date)))))
        :component-did-update
        (fn [this _]
          (let [{:keys [min-date max-date]} (r/props this)]
-           (.setMinDate @el min-date)
-           (.setMaxDate @el max-date)))
+           (if min-date (.setMinDate @el min-date))
+           (if max-date (.setMaxDate @el max-date))))
        :reagent-render
        (fn [{:keys [value on-blur attrs clearable? disabled? on-clear]}]
+         (reset! current-val value)
          [:div.input-group
           [:span.input-group-addon
            [:span.glyphicon.glyphicon-calendar]]

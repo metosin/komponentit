@@ -6,7 +6,6 @@
   (:import [goog.date UtcDateTime]))
 
 (defn- allow-only-numbers [e]
-  (js/console.log (.-key e))
   (if-not (<= 48 (.-which e) 57)
     (.preventDefault e)))
 
