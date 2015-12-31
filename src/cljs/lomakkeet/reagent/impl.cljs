@@ -92,17 +92,25 @@
 
 ;; SELECT
 
+(def +empty-value+ "lomakkeet.reagent.impl/empty-value")
+
 (defn select*
-  [form {:keys [ks options attrs]}]
+  [form {:keys [ks options attrs empty-option?]}]
   (let [form-value (reaction (:value @(:data form)))
         value (reaction (get-in @form-value ks))]
     (fn [form {:keys [ks options attrs]}]
       [:select.form-control
        (merge
          (merge (get-or-deref (:attrs form)) attrs)
-         {:value @value
-          :on-change #(cb form ks (.. % -target -value))
+         {:value (or @value
+                     (if empty-option? +empty-value+))
+          :on-change (fn [e]
+                       (let [v (.. e -target -value)
+                             v (if (= +empty-value+ v) nil v)]
+                         (cb form ks v)))
           :on-blur #(blur form ks)})
+       (if empty-option?
+         [:option {:value +empty-value+} "---"])
        (for [option options
              :let [[k v] (if (map? option)
                            [(:key option) (:value option)]

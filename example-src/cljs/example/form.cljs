@@ -9,7 +9,8 @@
    :email (s/constrained s/Str seq 'required)
    :postalcode (s/maybe
                  {:code s/Str
-                  :name s/Str})})
+                  :name s/Str})
+   :language (s/maybe (s/enum :fi :en))})
 
 (defn simple-form' [state]
   (let [form (l/create-form state)]
@@ -24,7 +25,11 @@
                                                      :value->text (fn [_ v] (if v (str (:code v) " - " (:name v))))
                                                      :search-fields [:code :name]
                                                      :items [{:code "33720" :name "Tampere"}
-                                                             {:code "33100" :name "Tampere"}]}]]])))
+                                                             {:code "33100" :name "Tampere"}]}]
+        [l/select form "Language" [:language]
+         [["fi" "Finnish"]
+          ["en" "English"]]
+         {:empty-option? true}]]])))
 
 (dc/defcard-rg simple-form
   (fn [state _]
