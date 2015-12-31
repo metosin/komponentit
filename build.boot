@@ -31,7 +31,7 @@
   '[deraen.boot-less      :refer [less]]
   '[pandeiro.boot-http    :refer [serve]])
 
-(def +version+ "0.2.6")
+(def +version+ "0.2.7")
 
 (task-options!
   pom {:project 'metosin/lomakkeet
