@@ -39,7 +39,7 @@
        :description "Proof of concept: Form library for Reagent"
        :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}
        :url "https://github.com/metosin/lomakkeet"
-       :scm {"url" "https://github.com/metosin/lomakkeet"}}
+       :scm {:url "https://github.com/metosin/lomakkeet"}}
   cljs {:source-map true}
   less {:source-map true})
 
@@ -68,6 +68,4 @@
 (deftask deploy []
   (comp
     (build)
-    (push :gpg-sign (not (.endsWith +version+ "-SNAPSHOT"))
-          :repo "clojars"
-          :repo-map {:username :gpg :password :gpg})))
+    (push :repo "clojars" :gpg-sign (not (.endsWith +version+ "-SNAPSHOT")))))
