@@ -2,7 +2,8 @@
   (:require [reagent.core :as reagent]
             [reagent.ratom :refer-macros [reaction run!]]
             [lomakkeet.date :refer [date->str jsdate->local-date jsdate->date-time]]
-            [lomakkeet.reagent.impl :as impl]))
+            [lomakkeet.reagent.impl :as impl])
+  (:import [goog.date UtcDateTime]))
 
 (defn- allow-only-numbers [e]
   (js/console.log (.-key e))
@@ -30,6 +31,14 @@
     (str "0" value)
     value))
 
+(defn- clone-date [value]
+  (if value
+    (.clone value)
+    (doto (UtcDateTime.)
+      (.setHours 0)
+      (.setMinutes 0)
+      (.setSeconds 0))))
+
 (defn timepicker [{:keys [value on-select on-blur clearable?] :as opts}]
   (let [hours (reagent/atom nil)
         minutes (reagent/atom nil)]
@@ -41,13 +50,13 @@
          :min 0
          :max 23
          :step 1
-         :value (or @hours (padded-value (str (.getHours value))))
+         :value (or @hours (if value (padded-value (str (.getHours value)))))
          :on-change (fn [e]
                       (if-let [x (validate-hours (.. e -target -value))]
                         (reset! hours x)))
          :on-blur (fn [e]
                     (if @hours
-                      (on-select (doto (.clone value)
+                      (on-select (doto (clone-date value)
                                    (.setHours @hours))))
                     (reset! hours nil)
                     (if on-blur (on-blur e))
@@ -55,7 +64,7 @@
          :on-key-press (fn [e]
                          (case (.-key e)
                            "Enter" (do
-                                     (on-select (doto (.clone value)
+                                     (on-select (doto (clone-date value)
                                                   (.setHours @hours)))
                                      (reset! hours nil))
                            nil)
@@ -66,13 +75,13 @@
          :min 0
          :max 59
          :step 1
-         :value (or @minutes (padded-value (str (.getMinutes value))))
+         :value (or @minutes (if value (padded-value (str (.getMinutes value)))))
          :on-change (fn [e]
                       (if-let [x (validate-minutes (.. e -target -value))]
                         (reset! minutes x)))
          :on-blur (fn [e]
                     (if @minutes
-                      (on-select (doto (.clone value)
+                      (on-select (doto (clone-date value)
                                    (.setMinutes @minutes))))
                     (reset! minutes nil)
                     (if on-blur (on-blur e))
@@ -80,7 +89,7 @@
          :on-key-press (fn [e]
                          (case (.-key e)
                            "Enter" (do
-                                     (on-select (doto (.clone value)
+                                     (on-select (doto (clone-date value)
                                                   (.setMinutes @minutes)))
                                      (reset! minutes nil))
                            nil)
