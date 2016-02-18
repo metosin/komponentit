@@ -23,7 +23,6 @@
   (let [el (atom nil)
         ; Hack to access current value from onSelect
         current-val (atom nil)
-        coerce (if date-time? date/jsdate->date-time date/jsdate->local-date)
         current-disabled? (atom disabled?)]
     (r/create-class
       {:component-did-mount
