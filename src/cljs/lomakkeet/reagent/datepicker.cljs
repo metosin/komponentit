@@ -23,7 +23,8 @@
   (let [el (atom nil)
         ; Hack to access current value from onSelect
         current-val (atom nil)
-        coerce (if date-time? date/jsdate->date-time date/jsdate->local-date)]
+        coerce (if date-time? date/jsdate->date-time date/jsdate->local-date)
+        current-disabled? (atom disabled?)]
     (r/create-class
       {:component-did-mount
        (fn [this]
@@ -43,12 +44,21 @@
                       ; For some reason setting these at constructor didn't work
                       (.setDate (date/date-format value "yyyy-MM-dd"))
                       (cond-> min-date (.setMinDate min-date))
-                      (cond-> max-date (.setMaxDate max-date)))))
+                      (cond-> max-date (.setMaxDate max-date))))
+         (.addEventListener (r/dom-node this)
+                            "click"
+                            (fn [e]
+                              (when @current-disabled?
+                                (.preventDefault e)
+                                (.stopPropagation e))
+                              nil)
+                            true))
        :component-did-update
        (fn [this _]
-         (let [{:keys [min-date max-date]} (r/props this)]
+         (let [{:keys [min-date max-date disabled?]} (r/props this)]
            (if min-date (.setMinDate @el min-date))
-           (if max-date (.setMaxDate @el max-date))))
+           (if max-date (.setMaxDate @el max-date))
+           (reset! current-disabled? disabled?)))
        :reagent-render
        (fn [{:keys [value on-blur attrs clearable? disabled? on-clear]}]
          (reset! current-val value)
