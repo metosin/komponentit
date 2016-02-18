@@ -12,6 +12,24 @@
   (r/atom nil)
   {:inspect-data true})
 
+(dc/defcard-rg datepicker-disabled
+  (fn [state _]
+    (let [{:keys [date disabled?]} @state]
+      [:div
+       [datepicker/date {:value         date
+                         :on-select     (fn [x] (swap! state assoc :date x))
+                         :week-numbers? true
+                         :disabled?     disabled?}]
+       [:div {:style {:margin-top "20px"}}
+        [:input {:type      :checkbox
+                 :checked   disabled?
+                 :id        "disabled-checkbox"
+                 :on-change (fn [e] (->> e .-target .-checked (swap! state assoc :disabled?)))}]
+        [:label {:for "disabled-checkbox" :style {:padding-left "10px"}} "Disabled?"]]]))
+  (r/atom {:date nil :disabled? true})
+  {:inspect-data true})
+
+
 (dc/defcard-rg datepicker-min-and-max
   "The selectable date can be limited with min and max dates."
   (fn [date _]

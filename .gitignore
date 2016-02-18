@@ -5,3 +5,6 @@ resources/public/js
 gh-pages
 pom.xml
 figwheel_server.log
+/.idea
+/lomakkeet.iml
+/project.clj
