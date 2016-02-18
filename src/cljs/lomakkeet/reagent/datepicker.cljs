@@ -18,7 +18,7 @@
         (.setSeconds 0))
       (Date.))))
 
-(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear]
+(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear week-numbers?]
              :as   opts}]
   (let [el (atom nil)
         ; Hack to access current value from onSelect
@@ -31,6 +31,7 @@
                                             ; NOTE: This requires MomentJS
                                             :format         "D.M.YYYY"
                                             :firstDay       1
+                                            :showWeekNumber week-numbers?
                                             :onSelect       (fn [date]
                                                               (on-select (doto (clone-date opts @current-val)
                                                                            (.setYear (.getFullYear date))

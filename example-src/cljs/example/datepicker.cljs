@@ -16,6 +16,7 @@
   (fn [date _]
     [datepicker/date {:value     @date
                       :on-select (fn [x] (reset! date x))
+                      :week-numbers? true
                       :disabled? true}])
   (r/atom nil)
   {:inspect-data true})
