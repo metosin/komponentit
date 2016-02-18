@@ -45,7 +45,7 @@
                       (cond-> max-date (.setMaxDate max-date)))))
        :component-did-update
        (fn [this _]
-         (let [{:keys [min-date max-date disabled?]} (r/props this)]
+         (let [{:keys [min-date max-date]} (r/props this)]
            (if min-date (.setMinDate @el min-date))
            (if max-date (.setMaxDate @el max-date))))
        :reagent-render
