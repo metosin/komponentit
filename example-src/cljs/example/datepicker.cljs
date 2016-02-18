@@ -13,12 +13,20 @@
   {:inspect-data true})
 
 (dc/defcard-rg datepicker-disabled
-  (fn [date _]
-    [datepicker/date {:value     @date
-                      :on-select (fn [x] (reset! date x))
-                      :week-numbers? true
-                      :disabled? true}])
-  (r/atom nil)
+  (fn [state _]
+    (let [{:keys [date disabled?]} @state]
+      [:div
+       [datepicker/date {:value         date
+                         :on-select     (fn [x] (swap! state assoc :date x))
+                         :week-numbers? true
+                         :disabled?     disabled?}]
+       [:div {:style {:margin-top "20px"}}
+        [:input {:type      :checkbox
+                 :checked   disabled?
+                 :id        "disabled-checkbox"
+                 :on-change (fn [e] (->> e .-target .-checked (swap! state assoc :disabled?)))}]
+        [:label {:for "disabled-checkbox" :style {:padding-left "10px"}} "Disabled?"]]]))
+  (r/atom {:date nil :disabled? true})
   {:inspect-data true})
 
 
