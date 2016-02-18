@@ -12,6 +12,15 @@
   (r/atom nil)
   {:inspect-data true})
 
+(dc/defcard-rg datepicker-disabled
+  (fn [date _]
+    [datepicker/date {:value     @date
+                      :on-select (fn [x] (reset! date x))
+                      :disabled? true}])
+  (r/atom nil)
+  {:inspect-data true})
+
+
 (dc/defcard-rg datepicker-min-and-max
   "The selectable date can be limited with min and max dates."
   (fn [date _]
