@@ -19,7 +19,7 @@
       (Date.))))
 
 (defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear]
-             :as opts}]
+             :as   opts}]
   (let [el (atom nil)
         ; Hack to access current value from onSelect
         current-val (atom nil)
@@ -27,15 +27,15 @@
     (r/create-class
       {:component-did-mount
        (fn [this]
-         (reset! el (doto (js/Pikaday. (-> {:field (r/dom-node this)
+         (reset! el (doto (js/Pikaday. (-> {:field          (r/dom-node this)
                                             ; NOTE: This requires MomentJS
-                                            :format "D.M.YYYY"
-                                            :firstDay 1
-                                            :onSelect (fn [date]
-                                                        (on-select (doto (clone-date opts @current-val)
-                                                                     (.setYear (.getFullYear date))
-                                                                     (.setMonth (.getMonth date))
-                                                                     (.setDate (.getDate date)))))}
+                                            :format         "D.M.YYYY"
+                                            :firstDay       1
+                                            :onSelect       (fn [date]
+                                                              (on-select (doto (clone-date opts @current-val)
+                                                                           (.setYear (.getFullYear date))
+                                                                           (.setMonth (.getMonth date))
+                                                                           (.setDate (.getDate date)))))}
                                            (cond->
                                              datepicker-i18n (assoc :i18n datepicker-i18n))
                                            clj->js))
@@ -57,15 +57,16 @@
           [:input.form-control
            (merge
              attrs
-             {:type "text"
-              :value (or (date/date->str value) "")
+             {:type      "text"
+              :value     (or (date/date->str value) "")
               ; To silence reagent warnings
               :on-change identity
-              :on-blur on-blur})]
+              :on-blur   on-blur
+              :disabled  disabled?})]
           (if clearable?
             [:span.input-group-btn
              [:button.btn.btn-default
-              {:type "button"
+              {:type     "button"
                :disabled disabled?
                :on-click (fn [e]
                            (if on-clear
@@ -74,26 +75,26 @@
                            ; Hide datepicker
                            (.hide @el)
                            nil)}
-             "×"]])])})))
+              "×"]])])})))
 
 (defn try-deref [x]
   (if (satisfies? IDeref x) @x x))
 
 (defn date* [form {:keys [ks datepicker-i18n min-date max-date date-time? clearable? disabled]}]
-  (let [this       (r/current-component)
+  (let [this (r/current-component)
         form-value (reaction (:value @(:data form)))
-        value      (reaction (get-in @form-value ks))]
+        value (reaction (get-in @form-value ks))]
     (fn [_ {:keys [ks datepicker-i18n min-date max-date date-time? disabled]}]
-      [date {:value @value
-             :on-blur #(impl/blur form ks)
-             :on-clear (fn [e]
-                         ;; Set date to nil
-                         (impl/cb form ks nil))
-             :on-select (fn [date]
-                          (impl/cb form ks date))
+      [date {:value           @value
+             :on-blur         #(impl/blur form ks)
+             :on-clear        (fn [e]
+                                ;; Set date to nil
+                                (impl/cb form ks nil))
+             :on-select       (fn [date]
+                                (impl/cb form ks date))
              :datepicker-i18n datepicker-i18n
-             :min-date min-date
-             :max-date max-date
-             :date-time? date-time?
-             :disabled (try-deref disabled)
-             :clearable? clearable?}])))
+             :min-date        min-date
+             :max-date        max-date
+             :date-time?      date-time?
+             :disabled        (try-deref disabled)
+             :clearable?      clearable?}])))
