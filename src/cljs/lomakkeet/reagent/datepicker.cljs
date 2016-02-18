@@ -22,8 +22,7 @@
              :as   opts}]
   (let [el (atom nil)
         ; Hack to access current value from onSelect
-        current-val (atom nil)
-        current-disabled? (atom disabled?)]
+        current-val (atom nil)]
     (r/create-class
       {:component-did-mount
        (fn [this]
@@ -43,25 +42,16 @@
                       ; For some reason setting these at constructor didn't work
                       (.setDate (date/date-format value "yyyy-MM-dd"))
                       (cond-> min-date (.setMinDate min-date))
-                      (cond-> max-date (.setMaxDate max-date))))
-         (.addEventListener (r/dom-node this)
-                            "click"
-                            (fn [e]
-                              (when @current-disabled?
-                                (.preventDefault e)
-                                (.stopPropagation e))
-                              nil)
-                            true))
+                      (cond-> max-date (.setMaxDate max-date)))))
        :component-did-update
        (fn [this _]
          (let [{:keys [min-date max-date disabled?]} (r/props this)]
            (if min-date (.setMinDate @el min-date))
-           (if max-date (.setMaxDate @el max-date))
-           (reset! current-disabled? disabled?)))
+           (if max-date (.setMaxDate @el max-date))))
        :reagent-render
        (fn [{:keys [value on-blur attrs clearable? disabled? on-clear]}]
          (reset! current-val value)
-         [:div.input-group
+         [:div.input-group (if disabled? {:style {:pointer-events "none"}})
           [:span.input-group-addon
            [:span.glyphicon.glyphicon-calendar]]
           [:input.form-control
