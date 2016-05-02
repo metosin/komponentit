@@ -66,8 +66,9 @@ Items can be provided as:
       :search-fields [:value]
       :items (:items @state)
       :create (fn [s]
-                (swap! state assoc-in [:items (long s)] (str "Option " s))
-                (swap! state assoc :value (long s)))}])
+                (let [v (inc (apply max (keys (:items @state))))]
+                  (swap! state assoc-in [:items v] s)
+                  (swap! state assoc :value v)))}])
   (r/atom {:items (simple-items 5)
            :value nil})
   {:inspect-data true})
