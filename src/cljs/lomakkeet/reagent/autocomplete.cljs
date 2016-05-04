@@ -137,14 +137,14 @@
      :render
      (fn [this]
        (let [{:keys [item selected cb opts]} (r/props this)
-             {:keys [value item->key item->text item->value]} opts]
+             {:keys [item->key item->text]} opts]
          [:div
           {:key (item->key item)
            :on-click (fn [_]
                        (cb item)
                        nil)
-           :class (str "option " (if (or (= (::ac/i item) selected)
-                                         (= value (item->value item))) "active"))}
+           :class (str "option " (if (= (::ac/i item) selected)
+                                   "active"))}
           (or (::text item) (item->text item))]))}))
 
 (def ^:private defaults
@@ -224,7 +224,8 @@
                                :selected selected
                                :cb cb
                                :opts opts}])
-               [:div.option no-results-text]))]])})))
+               (if-not create-cb
+                 [:div.option no-results-text])))]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -421,7 +422,8 @@
         remove-cb
         (fn [x _]
           (if remove-cb (remove-cb x))
-          (impl/cb form ks (into (empty @value) (remove #(= % x) @value))))
+          (if multiple?
+            (impl/cb form ks (into (empty @value) (remove #(= % x) @value)))))
 
         on-blur
         (fn [e]

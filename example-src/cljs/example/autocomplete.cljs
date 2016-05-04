@@ -1,7 +1,8 @@
 (ns example.autocomplete
   (:require [lomakkeet.reagent.autocomplete :as autocomplete]
             [reagent.core :as r]
-            [devcards.core :as dc :include-macros true]))
+            [devcards.core :as dc :include-macros true]
+            [clojure.string :as str]))
 
 (defn simple-items [n]
   (into (sorted-map)
@@ -66,9 +67,77 @@ Items can be provided as:
       :search-fields [:value]
       :items (:items @state)
       :create (fn [s]
-                (swap! state assoc-in [:items (long s)] (str "Option " s))
-                (swap! state assoc :value (long s)))}])
+                (let [v (inc (apply max (keys (:items @state))))]
+                  (swap! state assoc-in [:items v] s)
+                  (swap! state assoc :value v)))}])
   (r/atom {:items (simple-items 5)
+           :value nil})
+  {:inspect-data true})
+
+(defn person-popup [person change-fn submit-fn cancel-fn]
+  [:div {:style {:background-color "#fff"
+                 :padding "10px 13px"
+                 :border "1px solid #e3e3e3"
+                 :position "absolute"
+                 :box-shadow "1px 2px 5px #888"}}
+   [:h2 "Add new person"]
+   [:form {:on-submit (fn [e]
+                        (.preventDefault e)
+                        (submit-fn))}
+    [:p
+     [:label {:for "first-name"
+              :style {:width "100px"}}
+      "First name"]
+     [:input {:type "text"
+              :id "first-name"
+              :value (:first-name person)
+              :on-change #(change-fn :first-name (.. % -target -value))}]]
+    [:p
+     [:label {:for "last-name"
+              :style {:width "100px"}}
+      "Last name"]
+     [:input {:type "text"
+              :id "last-name"
+              :value (:last-name person)
+              :on-change #(change-fn :last-name (.. % -target -value))}]]
+    [:button {:type "button"
+              :on-click cancel-fn
+              :style {:margin-right "7px"}}
+     "Cancel"]
+    [:button {:type "submit"}
+     "Add"]]])
+
+(dc/defcard-rg create-new-items-complex
+  (fn [state _]
+    [:div
+     [autocomplete/autocomplete
+      {:value (:value @state)
+       :cb (fn [item] (swap! state assoc :value (:key item)))
+       :search-fields [:value]
+       :items (into (sorted-map)
+                    (map (fn [{:keys [id first-name last-name]}]
+                           [id (str first-name " " last-name)])
+                         (:persons @state)))
+       :create (fn [s]
+                 (let [id (inc (apply max (map :id (:persons @state))))
+                       [first-name last-name] (str/split s #" ")]
+                   (swap! state merge {:new {:id id
+                                             :first-name first-name
+                                             :last-name last-name}})))}]
+     (if (:new @state)
+       [person-popup
+        (:new @state)
+        (fn [k v]
+          (swap! state assoc-in [:new k] v))
+        (fn []
+          (let [new-persons (conj (:persons @state) (:new @state))]
+            (swap! state merge {:persons new-persons
+                                :new nil
+                                :value (get-in @state [:new :id])})))
+        (fn []
+          (swap! state dissoc :new))])])
+  (r/atom {:persons [{:id 0 :first-name "Jane" :last-name "Doe"}
+                     {:id 1 :first-name "John" :last-name "Doe"}]
            :value nil})
   {:inspect-data true})
 
