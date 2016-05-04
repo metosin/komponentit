@@ -224,7 +224,8 @@
                                :selected selected
                                :cb cb
                                :opts opts}])
-               [:div.option no-results-text]))]])})))
+               (if-not create-cb
+                 [:div.option no-results-text])))]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
