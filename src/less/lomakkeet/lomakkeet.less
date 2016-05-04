@@ -275,7 +275,10 @@
 }
 
 .selectize-control.single .selectize-input {
-  &, input { cursor: pointer; }
+  &, input {
+    cursor: pointer;
+    width: 100%;
+  }
   &.input-active, &.input-active input { cursor: text; }
 
   padding-right: @selectize-padding-x + @selectize-arrow-offset + @selectize-arrow-size;
