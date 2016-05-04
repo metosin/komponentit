@@ -421,7 +421,8 @@
         remove-cb
         (fn [x _]
           (if remove-cb (remove-cb x))
-          (impl/cb form ks (into (empty @value) (remove #(= % x) @value))))
+          (if multiple?
+            (impl/cb form ks (into (empty @value) (remove #(= % x) @value)))))
 
         on-blur
         (fn [e]
