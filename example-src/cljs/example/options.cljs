@@ -15,8 +15,9 @@
 (defn table [current cb options]
   [:table.table
    [:thead
-    [:th "Option"]
-    [:th "Value"]]
+    [:tr
+     [:th "Option"]
+     [:th "Value"]]]
    [:tbody
     (for [[k type] options]
       [:tr
