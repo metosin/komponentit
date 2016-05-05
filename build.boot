@@ -1,24 +1,28 @@
 (set-env!
   :source-paths #{"example-src/cljs" "example-src/less" "example-src/html"}
   :resource-paths #{"src/cljs" "src/less"}
-  :dependencies '[[org.clojure/clojure    "1.7.0"      :scope "provided"]
-                  [org.clojure/clojurescript "1.7.170" :scope "provided"]
-                  [boot/core              "2.5.2"      :scope "test"]
-                  [adzerk/boot-cljs       "1.7.170-3"  :scope "test"]
+  :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
+                  [org.clojure/clojurescript "1.8.51"  :scope "provided"]
+                  [boot/core              "2.5.5"      :scope "test"]
+                  [adzerk/boot-cljs       "1.7.228-1"  :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.0"      :scope "test"]
                   [com.cemerick/piggieback "0.2.1"     :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
                   [org.clojure/tools.nrepl "0.2.12"    :scope "test"]
-                  [adzerk/boot-reload     "0.4.2"      :scope "test"]
-                  [deraen/boot-less       "0.4.2"      :scope "test"]
-                  [pandeiro/boot-http     "0.7.0"      :scope "test"]
-                  [devcards               "0.2.0-8"    :scope "test"]
+                  [adzerk/boot-reload     "0.4.7"      :scope "test"]
+                  [deraen/boot-less       "0.5.1"      :scope "test"]
+                  [pandeiro/boot-http     "0.7.3"      :scope "test"]
 
-                  [prismatic/schema "1.0.3"]
-                  [metosin/schema-tools "0.7.0"]
-                  [com.andrewmcveigh/cljs-time "0.3.14"]
+                  [prismatic/schema "1.1.1"]
+                  [metosin/schema-tools "0.9.0"]
+                  [com.andrewmcveigh/cljs-time "0.4.0"]
                   [cljsjs/pikaday "1.4.0-1"]
-                  [reagent "0.5.1"]
+                  ;; Reagent before devcards to use proper React version
+                  [reagent "0.6.0-alpha2"]
+                  ;; Devcards has "closer" dependency to cljsjs/react package which
+                  ;; overwrites Reagent version
+                  [cljsjs/react "15.0.2-0" :scope "test"]
+                  [devcards "0.2.1-7" :scope "test"]
 
                   ; LESS
                   [org.webjars/bootstrap "3.3.4"]])
