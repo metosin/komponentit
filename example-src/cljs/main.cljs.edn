@@ -1,3 +1,4 @@
 {:require [example.main]
  :compiler-options {:asset-path "main.out"
+                    :parallel-build true
                     :devcards true}}
