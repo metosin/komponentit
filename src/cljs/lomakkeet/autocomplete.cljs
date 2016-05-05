@@ -1,8 +1,6 @@
 (ns lomakkeet.autocomplete
-  (:require-macros [cljs.core.async.macros :refer [go]]
-                   lomakkeet.autocomplete)
+  (:require-macros lomakkeet.autocomplete)
   (:require [clojure.string :as string]
-            [cljs.core.async :refer [put!]]
             [lomakkeet.util :as util]))
 
 ;;

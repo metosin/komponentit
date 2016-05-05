@@ -1,10 +1,4 @@
-(ns lomakkeet.util
-  (:require-macros [cljs.core.async.macros :as a])
-  (:require cljs.core.async.impl.channels
-            [cljs.core.async :as a]))
-
-(defn- chan? [v]
-  (instance? cljs.core.async.impl.channels.ManyToManyChannel v))
+(ns lomakkeet.util)
 
 (defn dissoc-in
   "Dissociates an entry from a nested associative structure returning a new
@@ -19,24 +13,6 @@
           (dissoc m k)))
       m)
     (dissoc m k)))
-
-; Source: https://gist.github.com/Deraen/946ac9e6c6211c83f1e9
-(defn debounce [in ms]
-  "Creates a channel which will change put a new value to the output channel
-   after timeout has passed. Each value change resets the timeout. If value
-   changes more frequently only the latest value is put out.
-
-   When input channel closes, the output channel is closed."
-  (let [out (a/chan)]
-    (a/go-loop [last-val nil]
-      (let [val (if (nil? last-val) (a/<! in) last-val)
-            timer (a/timeout ms)]
-        (a/alt!
-          in ([v] (if v
-                    (recur v)
-                    (a/close! out)))
-          timer ([_] (do (a/>! out val) (recur nil))))))
-    out))
 
 (defn keep-visible!
   "Given parent element with scrollbar, keep the children visible."

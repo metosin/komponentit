@@ -14,7 +14,6 @@
                   [pandeiro/boot-http     "0.7.0"      :scope "test"]
                   [devcards               "0.2.0-8"    :scope "test"]
 
-                  [org.clojure/core.async "0.2.374"]
                   [prismatic/schema "1.0.3"]
                   [metosin/schema-tools "0.7.0"]
                   [com.andrewmcveigh/cljs-time "0.3.14"]
