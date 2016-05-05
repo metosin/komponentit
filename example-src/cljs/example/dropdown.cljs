@@ -1,5 +1,5 @@
 (ns example.dropdown
-  (:require [lomakkeet.reagent.dropdown :refer [dropdown ->menu-item dropdown-button dropdown-li]]
+  (:require [komponentit.dropdown :refer [dropdown ->menu-item dropdown-button dropdown-li]]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]

@@ -9,8 +9,7 @@
             example.timepicker
             example.currency-input
             example.search-highlight
-            example.dropdown
-            example.form))
+            example.dropdown))
 
 (defn restart! []
   (dc/start-devcard-ui!))

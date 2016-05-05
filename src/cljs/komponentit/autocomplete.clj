@@ -1,4 +1,4 @@
-(ns lomakkeet.autocomplete)
+(ns komponentit.autocomplete)
 
 (defmacro create-matcher [fields]
   `(fn [~'item ~'term]

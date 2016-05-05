@@ -1,4 +1,4 @@
-(ns lomakkeet.date
+(ns komponentit.date
   (:require [goog.string :as gs]
             goog.date.Date)
   (:import [goog.i18n DateTimeFormat DateTimeParse]))

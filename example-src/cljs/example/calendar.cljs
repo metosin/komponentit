@@ -1,5 +1,5 @@
 (ns example.calendar
-  (:require [lomakkeet.reagent.calendar :as calendar]
+  (:require [komponentit.calendar :as calendar]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [example.options :as options])

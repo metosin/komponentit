@@ -1,8 +1,7 @@
-(ns lomakkeet.reagent.timepicker
+(ns komponentit.timepicker
   (:require [reagent.core :as reagent]
             [reagent.ratom :refer-macros [reaction run!]]
-            [lomakkeet.date :refer [date->str jsdate->local-date jsdate->date-time]]
-            [lomakkeet.reagent.impl :as impl])
+            [komponentit.date :refer [date->str jsdate->local-date jsdate->date-time]])
   (:import [goog.date UtcDateTime]))
 
 (defn- allow-only-numbers [e]
@@ -98,14 +97,3 @@
        (if clearable?
          [:span.glyphicon.glyphicon-remove.timepicker-remove-btn
           {:on-click #(on-select nil)}])])))
-
-(defn timepicker* [form {:keys [ks clearable?]}]
-  (let [this       (reagent/current-component)
-        form-value (reaction (:value @(:data form)))
-        value      (reaction (get-in @form-value ks))]
-    (fn [_]
-      [timepicker {:value @value
-                   :on-blur #(impl/blur form ks)
-                   :on-select (fn [date]
-                                (impl/cb form ks date))
-                   :clearable? clearable?}])))

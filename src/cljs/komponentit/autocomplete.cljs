@@ -1,12 +1,51 @@
-(ns lomakkeet.reagent.autocomplete
+(ns komponentit.autocomplete
+  (:require-macros komponentit.autocomplete)
   (:require [reagent.core :as r]
             [reagent.ratom :refer-macros [run! reaction]]
-            [lomakkeet.util :as util]
-            [lomakkeet.autocomplete :as ac]
-            [lomakkeet.reagent.impl :as impl]
-            [lomakkeet.reagent.mixins :as mixins]
+            [komponentit.util :as util]
+            [komponentit.mixins :as mixins]
+            [komponentit.highlight :refer [highlight-string]]
             [goog.dom.classes :as classes]
             [goog.style :refer [scrollIntoContainerView]]))
+
+(defn- query-match? [term-match-fn v query]
+  (every? (partial term-match-fn v) query))
+
+(defn matches [term-match-fn v query]
+  (let [m (group-by (partial term-match-fn v) query)]
+    [(get m true) (get m false)]))
+
+(defn default->query [search]
+  (some-> search
+    (.toLowerCase)
+    (.split #" ")
+    (->> (remove empty?))
+    vec))
+
+(defn default-find-by-selection [data x]
+  (some (fn [v]
+          (if (= (::i v) x) v))
+        data))
+
+(defn- default-group-find-by-selection [data x]
+  (some (fn [[_ data]]
+          (some (fn [v]
+                  (if (= (::i v) x) v))
+                data))
+        data))
+
+(defn create-matcher*
+  "Fields can be either collection containing multiple key for map,
+   or a single key.
+   If collection is given, returned function will go through keys using some."
+  [fields]
+  (if (sequential? fields)
+    (fn [item term]
+      (some (fn [field]
+              (some-> item (get field) (-> (.toLowerCase) (.indexOf term) (not= -1))))
+            fields))
+    (fn [item term]
+      (some-> item (get fields) (-> (.toLowerCase) (.indexOf term) (not= -1))))))
 
 (declare filter-results)
 
@@ -91,7 +130,7 @@
 
         filter-search
         (if (and search? (and term-match-fn query))
-          (filter (fn [item] (ac/query-match? term-match-fn item query)))
+          (filter (fn [item] (query-match? term-match-fn item query)))
           identity)
 
         filter-current
@@ -107,11 +146,11 @@
                 identity)
 
         add-index
-        (map (fn [v] (assoc v ::ac/i (swap! n inc))))
+        (map (fn [v] (assoc v ::i (swap! n inc))))
 
         add-highlighted-str
         (if (and search? (seq query))
-          (map (fn [v] (assoc v ::text (ac/highlight-string (item->text v) query))))
+          (map (fn [v] (assoc v ::text (highlight-string (item->text v) query))))
           identity)
 
         results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
@@ -127,12 +166,12 @@
     {:component-did-mount
      (fn [this]
        (let [{:keys [item selected]} (r/props this)]
-         (if (= (::ac/i item) selected)
+         (if (= (::i item) selected)
            (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :component-did-update
      (fn [this]
        (let [{:keys [item selected]} (r/props this)]
-         (if (= (::ac/i item) selected)
+         (if (= (::i item) selected)
            (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
      :render
      (fn [this]
@@ -143,7 +182,7 @@
            :on-click (fn [_]
                        (cb item)
                        nil)
-           :class (str "option " (if (= (::ac/i item) selected)
+           :class (str "option " (if (= (::i item) selected)
                                    "active"))}
           (or (::text item) (item->text item))]))}))
 
@@ -153,7 +192,7 @@
    :item->text :value
    :item-removable? (constantly true)
    :value->search identity
-   :->query ac/default->query
+   :->query default->query
    :no-results-text "No results"})
 
 (defn- assert-opts [{:keys [items filter-current-out? multiple? value cb]
@@ -340,9 +379,9 @@
               :as opts}
              (merge {:item->value item->key
                      :find-by-selection (if group-by
-                                          ac/default-group-find-by-selection
-                                          ac/default-find-by-selection)
-                     :term-match-fn (if search-fields (ac/create-matcher* search-fields))}
+                                          default-group-find-by-selection
+                                          default-find-by-selection)
+                     :term-match-fn (if search-fields (create-matcher* search-fields))}
                     opts)
 
              select-cb (fn [v]
@@ -399,37 +438,3 @@
               "×"])]
           (if open?
             [autocomplete-contents results {:width width :height height} selected select-cb create-cb search opts])]))}))
-
-(defn autocomplete*
-  [form {:keys [ks item->value item->key multiple? cb remove-cb disabled?]
-         :or {item->key key}}]
-  (let [value (reaction (get-in (:value @(:data form)) ks))
-        item->value (or item->value item->key)
-
-        cb
-        (fn [v]
-          (if cb (cb v))
-          ;; FIXME: hack
-          (let [item->value (if (map? item->value)
-                              item->value
-                              {ks item->value})]
-            (doseq [[ks item->value] item->value]
-              (impl/cb form ks (if multiple?
-                                 (conj @value (item->value v))
-                                 (item->value v)))))
-          nil)
-
-        remove-cb
-        (fn [x _]
-          (if remove-cb (remove-cb x))
-          (if multiple?
-            (impl/cb form ks (into (empty @value) (remove #(= % x) @value)))))
-
-        on-blur
-        (fn [e]
-          (impl/blur form ks))
-
-        attrs (:attrs form)
-        disabled (reaction (or disabled? (:disabled attrs)))]
-    (fn [form opts]
-      [autocomplete (assoc opts :value @value, :cb cb, :remove-cb remove-cb, :on-blur on-blur :disabled? @disabled)])))

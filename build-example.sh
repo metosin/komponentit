@@ -3,7 +3,7 @@
 rev=$(git rev-parse HEAD)
 
 if [[ ! -d gh-pages ]]; then
-    git clone --branch gh-pages git@github.com:metosin/lomakkeet.git gh-pages
+    git clone --branch gh-pages git@github.com:metosin/komponentit.git gh-pages
 fi
 
 (

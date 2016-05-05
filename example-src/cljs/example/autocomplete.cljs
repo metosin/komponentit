@@ -1,5 +1,5 @@
 (ns example.autocomplete
-  (:require [lomakkeet.reagent.autocomplete :as autocomplete]
+  (:require [komponentit.autocomplete :as autocomplete]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]))

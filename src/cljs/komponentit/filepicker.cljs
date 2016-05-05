@@ -1,9 +1,8 @@
-(ns lomakkeet.reagent.filepicker
+(ns komponentit.filepicker
   (:require [goog.string :as gs]
             [goog.dom :as dom]
             [reagent.core :as reagent]
-            [reagent.ratom :refer-macros [reaction]]
-            [lomakkeet.reagent.impl :as impl]))
+            [reagent.ratom :refer-macros [reaction]]))
 
 ; Directory support: https://github.com/enyo/dropzone/blob/master/dist/dropzone.js#L908-L933
 
@@ -93,19 +92,3 @@
   {:on-drag-over  (on-drag-over-handler opts)
    :on-drag-leave (on-drag-leave-handler opts)
    :on-drop       (on-drop-handler opts)})
-
-;;
-;; Form integration
-;;
-
-(defn file* [form {:keys [ks file-select-label clearable?]}]
-  (let [this       (reagent/current-component)
-        form-value (reaction (:value @(:data form)))
-        value      (reaction (get-in @form-value ks))]
-    (fn [_]
-      [filepicker {:value @value
-                   :on-blur #(impl/blur form ks)
-                   :on-select (fn [file]
-                                (impl/cb form ks file))
-                   :clearable? clearable?
-                   :file-select-label file-select-label}])))

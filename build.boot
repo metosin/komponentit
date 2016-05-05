@@ -10,7 +10,7 @@
                   [weasel                  "0.7.0"     :scope "test"]
                   [org.clojure/tools.nrepl "0.2.12"    :scope "test"]
                   [adzerk/boot-reload     "0.4.7"      :scope "test"]
-                  [deraen/boot-less       "0.5.1"      :scope "test"]
+                  [deraen/boot-less       "0.5.0"      :scope "test"]
                   [pandeiro/boot-http     "0.7.3"      :scope "test"]
 
                   [prismatic/schema "1.1.1"]
@@ -34,15 +34,15 @@
   '[deraen.boot-less      :refer [less]]
   '[pandeiro.boot-http    :refer [serve]])
 
-(def +version+ "0.3.0-SNAPSHOT")
+(def +version+ "0.1.0-SNAPSHOT")
 
 (task-options!
-  pom {:project 'metosin/lomakkeet
+  pom {:project 'metosin/komponentit
        :version +version+
-       :description "Proof of concept: Form library for Reagent"
+       :description "Collection of bespoke Reagent components"
        :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}
-       :url "https://github.com/metosin/lomakkeet"
-       :scm {:url "https://github.com/metosin/lomakkeet"}}
+       :url "https://github.com/metosin/komponentit"
+       :scm {:url "https://github.com/metosin/komponentit"}}
   cljs {:source-map true}
   less {:source-map true})
 

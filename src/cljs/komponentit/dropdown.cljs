@@ -1,4 +1,4 @@
-(ns lomakkeet.reagent.dropdown
+(ns komponentit.dropdown
   (:require [goog.dom :as dom]
             [goog.events :as events]
             [reagent.core :as r]))

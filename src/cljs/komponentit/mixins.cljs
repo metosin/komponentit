@@ -1,5 +1,5 @@
-(ns lomakkeet.reagent.mixins
-  (:require [lomakkeet.util :as u]
+(ns komponentit.mixins
+  (:require [komponentit.util :as u]
             [goog.events :as events])
   (:import [goog.events EventType]))
 

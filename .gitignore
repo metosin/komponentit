@@ -6,5 +6,6 @@ gh-pages
 pom.xml
 figwheel_server.log
 /.idea
-/lomakkeet.iml
+/komponentit.iml
 /project.clj
+.cljs_rhino_repl

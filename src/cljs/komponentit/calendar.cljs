@@ -1,7 +1,7 @@
-(ns lomakkeet.reagent.calendar
+(ns komponentit.calendar
   (:require [reagent.core :as r]
             [clojure.string :as string]
-            [lomakkeet.date :as date]
+            [komponentit.date :as date]
             [cljs-time.core :as t]))
 
 (def default-i18n

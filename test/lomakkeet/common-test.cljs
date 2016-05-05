@@ -1,4 +1,4 @@
-(ns lomakkeet.common-test)
+(ns komponentit.common-test)
 
 (defn container-div []
   (let [id  (str "container-" (gensym))

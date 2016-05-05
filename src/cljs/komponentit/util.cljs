@@ -1,4 +1,4 @@
-(ns lomakkeet.util)
+(ns komponentit.util)
 
 (defn dissoc-in
   "Dissociates an entry from a nested associative structure returning a new

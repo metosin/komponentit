@@ -1,5 +1,5 @@
 (ns example.currency-input
-  (:require [lomakkeet.reagent.currency-input :as currency-input]
+  (:require [komponentit.currency-input :as currency-input]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true])

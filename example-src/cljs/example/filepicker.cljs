@@ -1,5 +1,5 @@
 (ns example.filepicker
-  (:require [lomakkeet.reagent.filepicker :as filepicker]
+  (:require [komponentit.filepicker :as filepicker]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]))
 

@@ -1,5 +1,5 @@
 (ns example.timepicker
-  (:require [lomakkeet.reagent.timepicker :as timepicker]
+  (:require [komponentit.timepicker :as timepicker]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true])
   (:import [goog.date UtcDateTime]))

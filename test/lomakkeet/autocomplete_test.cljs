@@ -1,6 +1,6 @@
-(ns lomakkeet.autocomplete-test
+(ns komponentit.autocomplete-test
   (:require [cljs.test :as test :refer-macros [deftest testing is]]
-            [lomakkeet.autocomplete :as ac]))
+            [komponentit.autocomplete :as ac]))
 
 (deftest highlight-match-test
   (is (= [:span [:span.highlight "Fi"] "nland"]

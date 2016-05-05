@@ -1,9 +1,7 @@
-(ns lomakkeet.reagent.currency-input
+(ns komponentit.currency-input
   (:require [reagent.core :as r]
             [reagent.ratom :refer-macros [reaction]]
-            [clojure.string :as str]
-            [lomakkeet.core :as l]
-            [lomakkeet.reagent.impl :as impl]))
+            [clojure.string :as str]))
 
 (defn- zero-to-end [s]
   (if (= 1 (count s))
@@ -54,15 +52,3 @@
                            nil)
                          nil)}]
        [:span.input-group-addon (or currency-symbol "€")]])))
-
-(defn currency-input* [form {:keys [ks currency-symbol delimiter]}]
-  (let [form-value (reaction (:value @(:data form)))
-        value      (reaction (get-in @form-value ks))]
-    (fn [form {:keys [ks currency-symbol delimiter]}]
-      [currency-input
-       {:value @value
-        :on-blur #(impl/blur form ks)
-        :on-change (fn [value]
-                     (impl/cb form ks value))
-        :currency-symbol currency-symbol
-        :delimiter delimiter}])))

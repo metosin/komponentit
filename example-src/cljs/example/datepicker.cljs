@@ -1,6 +1,6 @@
 (ns example.datepicker
-  (:require [lomakkeet.reagent.datepicker :as datepicker]
-            [lomakkeet.reagent.timepicker :as timepicker]
+  (:require [komponentit.datepicker :as datepicker]
+            [komponentit.timepicker :as timepicker]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true])
   (:import [goog.date Date UtcDateTime]))
