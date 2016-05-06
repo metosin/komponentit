@@ -54,8 +54,8 @@
 (defn close [this]
   (r/set-state this {:open? false}))
 
-(defn open [this]
-  (r/set-state this {:open? true}))
+(defn open [this text]
+  (r/set-state this {:open? true :initial-search text}))
 
 (defn update-search [this v {:keys [->query] :as opts}]
   (r/set-state this {:search v :query (->query v)})
@@ -71,34 +71,40 @@
     (reset-search this opts))
   nil)
 
-(defn click [this disabled? e]
+(defn click [this disabled? text e]
   (when-not disabled?
-    (open this)
+    (open this text)
     (.stopPropagation e))
   nil)
 
-(defn focus [this search e]
+(defn focus [this search text e]
   (if-not (:open? (r/state this))
     (r/set-state this {:search ""}))
-  (open this)
+  (open this text)
   nil)
 
 (defn change [this cb opts e]
-  (let [v (.. e -target -value)]
-    (update-search this v opts)
-    (if cb (cb v)))
+  (let [{:keys [initial-search]} (r/state this)
+        v (.. e -target -value)]
+    ;; If item is selected, search can't be changed until item is cleared with backspace
+    (when-not initial-search
+      (update-search this v opts)
+      (if cb (cb v))))
   nil)
 
 (defn limit-selection [n selected f search {:keys [create]}]
   (util/limit (if (and create (seq search)) +create-item-index+ 0) n (f selected)))
 
-(defn key-down [this find-by-selection cb {:keys [create] :as opts} e]
-  (let [{:keys [search results selected n]} (r/state this)
+(defn key-down [this find-by-selection select-cb text {:keys [cb create remove-cb] :as opts} e]
+  (let [{:keys [search results selected n open?]} (r/state this)
         update-selection (fn [f e]
                            (.preventDefault e)
                            (.stopPropagation e)
-                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f search opts)}))]
-    (r/set-state this {:open? true})
+                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f search opts)}))
+        _ (if-not open?
+            (open this text))
+        ;; Hack: get new inital-search
+        {:keys [initial-search]} (r/state this)]
 
     (case (.-key e)
       "Enter" (do
@@ -107,11 +113,16 @@
                 (if (and create (= +create-item-index+ selected))
                   (create search)
                   (when-let [v (find-by-selection results selected)]
-                    (cb v)
-                    (r/set-state this {:open? false :search nil}))))
+                    (select-cb v))))
       "Escape" (r/set-state this {:open? false :search nil})
-      "Backspace" (if-let [remove-cb (:remove-cb opts)]
-                    (remove-cb (last (:value opts))))
+      "Backspace" (cond
+                    remove-cb (remove-cb (last (:value opts)))
+                    initial-search (do
+                                     (r/set-state this {:initial-search nil :search ""})
+                                     (cb nil)
+                                     ;; prevent on-change event after this
+                                     (.preventDefault e)
+                                     (.stopPropagation e)))
       "ArrowUp" (update-selection dec e)
       "ArrowDown" (update-selection inc e)
       nil)))
@@ -371,7 +382,7 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [items open? results search selected n width height]} (r/state this)
+             {:keys [items open? results initial-search search selected n width height]} (r/state this)
 
              {:keys [value cb create remove-cb on-blur
                      value->text item->key
@@ -396,13 +407,14 @@
 
              select-cb (fn [v]
                          (cb v)
-                         (r/set-state this {:search nil :open? false}))
+                         (r/set-state this {:search "" :open? false}))
 
              opts (if create
                     (assoc opts :create (fn [s]
                                           (create s)
                                           (r/set-state this {:search nil :open? false})))
-                    opts)]
+                    opts)
+             text (if-not multiple? (value->text items value) "")]
 
          [:div.selectize-control
           {:class (str ctrl-class
@@ -414,7 +426,8 @@
                         (if (seq results) " items ")
                         (let [v value]
                           (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
-            :on-click (partial click this disabled?)}
+            ;; FIXME: Why is on-click defined on both selectize-input and input?
+            :on-click (partial click this disabled? text)}
            (if multiple?
              (doall
                (for [x value]
@@ -428,21 +441,22 @@
                                               nil)}
                        "×"])]))))
            [:input
-            {:on-focus  (partial focus this search)
+            {:on-focus  (partial focus this search text)
              :on-blur   (fn [e]
                           (blur this opts e)
                           (if on-blur (on-blur e)))
              :on-change (partial change this nil opts)
-             :on-key-down (partial key-down this find-by-selection select-cb opts)
+             :on-key-down (partial key-down this find-by-selection select-cb text opts)
              :auto-complete false
              :disabled disabled?
              :type "text"
              :placeholder placeholder
-             :on-click (partial click this disabled?)
+             :on-click (partial click this disabled? text)
              :value (if open?
-                      (str search)
-                      (if-not multiple?
-                        (value->text items value)))}]
+                      (if initial-search
+                        (str initial-search)
+                        (str search))
+                      text)}]
            (if clearable?
              [:span.selectize-clear
               {:on-click #(select-cb nil)}

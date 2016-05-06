@@ -15,10 +15,12 @@
 
 ## Features
 
+- Tries to mimick [Selectize.js](http://selectize.github.io/selectize.js/)
 - Opens when focused or clicked.
 - Item is selected by mouse or enter.
 - Closes when unfocused, with ESC or when clicked outside.
 - Selection can be moved with up and down arrows.
+- The selection can be reset with backspace
 - In multiple selection mode, selected items can be removed with Backspace.
 - Searchable. Matches are highlighted.
 - Multiple selection
