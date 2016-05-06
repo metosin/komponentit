@@ -12,12 +12,12 @@
   [close-cb]
   (let [click-handler
         (events/listen js/window EventType.CLICK (fn [e]
-                                                   (close-cb)
+                                                   (close-cb e)
                                                    nil))
         key-handler
         (events/listen js/window EventType.KEYUP (fn [e]
                                                    (case (.-key e)
-                                                     "Esc" (close-cb)
+                                                     "Esc" (close-cb e)
                                                      nil)
                                                    nil))]
     (fn []

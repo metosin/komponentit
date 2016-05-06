@@ -5,6 +5,7 @@
             [komponentit.util :as util]
             [komponentit.mixins :as mixins]
             [komponentit.highlight :refer [highlight-string]]
+            [goog.dom :as dom]
             [goog.dom.classes :as classes]
             [goog.style :refer [scrollIntoContainerView]]))
 
@@ -73,8 +74,7 @@
 
 (defn click [this disabled? text e]
   (when-not disabled?
-    (open this text)
-    (.stopPropagation e))
+    (open this text))
   nil)
 
 (defn focus [this search text e]
@@ -373,9 +373,11 @@
 
      :component-did-mount
      (fn [this]
-       (r/set-state this {:closable (mixins/create-closable (fn []
-                                                              (close this)
-                                                              (reset-search this opts)))})
+       (r/set-state this {:closable (mixins/create-closable (fn [e]
+                                                              ;; Only close if the clicked element was outside this autocomplete el
+                                                              (when-not (dom/contains (r/dom-node this) (.-target e))
+                                                                (close this)
+                                                                (reset-search this opts))))})
        (update-el-dimensions this)
        (focus-input this))
 
