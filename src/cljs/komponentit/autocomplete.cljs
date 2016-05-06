@@ -8,6 +8,8 @@
             [goog.dom.classes :as classes]
             [goog.style :refer [scrollIntoContainerView]]))
 
+(def +create-item-index+ -1)
+
 (defn- query-match? [term-match-fn v query]
   (every? (partial term-match-fn v) query))
 
@@ -87,25 +89,26 @@
     (if cb (cb v)))
   nil)
 
-(defn limit-selection [n selected f]
-  (js/console.log n selected)
-  (util/limit 0 n (f selected)))
+(defn limit-selection [n selected f {:keys [create] :as  opts}]
+  (util/limit (if create +create-item-index+ 0) n (f selected)))
 
-(defn key-down [this find-by-selection cb opts e]
-  (let [{:keys [results selected n]} (r/state this)
+(defn key-down [this find-by-selection cb {:keys [create] :as opts} e]
+  (let [{:keys [search results selected n]} (r/state this)
         update-selection (fn [f e]
                            (.preventDefault e)
                            (.stopPropagation e)
-                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f)}))]
+                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f opts)}))]
     (r/set-state this {:open? true})
 
     (case (.-key e)
       "Enter" (do
                 (.preventDefault e)
                 (.stopPropagation e)
-                (when-let [v (find-by-selection results selected)]
-                  (cb v)
-                  (r/set-state this {:open? false :search nil})))
+                (if (and create (= +create-item-index+ selected))
+                  (create search)
+                  (when-let [v (find-by-selection results selected)]
+                    (cb v)
+                    (r/set-state this {:open? false :search nil}))))
       "Escape" (r/set-state this {:open? false :search nil})
       "Backspace" (if-let [remove-cb (:remove-cb opts)]
                     (remove-cb (last (:value opts))))
@@ -127,7 +130,8 @@
   [prepared-items query selected
    {:keys [value term-match-fn multiple? filter-current-out?
            item->text item->value item->key
-           min-search-length max-results]}]
+           min-search-length max-results]
+    :as opts}]
   (let [n (atom -1)
         search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
                     (not min-search-length))
@@ -159,7 +163,7 @@
 
         results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
     {:n @n
-     :selected (limit-selection @n selected identity)
+     :selected (limit-selection @n selected identity opts)
      :results results}))
 
 (defn filter-results [this opts]
@@ -216,13 +220,14 @@
       ; FIXME: Is this window height or content height? Does this work correctly with non absolute positioned page?
       {:top 0 :bottom (.-innerHeight js/window)})))
 
-(defn create-new-item [search create-cb _]
-  (if (and create-cb (seq search))
-    [:div.option
-     {:on-click (fn [_]
-                  (create-cb search)
-                  nil)}
-     "Add " search "..."]))
+(defn create-new-item [search create selected opts]
+  (if (and create (seq search))
+    [choice-item
+     {:item {::i +create-item-index+
+             ::text (str "Add " search "...")}
+      :cb (fn [_] (create search))
+      :selected selected
+      :opts opts}]))
 
 (defn autocomplete-contents [_ container-state _ _ _ _]
   (let [top? (r/atom false)]
@@ -237,12 +242,12 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected select-cb create-cb search {:keys [multiple? group-by groups cb item->key no-results-text] :as opts}]
+       (fn [results container-state selected select-cb search {:keys [create multiple? group-by groups cb item->key no-results-text] :as opts}]
          [:div
           {:class (str "selectize-dropdown " (if multiple? "multi " "single ") (if @top? "above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
           [:div.selectize-dropdown-content
-           [create-new-item search create-cb opts]
+           [create-new-item search create selected opts]
            ; FIXME: Hack?
            (if (or group-by groups)
              (let [r (doall
@@ -268,7 +273,7 @@
                                :selected selected
                                :cb cb
                                :opts opts}])
-               (if-not create-cb
+               (if-not create
                  [:div.option no-results-text])))]])})))
 
 (defn update-el-dimensions
@@ -393,10 +398,11 @@
                          (cb v)
                          (r/set-state this {:search nil :open? false}))
 
-             create-cb (if create
-                         (fn [s]
-                           (create s)
-                           (r/set-state this {:search nil :open? false})))]
+             opts (if create
+                    (assoc opts :create (fn [s]
+                                          (create s)
+                                          (r/set-state this {:search nil :open? false})))
+                    opts)]
 
          [:div.selectize-control
           {:class (str ctrl-class
@@ -442,4 +448,4 @@
               {:on-click #(select-cb nil)}
               "×"])]
           (if open?
-            [autocomplete-contents results {:width width :height height} selected select-cb create-cb search opts])]))}))
+            [autocomplete-contents results {:width width :height height} selected select-cb search opts])]))}))
