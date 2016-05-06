@@ -60,7 +60,8 @@
     (less)
     (cljs :optimizations :advanced)
     (sift :to-resource #{#"^index\.html"})
-    (sift :include #{#"^(main.js|example.css|index.html)"})))
+    (sift :include #{#"^(main.js|example.css|index.html)"})
+    (target)))
 
 (deftask build []
   (comp
