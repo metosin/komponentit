@@ -67,8 +67,13 @@
   (r/set-state this (filter-results this opts)))
 
 (defn blur [this opts e]
-  (close this)
-  (reset-search this opts)
+  ;; Check relatedTarget to see  if focus moved out of the browser
+  ;; this way the dropbox is kept open when changing focus to other window
+  ;; FIXME: Doesn't work on Firefox
+  ;; FIXME: Also breaks everything if called each time, because ?!??!?!?
+  (when (.-relatedTarget e)
+    (close this)
+    (reset-search this opts))
   nil)
 
 (defn click [this disabled? text e]
@@ -252,7 +257,7 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected select-cb search {:keys [create multiple? group-by groups cb item->key no-results-text] :as opts}]
+       (fn [results container-state selected select-cb search {:keys [create multiple? group-by groups item->key no-results-text] :as opts}]
          [:div
           {:class (str "selectize-dropdown " (if multiple? "multi " "single ") (if @top? "above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
@@ -271,7 +276,7 @@
                             ^{:key (item->key item)}
                             [choice-item {:item item
                                           :selected selected
-                                          :cb cb
+                                          :cb select-cb
                                           :opts opts}])]))]
                (if (seq r)
                  r
@@ -281,7 +286,7 @@
                  ^{:key (item->key item)}
                  [choice-item {:item item
                                :selected selected
-                               :cb cb
+                               :cb select-cb
                                :opts opts}])
                (if-not create
                  [:div.option no-results-text])))]])})))

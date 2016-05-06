@@ -91,6 +91,7 @@ Items can be provided as:
               :style {:width "100px"}}
       "First name"]
      [:input {:type "text"
+              :auto-focus true
               :id "first-name"
               :value (:first-name person)
               :on-change #(change-fn :first-name (.. % -target -value))}]]
