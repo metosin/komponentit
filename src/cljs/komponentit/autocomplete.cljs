@@ -67,12 +67,8 @@
   (r/set-state this (filter-results this opts)))
 
 (defn blur [this opts e]
-  ;; Check relatedTarget to see  if focus moved out of the browser
-  ;; this way the dropbox is kept open when changing focus to other window
-  ;; FIXME: Doesn't work on Firefox
-  (when (.-relatedTarget e)
-    (close this)
-    (reset-search this opts))
+  (close this)
+  (reset-search this opts)
   nil)
 
 (defn click [this disabled? text e]
