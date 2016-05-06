@@ -89,15 +89,15 @@
     (if cb (cb v)))
   nil)
 
-(defn limit-selection [n selected f {:keys [create] :as  opts}]
-  (util/limit (if create +create-item-index+ 0) n (f selected)))
+(defn limit-selection [n selected f search {:keys [create]}]
+  (util/limit (if (and create (seq search)) +create-item-index+ 0) n (f selected)))
 
 (defn key-down [this find-by-selection cb {:keys [create] :as opts} e]
   (let [{:keys [search results selected n]} (r/state this)
         update-selection (fn [f e]
                            (.preventDefault e)
                            (.stopPropagation e)
-                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f opts)}))]
+                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f search opts)}))]
     (r/set-state this {:open? true})
 
     (case (.-key e)
@@ -163,7 +163,7 @@
 
         results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
     {:n @n
-     :selected (limit-selection @n selected identity opts)
+     :selected (limit-selection @n selected identity query opts)
      :results results}))
 
 (defn filter-results [this opts]
