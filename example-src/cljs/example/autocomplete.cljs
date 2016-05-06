@@ -140,8 +140,3 @@ Items can be provided as:
                      {:id 1 :first-name "John" :last-name "Doe"}]
            :value nil})
   {:inspect-data true})
-
-(dc/defcard
-"# TODO
-
-- Long search text doesn't show as the input element is small")

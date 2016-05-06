@@ -87,12 +87,16 @@
     (if cb (cb v)))
   nil)
 
+(defn limit-selection [n selected f]
+  (js/console.log n selected)
+  (util/limit 0 n (f selected)))
+
 (defn key-down [this find-by-selection cb opts e]
   (let [{:keys [results selected n]} (r/state this)
-        change-selection (fn change-selection  [f e]
-                           (r/set-state this {:selected (util/limit 0 n (f (:selected (r/state this))))})
+        update-selection (fn [f e]
                            (.preventDefault e)
-                           (.stopPropagation e))]
+                           (.stopPropagation e)
+                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f)}))]
     (r/set-state this {:open? true})
 
     (case (.-key e)
@@ -105,8 +109,8 @@
       "Escape" (r/set-state this {:open? false :search nil})
       "Backspace" (if-let [remove-cb (:remove-cb opts)]
                     (remove-cb (last (:value opts))))
-      "ArrowUp" (change-selection dec e)
-      "ArrowDown" (change-selection inc e)
+      "ArrowUp" (update-selection dec e)
+      "ArrowDown" (update-selection inc e)
       nil)))
 
 (defn prepare-items [items {:keys [prepare-xform] :as opts}]
@@ -120,7 +124,7 @@
     (into [] (comp map-to-seq prepare-xform) items)))
 
 (defn filter-results'
-  [prepared-items query
+  [prepared-items query selected
    {:keys [value term-match-fn multiple? filter-current-out?
            item->text item->value item->key
            min-search-length max-results]}]
@@ -155,11 +159,12 @@
 
         results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
     {:n @n
+     :selected (limit-selection @n selected identity)
      :results results}))
 
 (defn filter-results [this opts]
-  (let [{:keys [prepared-items query]} (r/state this)]
-    (filter-results' prepared-items query opts)))
+  (let [{:keys [prepared-items query selected]} (r/state this)]
+    (filter-results' prepared-items query selected opts)))
 
 (defn choice-item [_]
   (r/create-class
@@ -329,7 +334,7 @@
             :height nil
             :closable nil}
            ; FIXME: Default opts.
-           (filter-results' prepared-items nil (merge defaults opts))
+           (filter-results' prepared-items nil 0 (merge defaults opts))
            )))
 
      :component-will-receive-props
