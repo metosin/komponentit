@@ -27,6 +27,8 @@
          delimiter
          (padded-value (str (mod (js/Math.abs value) 100))))))
 
+;; TODO: Refactor to use number input
+
 (defn currency-input [{:keys [value on-change on-blur currency-symbol delimiter]}]
   (let [temp (r/atom nil)]
     (fn [{:keys [value on-change on-blur currency-symbol delimiter]}]
