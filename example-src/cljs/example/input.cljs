@@ -16,14 +16,18 @@
 (dc/defcard-rg number-input
   (fn [value _]
     [:div
-     [input/number
-      {:value @value
-       :on-change (fn [x] (reset! value x))}]
-     [input/number
-      {:value @value
-       :on-change (fn [x] (reset! value x))
-       :multiplier 100}] ])
-  (r/atom 1337)
+     [:div.form-group
+      [:label "Normal"]
+      [input/number
+       {:value @value
+        :on-change (fn [x] (reset! value x))}]]
+     [:div.form-group
+      [:label "Multiplier 100"]
+      [input/number
+       {:value @value
+        :on-change (fn [x] (reset! value x))
+        :multiplier 100}]] ])
+  (r/atom 100)
   {:inspect-data true})
 
 (dc/defcard-rg password-input
