@@ -12,7 +12,8 @@
             example.dropdown
             example.input
             example.form-group
-            example.modal))
+            example.modal
+            example.nav))
 
 (defn restart! []
   (dc/start-devcard-ui!))
