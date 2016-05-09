@@ -11,7 +11,8 @@
             example.search-highlight
             example.dropdown
             example.input
-            example.form-group))
+            example.form-group
+            example.modal))
 
 (defn restart! []
   (dc/start-devcard-ui!))
