@@ -79,3 +79,35 @@
   [:p.form-control-static
    (if (map? opts) opts {})
    value])
+
+(def +empty-value+ "komponentit.input/empty-value")
+
+(defn select
+  [{:keys [value on-change on-blur empty-option? options value-fn]
+    :or {value-fn identity}
+    :as opts}]
+  [:select.form-control
+   (assoc opts
+          :value (or value
+                     (if empty-option? +empty-value+))
+          :on-change (fn [e]
+                       (let [v (.. e -target -value)
+                             v (if (= +empty-value+ v) nil v)]
+                         (on-change (value-fn v))))
+          :on-blur on-blur)
+   (if empty-option?
+     [:option {:value +empty-value+} "---"])
+   (for [option options
+         :let [{:keys [value text]} option]]
+     [:option {:value value :key value} text])])
+
+(defn checkbox
+  [{:keys [value on-change on-blur]
+    :as opts}]
+  [:input
+   (-> opts
+       (dissoc :value)
+       (assoc :type "checkbox"
+              :checked (boolean value)
+              :on-change #(on-change (.. % -target -checked))
+              :on-blur on-blur))])

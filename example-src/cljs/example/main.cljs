@@ -10,7 +10,8 @@
             example.currency-input
             example.search-highlight
             example.dropdown
-            example.input))
+            example.input
+            example.form-group))
 
 (defn restart! []
   (dc/start-devcard-ui!))

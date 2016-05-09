@@ -53,3 +53,31 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
        :style {:height "200px"}}]])
   (r/atom lorem)
   {:inspect-data true})
+
+(defn safe-long [s]
+  (let [i (long s)]
+    (if (js/isNaN i) s i)))
+
+(dc/defcard-rg select
+  (fn [value _]
+    [:div
+     [input/select
+      {:value @value
+       :on-change (fn [x] (reset! value x))
+       :options [{:value 1 :text "Option 1"}
+                 {:value 2 :text "Option 2"}
+                 {:value 3 :text "Option 3"}
+                 {:value "foo" :text "Option foo"}]
+       :empty-option? true
+       :value-fn safe-long}]])
+  (r/atom 1)
+  {:inspect-data true})
+
+(dc/defcard-rg checkbox
+  (fn [value _]
+    [:div
+     [input/checkbox
+      {:value @value
+       :on-change (fn [x] (reset! value x))}]])
+  (r/atom true)
+  {:inspect-data true})
