@@ -89,7 +89,8 @@
   [:select.form-control
    (assoc opts
           :value (or value
-                     (if empty-option? +empty-value+))
+                     (if empty-option? +empty-value+)
+                     "")
           :on-change (fn [e]
                        (let [v (.. e -target -value)
                              v (if (= +empty-value+ v) nil v)]
