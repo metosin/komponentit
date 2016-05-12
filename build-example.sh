@@ -13,7 +13,7 @@ git pull
 
 boot build-example
 
-rm -r gh-pages/*
+rm -rf gh-pages/*
 cp -r target/* gh-pages
 
 cd gh-pages
