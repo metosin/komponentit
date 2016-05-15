@@ -112,8 +112,7 @@
           :on-blur on-blur)
    (if empty-option?
      [:option {:value +empty-value+} "---"])
-   (for [option options
-         :let [{:keys [value text]} option]]
+   (for [{:keys [value text]} options]
      [:option {:value value :key value} text])])
 
 (defn checkbox
