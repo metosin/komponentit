@@ -4,15 +4,29 @@
             [clojure.string :as str]))
 
 (defn input
-  [{:keys [value value-fn text-fn on-change type on-blur]
-    :or {text-fn identity
-         value-fn identity}
-    :as opts}]
-  [:input.form-control
-   (assoc opts
-          :value (or (text-fn value) "")
-          :on-change #(on-change (value-fn (.. % -target -value)))
-          :on-blur on-blur)])
+  [_]
+  (let [temp (reagent/atom nil)]
+    (fn [{:keys [value value-fn text-fn on-change type on-blur]
+          :or {text-fn identity
+               value-fn identity}
+          :as opts}]
+      [:input.form-control
+       (assoc opts
+              :value (or @temp (text-fn value) "")
+              :on-change (fn [e]
+                           (reset! temp (.. e -target -value)))
+              :on-blur (fn [e]
+                         (swap! temp (fn [x]
+                                       (if x (on-change (value-fn x)))
+                                       nil))
+                         (if on-blur
+                           (on-blur e)))
+              :on-key-press (fn [e]
+                              (case (.-key e)
+                                "Enter" (swap! temp (fn [x]
+                                                      (if x (on-change (value-fn x)))
+                                                      nil))
+                                nil)))])))
 
 (defn text
   [{:keys [value on-change] :as opts}]

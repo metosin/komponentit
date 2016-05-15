@@ -5,6 +5,7 @@
             [example.options :as options]))
 
 (dc/defcard-rg text-input
+  "The state is updated when user presses Enter or leaves the input (on-blur event, tab, clicks elsewhere etc.)"
   (fn [value _]
     [:div
      [input/text
