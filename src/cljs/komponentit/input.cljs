@@ -5,7 +5,8 @@
 
 (defn input
   [_]
-  (let [temp (reagent/atom nil)]
+  (let [temp (reagent/atom nil)
+        timeout (atom nil)]
     (fn [{:keys [value value-fn text-fn on-change type on-blur]
           :or {text-fn identity
                value-fn identity}
@@ -14,7 +15,13 @@
        (assoc opts
               :value (or @temp (text-fn value) "")
               :on-change (fn [e]
-                           (reset! temp (.. e -target -value)))
+                           (let [v (.. e -target -value)]
+                             (swap! timeout (fn [current]
+                                              (if current (js/clearTimeout current))
+                                              (js/setTimeout (fn [_]
+                                                               (on-change (value-fn v)))
+                                                             250)))
+                             (reset! temp v)))
               :on-blur (fn [e]
                          (swap! temp (fn [x]
                                        (if x (on-change (value-fn x)))
@@ -49,7 +56,8 @@
 
 (defn number
   [_]
-  (let [temp (reagent/atom nil)]
+  (let [temp (reagent/atom nil)
+        timeout (atom nil)]
     (fn
       [{:keys [value on-change on-blur multiplier]
         :or {multiplier 1}
@@ -58,7 +66,13 @@
        (assoc opts
               :value (or @temp (number->str value multiplier) "")
               :on-change (fn [e]
-                           (reset! temp (.. e -target -value)))
+                           (let [v (.. e -target -value)]
+                             (swap! timeout (fn [current]
+                                              (if current (js/clearTimeout current))
+                                              (js/setTimeout (fn [_]
+                                                               (on-change (str->number v multiplier)))
+                                                             250)))
+                             (reset! temp v)))
               :on-blur (fn [e]
                          (swap! temp (fn [x]
                                        (if x (on-change (str->number x multiplier)))
