@@ -18,13 +18,15 @@
   - `:text` Text
   "
   [open?
-   {:keys [on-change close-on-click?] :as dropdown-opts}
+   {:keys [on-change close-on-click? active-item-class]
+    :or {active-item-class "active"}
+    :as dropdown-opts}
    {:keys [separator key text value href on-click] :as item-opts}]
   (cond
     separator [:li.divider]
     :else
     [:li {:key key
-          :class (str (if (and value (= (:value dropdown-opts) value)) "active "))}
+          :class (str (if (and value (= (:value dropdown-opts) value)) active-item-class))}
      [:a {:href (or href "#")
           :on-click (fn [e]
                       (if-not href (.preventDefault e))
@@ -43,7 +45,7 @@
   - `:value` (Optional, supported by content) Current value, marks list item with equivalent value as active.
   - `:close-on-click?` (Default `true`) Close dropdown when any item is selected.
   - `:caret?` (Default `true`) Whether to automatically append caret to text."
-  [{:keys [el content children]}]
+  [_]
   (let [open?  (r/atom false)
         listener (atom nil)]
     (r/create-class
@@ -58,13 +60,16 @@
        (fn [_]
          (events/unlistenByKey @listener))
        :reagent-render
-       (fn [{:keys [el content children] :as opts}]
+       (fn [{:keys [el content children dropdown-class]
+             :or {dropdown-class "dropdown-menu"}
+             :as opts}]
          [el
           open?
           (if open?
-            (into [:ul.dropdown-menu] (if children
-                                        children
-                                        (map (partial ->menu-item open? opts) content))))
+            (into [:ul {:class dropdown-class}]
+                  (if children
+                    children
+                    (map (partial ->menu-item open? opts) content))))
           opts])})))
 
 (defn toggle [open? e]
@@ -72,10 +77,14 @@
   (swap! open? not)
   nil)
 
-(defn dropdown-li' [open? dropdown {:keys [text caret?]}]
-  [:li {:class (str "dropdown " (if @open? "open "))}
-   [:a.dropdown-toggle
-    {:href "#"
+(defn dropdown-li' [open? dropdown {:keys [text caret? li-class open-class a-class]
+                                    :or {a-class "dropdown-toggle"
+                                         open-class "open"
+                                         li-class "dropdown"}}]
+  [:li {:class (str li-class " " (if @open? open-class))}
+   [:a
+    {:class a-class
+     :href "#"
      :on-click (partial toggle open?)
      :aria-haspopup true
      :aria-expanded @open?}
@@ -88,11 +97,15 @@
 (defn dropdown-li [opts]
   [dropdown (assoc opts :el dropdown-li')])
 
-(defn dropdown-button' [open? dropdown {:keys [text caret?]}]
+(defn dropdown-button' [open? dropdown {:keys [text caret? button-container-class open-class button-class]
+                                        :or {button-container-class "btn-group"
+                                             open-class "open"
+                                             button-class "btn btn-default dropdown-toggle"}}]
   [:div
-   {:class (str "btn-group " (if @open? "open "))}
-   [:button.btn.btn-default.dropdown-toggle
-    {:type "button"
+   {:class (str button-container-class " " (if @open? open-class))}
+   [:button
+    {:class button-class
+     :type "button"
      :on-click (partial toggle open?)
      :aria-haspopup true
      :aria-expanded @open?}

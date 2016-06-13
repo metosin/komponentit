@@ -1,3 +1,7 @@
+## 0.1.3 (13.6.2016)
+
+- Parametrized dropdown classes
+
 ## 0.1.2
 
 - Call on-change after real on-change event
