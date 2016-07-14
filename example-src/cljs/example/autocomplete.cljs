@@ -50,14 +50,13 @@ Items can be provided as:
 
 (dc/defcard-rg autocomplete-multiple
   (fn [value _]
-    [autocomplete/autocomplete
+    [autocomplete/multiple-autocomplete
      {:value @value
       :cb (fn [item] (swap! value conj (:key item)))
       ; FIXME: Remove-cb is called with value, not item
       :remove-cb (fn [x] (swap! value disj x))
       :search-fields [:value]
-      :items (simple-items 50)
-      :multiple? true}])
+      :items (simple-items 50)}])
   (r/atom #{})
   {:inspect-data true})
 

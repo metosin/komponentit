@@ -214,10 +214,14 @@
   {:value->text get
    :item->key :key
    :item->text :value
-   :item-removable? (constantly true)
    :value->search identity
    :->query default->query
    :no-results-text "No results"})
+
+(def ^:private multiple-defaults
+  (assoc defaults
+         :multiple? true
+         :item-removable? (constantly true)))
 
 (defn- assert-opts [{:keys [items filter-current-out? multiple? value cb]
                      :as opts}]
@@ -309,7 +313,6 @@
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
-   :remove-cb - For multiple?
    :on-blur - Input :on-blur. Might be useful for form pristine handling.
    :items
    :max-results
@@ -324,7 +327,6 @@
    :->query
    :find-by-selection
    :clearable?
-   :multiple?
    :group-by
    :groups
    :filter-current-opt?
@@ -395,7 +397,7 @@
                      item-removable?
                      search-fields
                      ->query
-                     clearable? multiple?
+                     clearable?
                      group-by groups
                      placeholder
                      ctrl-class input-class disabled?]
@@ -420,32 +422,182 @@
                                           (create s)
                                           (r/set-state this {:search nil :open? false})))
                     opts)
-             text (if-not multiple? (value->text items value) "")]
+             text (value->text items value)]
 
-         [:div.selectize-control
-          {:class (str ctrl-class
-                       (if multiple? " multi" " single"))}
+         [:div.selectize-control.single
+          {:class ctrl-class}
           [:div.selectize-input
            {:class (str input-class
                         (if open? " input-active dropdown-active ")
                         (if disabled? " disabled ")
                         (if (seq results) " items ")
+                        ;; FIXME: ??
                         (let [v value]
                           (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
             ;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
-           (if multiple?
-             (doall
-               (for [x value]
-                 (let [removable? (item-removable? x)]
-                   ^{:key x}
-                   [:div {:class (if removable? "item" "non-removable-item")}
-                    (value->text items x)
-                    (if removable?
-                      [:a.remove {:on-click (fn [e]
-                                              (remove-cb x)
-                                              nil)}
-                       "×"])]))))
+           [:input
+            {:on-focus  (partial focus this search text)
+             :on-blur   (fn [e]
+                          (blur this opts e)
+                          (if on-blur (on-blur e)))
+             :on-change (partial change this nil opts)
+             :on-key-down (partial key-down this find-by-selection select-cb text opts)
+             :auto-complete false
+             :disabled disabled?
+             :type "text"
+             :placeholder placeholder
+             :on-click (partial click this disabled? text)
+             :value (if open?
+                      (if initial-search
+                        (str initial-search)
+                        (str search))
+                      text)}]
+           (if clearable?
+             [:span.selectize-clear
+              {:on-click #(select-cb nil)}
+              "×"])]
+          (if open?
+            [autocomplete-contents results {:width width :height height} selected select-cb search opts])]))}))
+
+(defn multiple-autocomplete
+  ":value - (required) IDeref or value
+   :cb - (required) Function. [value]
+   :remove-cb - For multiple?
+   :on-blur - Input :on-blur. Might be useful for form pristine handling.
+   :items
+   :max-results
+   :value->search
+   :value->text
+   :item->key
+   :item->value
+   :item-removable? - predicate function to determine if item is non-removable
+   :term-match-fn
+   :search-fields
+   :min-search-length - Required number of characters in search string before results are filtered.
+   :->query
+   :find-by-selection
+   :clearable?
+   :group-by
+   :groups
+   :filter-current-opt?
+
+   Localization
+   :placeholder
+   :no-results-text
+
+   Style
+   :ctrl-class
+   :input-class
+   :disabled?"
+  [{:keys [items] :as opts}]
+  (r/create-class
+    {:get-initial-state
+     (fn [this]
+       (let [prepared-items (prepare-items items opts)]
+         (merge
+           {:open? false
+            :search nil
+            :query nil
+            :selected 0
+            :items items
+            ; FIXME: Default opts. Uses only prepare-xform option.
+            :prepared-items prepared-items
+            :width nil
+            :height nil
+            :closable nil}
+           ; FIXME: Default opts.
+           (filter-results' prepared-items nil 0 (merge multiple-defaults opts))
+           )))
+
+     :component-will-receive-props
+     (fn [this [_ {:keys [items] :as opts}]]
+       ;; When items changes, reset the results
+       (when-not (= (:items (r/props this)) items)
+         (r/set-state this {:items items})
+         (r/set-state this {:prepared-items (prepare-items items opts)})
+         (reset-search this opts)))
+
+     :component-will-unmount
+     (fn [this]
+       (if-let [closable (:closable (r/state this))]
+         (closable)))
+
+     :component-did-update
+     (fn [this old-argv]
+       (update-el-dimensions this)
+       (focus-input this))
+
+     :component-did-mount
+     (fn [this]
+       (r/set-state this {:closable (mixins/create-closable (fn [e]
+                                                              ;; Only close if the clicked element was outside this autocomplete el
+                                                              (when-not (dom/contains (r/dom-node this) (.-target e))
+                                                                (close this)
+                                                                (reset-search this opts))))})
+       (update-el-dimensions this)
+       (focus-input this))
+
+     :render
+     (fn [this]
+       (let [opts (r/props this)
+             {:keys [items open? results initial-search search selected n width height]} (r/state this)
+
+             {:keys [value cb create remove-cb on-blur
+                     value->text item->key
+                     item-removable?
+                     search-fields
+                     ->query
+                     clearable?
+                     group-by groups
+                     placeholder
+                     ctrl-class input-class disabled?]
+              :as opts}
+             (assert-opts (merge multiple-defaults opts))
+
+             {:keys [item->value find-by-selection term-match-fn]
+              :as opts}
+             (merge {:item->value item->key
+                     :find-by-selection (if group-by
+                                          default-group-find-by-selection
+                                          default-find-by-selection)
+                     :term-match-fn (if search-fields (create-matcher* search-fields))}
+                    opts)
+
+             select-cb (fn [v]
+                         (cb v)
+                         (r/set-state this {:search "" :open? false}))
+
+             opts (if create
+                    (assoc opts :create (fn [s]
+                                          (create s)
+                                          (r/set-state this {:search nil :open? false})))
+                    opts)
+             text ""]
+
+         [:div.selectize-control.multi
+          {:class ctrl-class}
+          [:div.selectize-input
+           {:class (str input-class
+                        (if open? " input-active dropdown-active ")
+                        (if disabled? " disabled ")
+                        (if (seq results) " items ")
+                        ;; FIXME: ?
+                        (let [v value]
+                          (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
+            ;; FIXME: Why is on-click defined on both selectize-input and input?
+            :on-click (partial click this disabled? text)}
+           (doall
+             (for [x value]
+               (let [removable? (item-removable? x)]
+                 ^{:key x}
+                 [:div {:class (if removable? "item" "non-removable-item")}
+                  (value->text items x)
+                  (if removable?
+                    [:a.remove {:on-click (fn [e]
+                                            (remove-cb x)
+                                            nil)}
+                     "×"])])))
            [:input
             {:on-focus  (partial focus this search text)
              :on-blur   (fn [e]
