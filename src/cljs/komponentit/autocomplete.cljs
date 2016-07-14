@@ -384,11 +384,16 @@
                           nil)}
              "×"])]))]))
 
-(defn autocomplete-clear [{:keys [clearable? select-cb]}]
-  (if clearable?
+(defn autocomplete-clear [{:keys [value select-cb remove-cb]}]
+  (if (if (coll? value)
+        (seq value)
+        value)
     [:span.autocomplete__clear-button
-     {:on-click #(select-cb nil)}
-     "×"]))
+     {:on-click (fn [_]
+                  (if remove-cb
+                    (doseq [v value]
+                      (remove-cb v))
+                    (select-cb nil)))}]))
 
 (defn autocomplete
   ":value - (required) IDeref or value
@@ -406,7 +411,6 @@
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
    :find-by-selection
-   :clearable?
    :groups
    :filter-current-opt?
 
@@ -459,7 +463,6 @@
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
    :find-by-selection
-   :clearable?
    :groups
    :filter-current-opt?
 
