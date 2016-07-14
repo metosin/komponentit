@@ -310,6 +310,22 @@
   (if (:open? (r/state this))
     (some-> this r/dom-node (.getElementsByTagName "input") (.item 0) (.focus))))
 
+(defn initial-state [{:keys [items] :as opts} defaults this]
+  (let [prepared-items (prepare-items items opts)]
+    (merge
+      {:open? false
+       :search nil
+       :query nil
+       :selected 0
+       :items items
+       ; FIXME: Default opts. Uses only prepare-xform option.
+       :prepared-items prepared-items
+       :width nil
+       :height nil
+       :closable nil}
+      ; FIXME: Default opts.
+      (filter-results' prepared-items nil 0 (merge defaults opts)))))
+
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
@@ -339,25 +355,9 @@
    :ctrl-class
    :input-class
    :disabled?"
-  [{:keys [items] :as opts}]
+  [opts]
   (r/create-class
-    {:get-initial-state
-     (fn [this]
-       (let [prepared-items (prepare-items items opts)]
-         (merge
-           {:open? false
-            :search nil
-            :query nil
-            :selected 0
-            :items items
-            ; FIXME: Default opts. Uses only prepare-xform option.
-            :prepared-items prepared-items
-            :width nil
-            :height nil
-            :closable nil}
-           ; FIXME: Default opts.
-           (filter-results' prepared-items nil 0 (merge defaults opts))
-           )))
+    {:get-initial-state (partial initial-state opts defaults)
 
      :component-will-receive-props
      (fn [this [_ {:keys [items] :as opts}]]
@@ -490,25 +490,9 @@
    :ctrl-class
    :input-class
    :disabled?"
-  [{:keys [items] :as opts}]
+  [opts]
   (r/create-class
-    {:get-initial-state
-     (fn [this]
-       (let [prepared-items (prepare-items items opts)]
-         (merge
-           {:open? false
-            :search nil
-            :query nil
-            :selected 0
-            :items items
-            ; FIXME: Default opts. Uses only prepare-xform option.
-            :prepared-items prepared-items
-            :width nil
-            :height nil
-            :closable nil}
-           ; FIXME: Default opts.
-           (filter-results' prepared-items nil 0 (merge multiple-defaults opts))
-           )))
+    {:get-initial-state (partial initial-state opts multiple-defaults)
 
      :component-will-receive-props
      (fn [this [_ {:keys [items] :as opts}]]
