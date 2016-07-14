@@ -7,7 +7,8 @@
             [komponentit.highlight :refer [highlight-string]]
             [goog.dom :as dom]
             [goog.dom.classes :as classes]
-            [goog.style :refer [scrollIntoContainerView]]))
+            [goog.style :refer [scrollIntoContainerView]]
+            [komponentit.autosize :as autosize]))
 
 (def +create-item-index+ -1)
 
@@ -28,13 +29,6 @@
 (defn default-find-by-selection [data x]
   (some (fn [v]
           (if (= (::i v) x) v))
-        data))
-
-(defn- default-group-find-by-selection [data x]
-  (some (fn [[_ data]]
-          (some (fn [v]
-                  (if (= (::i v) x) v))
-                data))
         data))
 
 (defn create-matcher*
@@ -200,14 +194,15 @@
      :render
      (fn [this]
        (let [{:keys [item selected opts cb]} (r/props this)
-             {:keys [item->key item->text]} opts]
-         [:div
+             {:keys [item->key item->text value item->value]} opts]
+         [:div.autocomplete__item
           {:key (item->key item)
            :on-click (fn [_]
                        (cb item)
                        nil)
-           :class (str "option " (if (= (::i item) selected)
-                                   "active"))}
+           :class (str (cond
+                         (= (::i item) selected) "autocomplete__item--selected"
+                         (= value (item->value item)) "autocomplete__item--active"))}
           (or (::text item) (item->text item))]))}))
 
 (def ^:private defaults
@@ -256,38 +251,22 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected search {:keys [create multiple? group-by groups item->key no-results-text select-cb] :as opts}]
-         [:div
-          {:class (str "selectize-dropdown " (if multiple? "multi " "single ") (if @top? "above "))
+       (fn [results container-state selected search {:keys [create multiple? groups item->key no-results-text select-cb] :as opts}]
+         [:div.autocomplete__dropdown
+          {:class (str (if @top? "autocomplete__dropdown--above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
-          [:div.selectize-dropdown-content
+          [:div.autocomplete__dropdown-content
            [create-new-item search selected opts]
-           ; FIXME: Hack?
-           (if (or group-by groups)
-             (let [r (for [[k v] (or groups results)
-                           :let [group-results (get results k)]
-                           :when group-results]
-                       [:div.optgroup
-                        {:key k}
-                        [:div.optgroup-header (if groups v (name k))]
-                        (for [item group-results]
-                          ^{:key (item->key item)}
-                          [choice-item {:item item
-                                        :selected selected
-                                        :cb (:select-cb opts)
-                                        :opts opts}])])]
-               (if (seq r)
-                 r
-                 [:div.option no-results-text]))
-             (if (seq results)
-               (for [item results]
-                 ^{:key (item->key item)}
-                 [choice-item {:item item
-                               :selected selected
-                               :cb (:select-cb opts)
-                               :opts opts}])
-               (if-not create
-                 [:div.option no-results-text])))]])})))
+           ; FIXME: Reimplement optgroups/recursive items
+           (if (seq results)
+             (for [item results]
+               ^{:key (item->key item)}
+               [choice-item {:item item
+                             :selected selected
+                             :cb (:select-cb opts)
+                             :opts opts}])
+             (if-not create
+               [:div.option no-results-text]))]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -346,16 +325,14 @@
 
 (defn- build-options [opts defaults this]
   (let [;; Static defaults
-        {:keys [item->key group-by search-fields create cb] :as opts}
+        {:keys [item->key search-fields create cb] :as opts}
         (merge defaults opts)
 
         _ (assert (ifn? (:cb opts)) "Callback function is required")
 
         ;; Dynamic defaults based on other options
         opts (merge {:item->value item->key
-                     :find-by-selection (if (:group-by opts)
-                                          default-group-find-by-selection
-                                          default-find-by-selection)
+                     :find-by-selection default-find-by-selection
                      :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))}
                     opts)
 
@@ -372,8 +349,9 @@
 (defn autocomplete-input [opts text this]
   (let [{:keys [placeholder disabled? find-by-selection on-blur]} opts
         {:keys [open? search initial-search]} (r/state this)]
-    [:input
-     {:on-focus  (partial focus this search text)
+    [autosize/autosize
+     {:input-class "autocomplete__input"
+      :on-focus  (partial focus this search text)
       :on-blur   (fn [e]
                    (blur this opts e)
                    (if on-blur (on-blur e)))
@@ -393,21 +371,22 @@
 (defn selected-items [opts this]
   (let [{:keys [value item-removable? remove-cb value->text]} opts
         {:keys [items]} (r/state this)]
-    [:div
+    [:div.autocomplete__selected-items
      (for [x value]
        (let [removable? (item-removable? x)]
          ^{:key x}
-         [:div.item {:class (if-not removable? "non-removable-item")}
-          (value->text items x)
+         [:div.autocomplete__selected-item
+          [:span.autocomplete__item-text (value->text items x)]
           (if removable?
-            [:a.remove {:on-click (fn [e]
-                                    (remove-cb x)
-                                    nil)}
+            [:a.autocomplete__remove-item-button
+             {:on-click (fn [e]
+                          (remove-cb x)
+                          nil)}
              "×"])]))]))
 
 (defn autocomplete-clear [{:keys [clearable? select-cb]}]
   (if clearable?
-    [:span.selectize-clear
+    [:span.autocomplete__clear-button
      {:on-click #(select-cb nil)}
      "×"]))
 
@@ -428,7 +407,6 @@
    :->query
    :find-by-selection
    :clearable?
-   :group-by
    :groups
    :filter-current-opt?
 
@@ -438,7 +416,6 @@
 
    Style
    :ctrl-class
-   :input-class
    :disabled?"
   [opts]
   (r/create-class
@@ -452,20 +429,13 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [items open? results search selected n width height]} (r/state this)
-             {:keys [value cb value->text item->key item->value group-by groups ctrl-class input-class disabled?] :as opts} (build-options opts defaults this)
+             {:keys [value cb value->text item->key item->value groups ctrl-class disabled?] :as opts} (build-options opts defaults this)
              text (value->text items value)]
 
-         [:div.selectize-control.single
+         [:div.autocomplete.autocomplete--single
           {:class ctrl-class}
-          [:div.selectize-input
-           {:class (str input-class
-                        (if open? " input-active dropdown-active ")
-                        (if disabled? " disabled ")
-                        (if (seq results) " items ")
-                        ;; FIXME: ??
-                        (let [v value]
-                          (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
-            ;; FIXME: Why is on-click defined on both selectize-input and input?
+          [:div.autocomplete__control
+           {;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
@@ -490,7 +460,6 @@
    :->query
    :find-by-selection
    :clearable?
-   :group-by
    :groups
    :filter-current-opt?
 
@@ -500,7 +469,6 @@
 
    Style
    :ctrl-class
-   :input-class
    :disabled?"
   [opts]
   (r/create-class
@@ -514,20 +482,13 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [open? results search selected n width height]} (r/state this)
-             {:keys [value cb item->key item->value group-by groups ctrl-class input-class disabled?] :as opts} (build-options opts multiple-defaults this)
+             {:keys [value cb item->key item->value groups ctrl-class disabled?] :as opts} (build-options opts multiple-defaults this)
              text ""]
 
-         [:div.selectize-control.multi
+         [:div.autocomplete
           {:class ctrl-class}
-          [:div.selectize-input
-           {:class (str input-class
-                        (if open? " input-active dropdown-active ")
-                        (if disabled? " disabled ")
-                        (if (seq results) " items ")
-                        ;; FIXME: ?
-                        (let [v value]
-                          (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
-            ;; FIXME: Why is on-click defined on both selectize-input and input?
+          [:div.autocomplete__control
+           {;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
            [selected-items opts this]
            [autocomplete-input opts text this]

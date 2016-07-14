@@ -44,7 +44,8 @@ Items can be provided as:
      {:value @value
       :cb (fn [item] (reset! value (:key item)))
       :search-fields [:value]
-      :items (simple-items 50)}])
+      :items (simple-items 50)
+      :clearable? true}])
   (r/atom 5)
   {:inspect-data true})
 
