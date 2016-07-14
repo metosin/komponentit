@@ -167,7 +167,7 @@
     zoom: 1;
     *display: inline;
   }
-  .selectize-control.multi & > div {
+  .selectize-control.multi div.item {
     cursor: pointer;
     margin: 0 @selectize-margin-item-x @selectize-margin-item-y 0;
     padding: @selectize-padding-item-y @selectize-padding-item-x;
@@ -181,7 +181,7 @@
       border: @selectize-width-item-border solid @selectize-color-item-active-border;
     }
   }
-  .selectize-control.multi &.disabled > div {
+  .selectize-control.multi &.disabled div.item {
     &, &.active {
       color: lighten(desaturate(@selectize-color-item-text, 100%), @selectize-lighten-disabled-item-text);
       background: lighten(desaturate(@selectize-color-item, 100%), @selectize-lighten-disabled-item);
