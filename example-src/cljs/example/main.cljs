@@ -13,7 +13,8 @@
             example.input
             example.form-group
             example.modal
-            example.nav))
+            example.nav
+            example.autosize))
 
 (defn restart! []
   (dc/start-devcard-ui!))
