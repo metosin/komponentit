@@ -310,7 +310,7 @@
   (if (:open? (r/state this))
     (some-> this r/dom-node (.getElementsByTagName "input") (.item 0) (.focus))))
 
-(defn initial-state [{:keys [items] :as opts} defaults this]
+(defn- initial-state [{:keys [items] :as opts} defaults this]
   (let [prepared-items (prepare-items items opts)]
     (merge
       {:open? false
@@ -325,6 +325,13 @@
        :closable nil}
       ; FIXME: Default opts.
       (filter-results' prepared-items nil 0 (merge defaults opts)))))
+
+(defn- will-receive-props [this [_ {:keys [items] :as opts}]]
+  ;; When items changes, reset the results
+  (when-not (= (:items (r/props this)) items)
+    (r/set-state this {:items items})
+    (r/set-state this {:prepared-items (prepare-items items opts)})
+    (reset-search this opts)))
 
 (defn autocomplete
   ":value - (required) IDeref or value
@@ -358,14 +365,7 @@
   [opts]
   (r/create-class
     {:get-initial-state (partial initial-state opts defaults)
-
-     :component-will-receive-props
-     (fn [this [_ {:keys [items] :as opts}]]
-       ;; When items changes, reset the results
-       (when-not (= (:items (r/props this)) items)
-         (r/set-state this {:items items})
-         (r/set-state this {:prepared-items (prepare-items items opts)})
-         (reset-search this opts)))
+     :component-will-receive-props will-receive-props
 
      :component-will-unmount
      (fn [this]
@@ -493,14 +493,7 @@
   [opts]
   (r/create-class
     {:get-initial-state (partial initial-state opts multiple-defaults)
-
-     :component-will-receive-props
-     (fn [this [_ {:keys [items] :as opts}]]
-       ;; When items changes, reset the results
-       (when-not (= (:items (r/props this)) items)
-         (r/set-state this {:items items})
-         (r/set-state this {:prepared-items (prepare-items items opts)})
-         (reset-search this opts)))
+     :component-will-receive-props will-receive-props
 
      :component-will-unmount
      (fn [this]
