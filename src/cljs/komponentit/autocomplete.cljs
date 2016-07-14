@@ -333,6 +333,23 @@
     (r/set-state this {:prepared-items (prepare-items items opts)})
     (reset-search this opts)))
 
+(defn- will-unmount [this]
+  (if-let [closable (:closable (r/state this))]
+    (closable)))
+
+(defn- did-update [this old-argv]
+  (update-el-dimensions this)
+  (focus-input this))
+
+(defn- did-mount [opts this]
+  (r/set-state this {:closable (mixins/create-closable (fn [e]
+                                                         ;; Only close if the clicked element was outside this autocomplete el
+                                                         (when-not (dom/contains (r/dom-node this) (.-target e))
+                                                           (close this)
+                                                           (reset-search this opts))))})
+  (update-el-dimensions this)
+  (focus-input this))
+
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
@@ -366,26 +383,9 @@
   (r/create-class
     {:get-initial-state (partial initial-state opts defaults)
      :component-will-receive-props will-receive-props
-
-     :component-will-unmount
-     (fn [this]
-       (if-let [closable (:closable (r/state this))]
-         (closable)))
-
-     :component-did-update
-     (fn [this old-argv]
-       (update-el-dimensions this)
-       (focus-input this))
-
-     :component-did-mount
-     (fn [this]
-       (r/set-state this {:closable (mixins/create-closable (fn [e]
-                                                              ;; Only close if the clicked element was outside this autocomplete el
-                                                              (when-not (dom/contains (r/dom-node this) (.-target e))
-                                                                (close this)
-                                                                (reset-search this opts))))})
-       (update-el-dimensions this)
-       (focus-input this))
+     :component-will-unmount will-unmount
+     :component-did-update did-update
+     :component-did-mount (partial did-mount opts)
 
      :render
      (fn [this]
@@ -494,26 +494,9 @@
   (r/create-class
     {:get-initial-state (partial initial-state opts multiple-defaults)
      :component-will-receive-props will-receive-props
-
-     :component-will-unmount
-     (fn [this]
-       (if-let [closable (:closable (r/state this))]
-         (closable)))
-
-     :component-did-update
-     (fn [this old-argv]
-       (update-el-dimensions this)
-       (focus-input this))
-
-     :component-did-mount
-     (fn [this]
-       (r/set-state this {:closable (mixins/create-closable (fn [e]
-                                                              ;; Only close if the clicked element was outside this autocomplete el
-                                                              (when-not (dom/contains (r/dom-node this) (.-target e))
-                                                                (close this)
-                                                                (reset-search this opts))))})
-       (update-el-dimensions this)
-       (focus-input this))
+     :component-will-unmount will-unmount
+     :component-did-update did-update
+     :component-did-mount (partial did-mount opts)
 
      :render
      (fn [this]
