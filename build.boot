@@ -18,7 +18,7 @@
                   [com.andrewmcveigh/cljs-time "0.4.0"]
                   [cljsjs/pikaday "1.4.0-1"]
                   ;; Reagent before devcards to use proper React version
-                  [reagent "0.6.0-alpha2"]
+                  [reagent "0.6.0-SNAPSHOT"]
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
                   [cljsjs/react "15.0.2-0" :scope "test"]
