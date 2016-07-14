@@ -440,7 +440,8 @@
          [:div.autocomplete.autocomplete--single
           {:class ctrl-class}
           [:div.autocomplete__control
-           {;; FIXME: Why is on-click defined on both selectize-input and input?
+           {:class (if open? "autocomplete__control--open")
+            ;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
@@ -492,7 +493,8 @@
          [:div.autocomplete
           {:class ctrl-class}
           [:div.autocomplete__control
-           {;; FIXME: Why is on-click defined on both selectize-input and input?
+           {:class (if open? "autocomplete__control--open")
+            ;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
            [selected-items opts this]
            [autocomplete-input opts text this]

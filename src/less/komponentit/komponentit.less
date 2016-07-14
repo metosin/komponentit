@@ -19,6 +19,27 @@
   padding: @autocomplete-input-padding;
   border: 1px solid @autocomplete-input-border-color;
   overflow: hidden;
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    display: block;
+    width: 0;
+    height: 0;
+    margin-top: -3px;
+    border-color: #444 transparent transparent transparent;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    content: ' ';
+  }
+}
+
+.autocomplete__control--open {
+  &:after {
+    border-color: transparent transparent #444 transparent;
+    border-width: 0 5px 5px 5px;
+  }
 }
 
 .autocomplete__input {
