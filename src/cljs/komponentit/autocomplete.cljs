@@ -168,7 +168,7 @@
 
         add-highlighted-str
         (if (and search? (seq query))
-          (map (fn [v] (assoc v ::text (highlight-string (item->text v) query))))
+          (map (fn [v] (assoc v ::text (highlight-string (item->text v) query (fn [x] [:span.autocomplete__highlight x])))))
           identity)
 
         results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
