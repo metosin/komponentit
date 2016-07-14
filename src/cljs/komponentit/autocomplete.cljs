@@ -345,7 +345,7 @@
   (update-el-dimensions this)
   (focus-input this))
 
-(defn- merge-options [opts defaults]
+(defn- merge-options [opts defaults this]
   (let [opts (merge defaults opts)
 
         _ (assert (ifn? (:cb opts)) "Callback function is required")
@@ -354,8 +354,12 @@
                     :item->value (:item->key opts)
                     :find-by-selection (if (:group-by opts)
                                          default-group-find-by-selection
-                                         default-find-by-selection) :term-match-fn
-                    (if (:search-fields opts) (create-matcher* (:search-fields opts))))]
+                                         default-find-by-selection)
+                    :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))
+                    :create (if-let [create (:create opts)]
+                              (fn [s]
+                                (create s)
+                                (r/set-state this {:search nil :open? false}))))]
     opts))
 
 (defn autocomplete-input [opts select-cb text this]
@@ -378,6 +382,21 @@
                  (str initial-search)
                  (str search))
                text)}]))
+
+(defn selected-items [opts this]
+  (let [{:keys [item-removable? remove-cb value->text]} opts
+        {:keys [items value]} (r/state this)]
+    (doall
+      (for [x value]
+        (let [removable? (item-removable? x)]
+          ^{:key x}
+          [:div {:class (if removable? "item" "non-removable-item")}
+           (value->text items x)
+           (if removable?
+             [:a.remove {:on-click (fn [e]
+                                     (remove-cb x)
+                                     nil)}
+              "×"])])))))
 
 (defn autocomplete
   ":value - (required) IDeref or value
@@ -421,27 +440,18 @@
        (let [opts (r/props this)
              {:keys [items open? results search selected n width height]} (r/state this)
 
-             {:keys [value cb create remove-cb
+             {:keys [value cb create
                      value->text item->key item->value
-                     term-match-fn
-                     item-removable?
-                     search-fields
-                     ->query
                      clearable?
                      group-by groups
                      ctrl-class input-class disabled?]
               :as opts}
-             (merge-options opts defaults)
+             (merge-options opts defaults this)
 
              select-cb (fn [v]
                          (cb v)
                          (r/set-state this {:search "" :open? false}))
 
-             opts (if create
-                    (assoc opts :create (fn [s]
-                                          (create s)
-                                          (r/set-state this {:search nil :open? false})))
-                    opts)
              text (value->text items value)]
 
          [:div.selectize-control.single
@@ -505,29 +515,20 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [items open? results search selected n width height]} (r/state this)
+             {:keys [open? results search selected n width height]} (r/state this)
 
-             {:keys [value cb create remove-cb
-                     value->text item->key item->value
-                     term-match-fn
-                     item-removable?
-                     search-fields
-                     ->query
+             {:keys [value cb
+                     item->key item->value
                      clearable?
                      group-by groups
                      ctrl-class input-class disabled?]
               :as opts}
-             (merge-options opts defaults)
+             (merge-options opts defaults this)
 
              select-cb (fn [v]
                          (cb v)
                          (r/set-state this {:search "" :open? false}))
 
-             opts (if create
-                    (assoc opts :create (fn [s]
-                                          (create s)
-                                          (r/set-state this {:search nil :open? false})))
-                    opts)
              text ""]
 
          [:div.selectize-control.multi
@@ -542,17 +543,7 @@
                           (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
             ;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
-           (doall
-             (for [x value]
-               (let [removable? (item-removable? x)]
-                 ^{:key x}
-                 [:div {:class (if removable? "item" "non-removable-item")}
-                  (value->text items x)
-                  (if removable?
-                    [:a.remove {:on-click (fn [e]
-                                            (remove-cb x)
-                                            nil)}
-                     "×"])])))
+           [selected-items opts this]
            [autocomplete-input opts select-cb text this]
            (if clearable?
              [:span.selectize-clear
