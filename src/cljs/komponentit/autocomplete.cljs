@@ -223,11 +223,6 @@
          :multiple? true
          :item-removable? (constantly true)))
 
-(defn- assert-opts [{:keys [items filter-current-out? multiple? value cb]
-                     :as opts}]
-  (assert (ifn? cb) "Callback function is required")
-  opts)
-
 (defn- find-container [el]
   (loop [el el]
     (if el
@@ -350,6 +345,40 @@
   (update-el-dimensions this)
   (focus-input this))
 
+(defn- merge-options [opts defaults]
+  (let [opts (merge defaults opts)
+
+        _ (assert (ifn? (:cb opts)) "Callback function is required")
+
+        opts (assoc opts
+                    :item->value (:item->key opts)
+                    :find-by-selection (if (:group-by opts)
+                                         default-group-find-by-selection
+                                         default-find-by-selection) :term-match-fn
+                    (if (:search-fields opts) (create-matcher* (:search-fields opts))))]
+    opts))
+
+(defn autocomplete-input [opts select-cb text this]
+  (let [{:keys [placeholder disabled? find-by-selection on-blur]} opts
+        {:keys [open? search initial-search]} (r/state this)]
+    [:input
+     {:on-focus  (partial focus this search text)
+      :on-blur   (fn [e]
+                   (blur this opts e)
+                   (if on-blur (on-blur e)))
+      :on-change (partial change this nil opts)
+      :on-key-down (partial key-down this find-by-selection select-cb text opts)
+      :auto-complete false
+      :disabled disabled?
+      :type "text"
+      :placeholder placeholder
+      :on-click (partial click this disabled? text)
+      :value (if open?
+               (if initial-search
+                 (str initial-search)
+                 (str search))
+               text)}]))
+
 (defn autocomplete
   ":value - (required) IDeref or value
    :cb - (required) Function. [value]
@@ -390,28 +419,19 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [items open? results initial-search search selected n width height]} (r/state this)
+             {:keys [items open? results search selected n width height]} (r/state this)
 
-             {:keys [value cb create remove-cb on-blur
-                     value->text item->key
+             {:keys [value cb create remove-cb
+                     value->text item->key item->value
+                     term-match-fn
                      item-removable?
                      search-fields
                      ->query
                      clearable?
                      group-by groups
-                     placeholder
                      ctrl-class input-class disabled?]
               :as opts}
-             (assert-opts (merge defaults opts))
-
-             {:keys [item->value find-by-selection term-match-fn]
-              :as opts}
-             (merge {:item->value item->key
-                     :find-by-selection (if group-by
-                                          default-group-find-by-selection
-                                          default-find-by-selection)
-                     :term-match-fn (if search-fields (create-matcher* search-fields))}
-                    opts)
+             (merge-options opts defaults)
 
              select-cb (fn [v]
                          (cb v)
@@ -436,23 +456,7 @@
                           (if (or (and (not (coll? v)) (some? v)) (seq v)) " has-items ")))
             ;; FIXME: Why is on-click defined on both selectize-input and input?
             :on-click (partial click this disabled? text)}
-           [:input
-            {:on-focus  (partial focus this search text)
-             :on-blur   (fn [e]
-                          (blur this opts e)
-                          (if on-blur (on-blur e)))
-             :on-change (partial change this nil opts)
-             :on-key-down (partial key-down this find-by-selection select-cb text opts)
-             :auto-complete false
-             :disabled disabled?
-             :type "text"
-             :placeholder placeholder
-             :on-click (partial click this disabled? text)
-             :value (if open?
-                      (if initial-search
-                        (str initial-search)
-                        (str search))
-                      text)}]
+           [autocomplete-input opts select-cb text this]
            (if clearable?
              [:span.selectize-clear
               {:on-click #(select-cb nil)}
@@ -501,28 +505,19 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [items open? results initial-search search selected n width height]} (r/state this)
+             {:keys [items open? results search selected n width height]} (r/state this)
 
-             {:keys [value cb create remove-cb on-blur
-                     value->text item->key
+             {:keys [value cb create remove-cb
+                     value->text item->key item->value
+                     term-match-fn
                      item-removable?
                      search-fields
                      ->query
                      clearable?
                      group-by groups
-                     placeholder
                      ctrl-class input-class disabled?]
               :as opts}
-             (assert-opts (merge multiple-defaults opts))
-
-             {:keys [item->value find-by-selection term-match-fn]
-              :as opts}
-             (merge {:item->value item->key
-                     :find-by-selection (if group-by
-                                          default-group-find-by-selection
-                                          default-find-by-selection)
-                     :term-match-fn (if search-fields (create-matcher* search-fields))}
-                    opts)
+             (merge-options opts defaults)
 
              select-cb (fn [v]
                          (cb v)
@@ -558,23 +553,7 @@
                                             (remove-cb x)
                                             nil)}
                      "×"])])))
-           [:input
-            {:on-focus  (partial focus this search text)
-             :on-blur   (fn [e]
-                          (blur this opts e)
-                          (if on-blur (on-blur e)))
-             :on-change (partial change this nil opts)
-             :on-key-down (partial key-down this find-by-selection select-cb text opts)
-             :auto-complete false
-             :disabled disabled?
-             :type "text"
-             :placeholder placeholder
-             :on-click (partial click this disabled? text)
-             :value (if open?
-                      (if initial-search
-                        (str initial-search)
-                        (str search))
-                      text)}]
+           [autocomplete-input opts select-cb text this]
            (if clearable?
              [:span.selectize-clear
               {:on-click #(select-cb nil)}
