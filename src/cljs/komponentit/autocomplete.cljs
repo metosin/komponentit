@@ -5,6 +5,7 @@
             [komponentit.util :as util]
             [komponentit.mixins :as mixins]
             [komponentit.highlight :refer [highlight-string]]
+            [clojure.string :as string]
             [goog.dom :as dom]
             [goog.dom.classes :as classes]
             [goog.style :refer [scrollIntoContainerView]]
@@ -50,7 +51,7 @@
   (r/set-state this {:open? false}))
 
 (defn open [this text]
-  (r/set-state this {:open? true :initial-search text}))
+  (r/set-state this {:open? true :initial-search (if-not (string/blank? text) text)}))
 
 (defn update-search [this v {:keys [->query] :as opts}]
   (r/set-state this {:search v :query (->query v)})
