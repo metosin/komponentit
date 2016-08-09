@@ -12,18 +12,21 @@
                   [deraen/boot-less       "0.5.0"      :scope "test"]
                   [pandeiro/boot-http     "0.7.3"      :scope "test"]
 
-                  [prismatic/schema "1.1.3"]
-                  [metosin/schema-tools "0.9.0"]
+                  ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.4.0"]
+                  ;; FIXME: Drop
                   [cljsjs/pikaday "1.4.0-1"]
                   ;; Reagent before devcards to use proper React version
                   [reagent "0.6.0-SNAPSHOT"]
+
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
                   [cljsjs/react "15.0.2-0" :scope "test"]
                   [devcards "0.2.1-7" :scope "test"]
+                  [prismatic/schema "1.1.3" :scope "test"]
 
                   ; LESS
+                  ;; FIXME: Drop
                   [org.webjars/bootstrap "3.3.4"]])
 
 (require
