@@ -3,7 +3,6 @@
   :resource-paths #{"src/cljs" "src/less"}
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.8.51"  :scope "provided"]
-                  [boot/core              "2.5.5"      :scope "test"]
                   [adzerk/boot-cljs       "1.7.228-1"  :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.0"      :scope "test"]
                   [com.cemerick/piggieback "0.2.1"     :scope "test"]
