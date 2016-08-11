@@ -5,6 +5,7 @@
             example.datepicker
             example.filepicker
             example.autocomplete
+            example.autocomplete-tree
             example.calendar
             example.timepicker
             example.currency-input

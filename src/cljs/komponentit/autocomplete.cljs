@@ -180,6 +180,8 @@
   (let [{:keys [prepared-items query selected]} (r/state this)]
     (filter-results' prepared-items query selected opts)))
 
+(declare autocomplete-contents)
+
 (defn choice-item [_]
   (r/create-class
     {:component-did-mount
@@ -195,16 +197,22 @@
      :render
      (fn [this]
        (let [{:keys [item selected opts cb]} (r/props this)
-             {:keys [item->key item->text value item->value]} opts]
-         [:div.autocomplete__item
-          {:key (item->key item)
-           :on-click (fn [_]
-                       (cb item)
-                       nil)
-           :class (str (cond
-                         (= (::i item) selected) "autocomplete__item--selected"
-                         (= value (item->value item)) "autocomplete__item--active"))}
-          (or (::text item) (item->text item))]))}))
+             {:keys [item->key item->text value item->value item->items]} opts]
+         [:div
+          [:div.autocomplete__item
+           {:key (item->key item)
+            :on-click (fn [_]
+                        (cb item)
+                        nil)
+            :class (str (cond
+                          (= (::i item) selected) "autocomplete__item--selected"
+                          (= value (item->value item)) "autocomplete__item--active"))}
+           (or (::text item) (item->text item))]
+
+          ;; FIXME: calculate level for items
+          (if item->items
+            (if-let [subitems (item->items item)]
+              [:div.autocomplete__sub-items [autocomplete-contents subitems selected opts]]))]))}))
 
 (def ^:private defaults
   {:value->text get
@@ -239,7 +247,20 @@
       :selected selected
       :opts opts}]))
 
-(defn autocomplete-contents [_ container-state _ _ _ _]
+(defn autocomplete-contents
+  [results selected {:keys [create multiple? groups item->key no-results-text select-cb] :as opts}]
+  [:div
+   (if (seq results)
+     (for [item results]
+       ^{:key (item->key item)}
+       [choice-item {:item item
+                     :selected selected
+                     :cb (:select-cb opts)
+                     :opts opts}])
+     (if-not create
+       [:div.autocomplete__no-results no-results-text]))])
+
+(defn autocomplete-contents-wrapper [_ container-state _ _ _ _]
   (let [top? (r/atom false)]
     (r/create-class
       {:component-did-mount
@@ -258,16 +279,7 @@
            :style (if @top? {:bottom (str (:height container-state) "px")})}
           [:div.autocomplete__dropdown-content
            [create-new-item search selected opts]
-           ; FIXME: Reimplement optgroups/recursive items
-           (if (seq results)
-             (for [item results]
-               ^{:key (item->key item)}
-               [choice-item {:item item
-                             :selected selected
-                             :cb (:select-cb opts)
-                             :opts opts}])
-             (if-not create
-               [:div.option no-results-text]))]])})))
+           [autocomplete-contents results selected opts]]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -446,7 +458,7 @@
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
           (if open?
-            [autocomplete-contents results {:width width :height height} selected search opts])]))}))
+            [autocomplete-contents-wrapper results {:width width :height height} selected search opts])]))}))
 
 (defn multiple-autocomplete
   ":value - (required) IDeref or value

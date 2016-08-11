@@ -102,6 +102,24 @@
   padding: 2px 4px;
 }
 
+.autocomplete__no-results {
+  padding: @autocomplete-item-padding;
+}
+
+// FIXME: item class per level
+
+.autocomplete__sub-items div.autocomplete__item {
+  padding-left: 30px;
+}
+
+.autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+  padding-left: 60px;
+}
+
+.autocomplete__sub-items .autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+  padding-left: 90px;
+}
+
 .autocomplete__remove-item-button {
   // Devcards style overrides color without important
   color: #444 !important;
