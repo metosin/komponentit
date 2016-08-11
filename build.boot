@@ -37,7 +37,7 @@
   '[deraen.boot-less      :refer [less]]
   '[pandeiro.boot-http    :refer [serve]])
 
-(def +version+ "0.1.4-SNAPSHOT")
+(def +version+ "0.2.0-SNAPSHOT")
 
 (task-options!
   pom {:project 'metosin/komponentit
