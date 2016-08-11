@@ -6843,14 +6843,32 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .autocomplete__no-results {
   padding: 4px 8px;
 }
-.autocomplete__sub-items div.autocomplete__item {
+.autocomplete__level-1 {
+  padding-left: 0px;
+}
+.autocomplete__level-2 {
   padding-left: 30px;
 }
-.autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+.autocomplete__level-3 {
   padding-left: 60px;
 }
-.autocomplete__sub-items .autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+.autocomplete__level-4 {
   padding-left: 90px;
+}
+.autocomplete__level-5 {
+  padding-left: 120px;
+}
+.autocomplete__level-6 {
+  padding-left: 150px;
+}
+.autocomplete__level-7 {
+  padding-left: 180px;
+}
+.autocomplete__level-8 {
+  padding-left: 210px;
+}
+.autocomplete__level-9 {
+  padding-left: 240px;
 }
 .autocomplete__remove-item-button {
   color: #444 !important;
