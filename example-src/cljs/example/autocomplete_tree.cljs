@@ -40,7 +40,7 @@
       :search-fields [:name]
       :item->key :id
       :item->text (fn [item]
-                    (str (::autocomplete/i item) " " (:name item)))
+                    (str (::autocomplete/i item) " " (:name item) " (" (:id item) ")"))
       :value->text (fn [_ x] (str x))
       ;; Enable tree
       :item->items :items
@@ -55,7 +55,7 @@
       :search-fields [:name]
       :item->key :id
       :item->text (fn [item]
-                    (str (::autocomplete/i item) " " (:name item)))
+                    (str (::autocomplete/i item) " " (:name item) " (" (:id item) ")"))
       :value->text (fn [_ x] (str x))
       ;; Enable tree
       :item->items :items
