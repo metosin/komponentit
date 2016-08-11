@@ -13,11 +13,11 @@
 
 (def +create-item-index+ -1)
 
-(defn- query-match? [term-match-fn v query]
-  (every? (partial term-match-fn v) query))
+(defn query-match? [term-match-fn item query]
+  (every? (partial term-match-fn item) query))
 
-(defn matches [term-match-fn v query]
-  (let [m (group-by (partial term-match-fn v) query)]
+(defn sub-query-match? [term-match-fn item query]
+  (let [m (group-by #(boolean (term-match-fn item %)) query)]
     [(get m true) (get m false)]))
 
 (defn default->query [search]
@@ -150,13 +150,24 @@
                  (if-let [subitems (item->items item)]
                    ;; FIXME: item->items must be key currently
                    ;; Add indeces here, so top level items have the smaller index than sub items.
-                   ;; Check match and show all items if this item matched.
-                   (let [match? (if (and search? term-match-fn query)
-                                  (query-match? term-match-fn item query))]
+                   ;; Check for partial (or full) match and filter subitems with remaining query terms.
+                   (let [[matched not-matched] (if (and search? term-match-fn query)
+                                                 (sub-query-match? term-match-fn item query)
+                                                 [nil query])
+                         match? (boolean (seq matched))
+                         ;; Reserve index for this item
+                         this-i (swap! n inc)
+                         filtered-sub-items (filter-results' n search? subitems not-matched selected opts)
+                         ;; If this item is filtered out because of no items, release the index
+                         this-i (if (seq filtered-sub-items)
+                                  this-i
+                                  (do
+                                    (swap! n dec)
+                                    nil))]
                      (assoc item
                             ::match? match?
-                            ::i (swap! n inc)
-                            item->items (filter-results' n search? subitems (if match? nil query) selected opts)))
+                            ::i this-i
+                            item->items filtered-sub-items))
                    item)))
           identity)
 

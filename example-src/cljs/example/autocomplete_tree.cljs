@@ -2,7 +2,8 @@
   (:require [komponentit.autocomplete :as autocomplete]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [cljs.test :refer-macros [is]]))
 
 (dc/defcard-rg tree-autocomplete
   (fn [value _]
@@ -44,3 +45,7 @@
       :clearable? true}])
   (r/atom 5)
   {:inspect-data true})
+
+(dc/deftest sub-query-match?-test
+  (let [match-fn (autocomplete/create-matcher* [:name])]
+    (is (= [["foo"] ["bar"]] (autocomplete/sub-query-match? match-fn {:name "foo"} ["foo" "bar"])))))
