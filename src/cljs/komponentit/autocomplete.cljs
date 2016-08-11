@@ -197,9 +197,9 @@
                 (take max-results)
                 identity)
 
-        ;; subitem filter adds some indeces
         add-index
         (map (fn [v]
+               ;; subitem filter adds some indeces, don't overwrite them
                (if (::i v)
                  (assoc v
                         ::level level)
