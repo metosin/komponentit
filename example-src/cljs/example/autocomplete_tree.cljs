@@ -32,6 +32,15 @@
     :name "Lorem ipsum"
     :price 90}])
 
+(defn tree-items-by-id [by-id items path]
+  (reduce (fn [by-id item]
+            (let [item (assoc item :path path)]
+              (tree-items-by-id (assoc by-id (:id item) item)
+                                (:items item)
+                                (conj path (:id item)))))
+          by-id
+          items))
+
 (dc/defcard-rg tree-autocomplete
   (fn [value _]
     [autocomplete/autocomplete
@@ -41,7 +50,16 @@
       :item->key :id
       :item->text (fn [item]
                     (str (::autocomplete/i item) " " (:name item) " (" (:id item) ")"))
-      :value->text (fn [_ x] (str x))
+      :value->text (fn [items id]
+                     (if id
+                       ;; FIXME: This is probably ran too often?
+                       (let [items-by-id (tree-items-by-id {} items []) ]
+                         (if-let [{:keys [id name path]} (get items-by-id id)]
+                           (let [path (str/join " > " (map (comp :name items-by-id) path))]
+                             (str (if (seq path) (str path " > "))
+                                  name
+                                  " (" id ")"))
+                           (str "Unknown item, ID: " id)))))
       ;; Enable tree
       :item->items :items
       :items tree-data}])
