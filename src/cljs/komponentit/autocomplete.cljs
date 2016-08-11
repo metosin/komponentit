@@ -152,13 +152,12 @@
         (if item->items
           (map (fn [item]
                  (if-let [subitems (item->items item)]
-                   ;; FIXME: item->items must be key currently
-                   ;; Add indeces here, so top level items have the smaller index than sub items.
                    ;; Check for partial (or full) match and filter subitems with remaining query terms.
                    (let [[matched not-matched] (if (and search? term-match-fn query)
                                                  (sub-query-match? term-match-fn item query)
                                                  [nil query])
                          match? (boolean (seq matched))
+                         ;; Add indeces here, so top level items have the smaller index than sub items.
                          ;; Reserve index for this item
                          this-i (swap! n inc)
                          filtered-sub-items (filter-results' n search? subitems not-matched selected opts)
@@ -171,6 +170,7 @@
                      (assoc item
                             ::match? match?
                             ::i this-i
+                            ;; FIXME: item->items must be key currently
                             item->items filtered-sub-items))
                    item)))
           identity)
@@ -179,7 +179,6 @@
         (if (and search? term-match-fn query)
           (if item->items
             ;; If item has subitems, show if subitems matched the search
-            ;; FIXME: which order is faster?
             (filter (fn [item] (or (::match? item)
                                    (seq (item->items item))
                                    (query-match? term-match-fn item query))))
