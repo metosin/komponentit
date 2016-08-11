@@ -65,21 +65,6 @@
       :items tree-data}])
   (r/atom nil))
 
-(dc/defcard-rg tree-autocomplete-custom-item
-  (fn [value _]
-    [autocomplete/autocomplete
-     {:value @value
-      :cb (fn [item] (reset! value (:id item)))
-      :search-fields [:name]
-      :item->key :id
-      :item->text (fn [item]
-                    (str (::autocomplete/i item) " " (:name item) " (" (:id item) ")"))
-      :value->text (fn [_ x] (str x))
-      ;; Enable tree
-      :item->items :items
-      :items tree-data}])
-  (r/atom nil))
-
 (dc/deftest sub-query-match?-test
   (let [match-fn (autocomplete/create-matcher* [:name])]
     (is (= [["foo"] ["bar"]] (autocomplete/sub-query-match? match-fn {:name "foo"} ["foo" "bar"])))))
