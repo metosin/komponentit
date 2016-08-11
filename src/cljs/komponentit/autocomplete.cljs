@@ -127,6 +127,8 @@
       nil)))
 
 (defn prepare-items [items {:keys [prepare-xform] :as opts}]
+  ;; FIXME: remove map-to-seq
+  ;; FIXME: not used with sub-items, doesn't matter because this doesn't do anything useful
   (let [map-to-seq
         (if (map? items)
           (map (fn [v] {:key   (key v)
@@ -137,18 +139,28 @@
     (into [] (comp map-to-seq prepare-xform) items)))
 
 (defn filter-results'
-  [prepared-items query selected
+  [n search? prepared-items query selected
    {:keys [value term-match-fn multiple? filter-current-out?
-           item->text item->value item->key
+           item->text item->value item->key item->items
            min-search-length max-results]
     :as opts}]
-  (let [n (atom -1)
-        search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
-                    (not min-search-length))
+  (let [filter-subitems
+        (if item->items
+          (map (fn [item]
+                 (if-let [subitems (item->items item)]
+                   ;; FIXME: item->items must be key currently
+                   (assoc item item->items (filter-results' n search? subitems query selected opts))
+                   item)))
+          identity)
 
         filter-search
         (if (and search? (and term-match-fn query))
-          (filter (fn [item] (query-match? term-match-fn item query)))
+          (if item->items
+            ;; If item has subitems, show if subitems matched the search
+            ;; FIXME: which order is faster?
+            (filter (fn [item] (or (seq (item->items item))
+                                   (query-match? term-match-fn item query))))
+            (filter (fn [item] (query-match? term-match-fn item query))))
           identity)
 
         filter-current
@@ -169,18 +181,30 @@
         add-highlighted-str
         (if (and search? (seq query))
           (map (fn [v] (assoc v ::text (highlight-string (item->text v) query (fn [x] [:span.autocomplete__highlight x])))))
-          identity)
+          identity)]
 
-        results (into [] (comp filter-search filter-current limit add-index add-highlighted-str) prepared-items)]
+    (into [] (comp filter-subitems filter-search filter-current limit add-index add-highlighted-str) prepared-items)))
+
+(defn filter-results-top
+  [prepared-items query selected
+   {:keys [value term-match-fn multiple? filter-current-out?
+           item->text item->value item->key
+           min-search-length max-results]
+    :as opts}]
+  (let [n (atom -1)
+        search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
+                    (not min-search-length))
+
+        results (filter-results' n search? prepared-items query selected opts)]
     {:n @n
      :selected (limit-selection @n selected identity query opts)
      :results results}))
 
 (defn filter-results [this opts]
   (let [{:keys [prepared-items query selected]} (r/state this)]
-    (filter-results' prepared-items query selected opts)))
+    (filter-results-top prepared-items query selected opts)))
 
-(declare autocomplete-contents)
+(declare autocomplete-contents-list)
 
 (defn choice-item [_]
   (r/create-class
@@ -212,7 +236,7 @@
           ;; FIXME: calculate level for items
           (if item->items
             (if-let [subitems (item->items item)]
-              [:div.autocomplete__sub-items [autocomplete-contents subitems selected opts]]))]))}))
+              [:div.autocomplete__sub-items [autocomplete-contents-list subitems selected opts]]))]))}))
 
 (def ^:private defaults
   {:value->text get
@@ -247,18 +271,22 @@
       :selected selected
       :opts opts}]))
 
-(defn autocomplete-contents
-  [results selected {:keys [create multiple? groups item->key no-results-text select-cb] :as opts}]
+(defn autocomplete-contents-list
+  [results selected {:keys [item->key] :as opts}]
   [:div
-   (if (seq results)
-     (for [item results]
-       ^{:key (item->key item)}
-       [choice-item {:item item
-                     :selected selected
-                     :cb (:select-cb opts)
-                     :opts opts}])
-     (if-not create
-       [:div.autocomplete__no-results no-results-text]))])
+   (for [item results]
+     ^{:key (item->key item)}
+     [choice-item {:item item
+                   :selected selected
+                   :cb (:select-cb opts)
+                   :opts opts}])])
+
+(defn autocomplete-contents-top
+  [results selected {:keys [create no-results-text] :as opts}]
+  (if (seq results)
+    [autocomplete-contents-list results selected opts]
+    (if-not create
+      [:div.autocomplete__no-results no-results-text])))
 
 (defn autocomplete-contents-wrapper [_ container-state _ _ _ _]
   (let [top? (r/atom false)]
@@ -279,7 +307,7 @@
            :style (if @top? {:bottom (str (:height container-state) "px")})}
           [:div.autocomplete__dropdown-content
            [create-new-item search selected opts]
-           [autocomplete-contents results selected opts]]])})))
+           [autocomplete-contents-top results selected opts]]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -310,7 +338,7 @@
        :height nil
        :closable nil}
       ; FIXME: Default opts.
-      (filter-results' prepared-items nil 0 (merge defaults opts)))))
+      (filter-results-top prepared-items nil 0 (merge defaults opts)))))
 
 (defn- will-receive-props [this [_ {:keys [items] :as opts}]]
   ;; When items changes, reset the results
@@ -512,4 +540,4 @@
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
           (if open?
-            [autocomplete-contents results {:width width :height height} selected search opts])]))}))
+            [autocomplete-contents-top results {:width width :height height} selected search opts])]))}))
