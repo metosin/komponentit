@@ -149,7 +149,10 @@
           (map (fn [item]
                  (if-let [subitems (item->items item)]
                    ;; FIXME: item->items must be key currently
-                   (assoc item item->items (filter-results' n search? subitems query selected opts))
+                   ;; Add indeces here, so top level items have the smaller index than sub items
+                   (assoc item
+                          ::i (swap! n inc)
+                          item->items (filter-results' n search? subitems query selected opts))
                    item)))
           identity)
 
@@ -175,8 +178,11 @@
                 (take max-results)
                 identity)
 
+        ;; subitem filter adds some indeces
         add-index
-        (map (fn [v] (assoc v ::i (swap! n inc))))
+        (map (fn [v] (if (::i v)
+                       v
+                       (assoc v ::i (swap! n inc)))))
 
         add-highlighted-str
         (if (and search? (seq query))
