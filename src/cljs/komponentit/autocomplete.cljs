@@ -143,7 +143,7 @@
     (into [] (comp map-to-seq prepare-xform) items)))
 
 (defn filter-results'
-  [n search? prepared-items query selected
+  [n search? level prepared-items query selected
    {:keys [value term-match-fn multiple? filter-current-out?
            item->text item->value item->key item->items
            min-search-length max-results]
@@ -160,7 +160,7 @@
                          ;; Add indeces here, so top level items have the smaller index than sub items.
                          ;; Reserve index for this item
                          this-i (swap! n inc)
-                         filtered-sub-items (filter-results' n search? subitems not-matched selected opts)
+                         filtered-sub-items (filter-results' n search? (inc level) subitems not-matched selected opts)
                          ;; If this item is filtered out because of no items, release the index
                          this-i (if (seq filtered-sub-items)
                                   this-i
@@ -199,9 +199,13 @@
 
         ;; subitem filter adds some indeces
         add-index
-        (map (fn [v] (if (::i v)
-                       v
-                       (assoc v ::i (swap! n inc)))))
+        (map (fn [v]
+               (if (::i v)
+                 (assoc v
+                        ::level level)
+                 (assoc v
+                        ::i (swap! n inc)
+                        ::level level))))
 
         add-highlighted-str
         (if (and search? (seq query))
@@ -220,7 +224,7 @@
         search? (or (and min-search-length (>= (count (apply str query)) min-search-length))
                     (not min-search-length))
 
-        results (filter-results' n search? prepared-items query selected opts)]
+        results (filter-results' n search? 1 prepared-items query selected opts)]
     {:n @n
      :selected (limit-selection @n selected identity query opts)
      :results results}))
@@ -256,12 +260,13 @@
             :class (str (cond
                           (= (::i item) selected) "autocomplete__item--selected"
                           (= value (item->value item)) "autocomplete__item--active"))}
-           (or (::text item) (item->text item))]
+           [:div
+            {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
+            (or (::text item) (item->text item))]]
 
-          ;; FIXME: calculate level for items
           (if item->items
             (if-let [subitems (item->items item)]
-              [:div.autocomplete__sub-items [autocomplete-contents-list subitems selected opts]]))]))}))
+              [autocomplete-contents-list subitems selected opts]))]))}))
 
 (def ^:private defaults
   {:value->text get

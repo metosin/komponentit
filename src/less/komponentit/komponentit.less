@@ -10,6 +10,7 @@
 @autocomplete-item-background-selected: #CAECFF;
 @autocomplete-item-background-hover: lighten(@autocomplete-item-background-selected, 5);
 @autocomplete-item-background-active: #CBFFCA;
+@autocomplete-item-level-padding: 30px;
 
 .autocomplete {
   position: relative;
@@ -108,17 +109,15 @@
 
 // FIXME: item class per level
 
-.autocomplete__sub-items div.autocomplete__item {
-  padding-left: 30px;
-}
-
-.autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
-  padding-left: 60px;
-}
-
-.autocomplete__sub-items .autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
-  padding-left: 90px;
-}
+.autocomplete__level-1 { padding-left: 0 * @autocomplete-item-level-padding; }
+.autocomplete__level-2 { padding-left: 1 * @autocomplete-item-level-padding; }
+.autocomplete__level-3 { padding-left: 2 * @autocomplete-item-level-padding; }
+.autocomplete__level-4 { padding-left: 3 * @autocomplete-item-level-padding; }
+.autocomplete__level-5 { padding-left: 4 * @autocomplete-item-level-padding; }
+.autocomplete__level-6 { padding-left: 5 * @autocomplete-item-level-padding; }
+.autocomplete__level-7 { padding-left: 6 * @autocomplete-item-level-padding; }
+.autocomplete__level-8 { padding-left: 7 * @autocomplete-item-level-padding; }
+.autocomplete__level-9 { padding-left: 8 * @autocomplete-item-level-padding; }
 
 .autocomplete__remove-item-button {
   // Devcards style overrides color without important
