@@ -235,38 +235,45 @@
 
 (declare autocomplete-contents-list)
 
-(defn choice-item [_]
+(defn choice-item [{:keys [item selected opts cb]}]
+  (let [{:keys [item->key item->text value item->value item->items]} opts]
+    [:div
+     [:div.autocomplete__item
+      {:key (item->key item)
+       :on-click (fn [_]
+                   (cb item)
+                   nil)
+       :class (str (cond
+                     (= (::i item) selected) "autocomplete__item--selected"
+                     (= value (item->value item)) "autocomplete__item--active"))}
+      [:div
+       {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
+       (or (::text item) (item->text item))]]
+
+     (if item->items
+       (if-let [subitems (item->items item)]
+         [autocomplete-contents-list subitems selected opts]))]))
+
+(defn select-scroll-wrapper [el]
+  (loop [el (.-parentElement el)]
+    (if el
+      ;; NOTE: This element must only have this class, or this check will break
+      (if (= "autocomplete__dropdown-content" (.-className el))
+        el
+        (recur (.-parentElement el))))))
+
+(defn scroll-into-selected [this]
+  (let [{:keys [item selected]} (r/props this)]
+    (if (= (::i item) selected)
+      (scrollIntoContainerView (r/dom-node this) (select-scroll-wrapper (r/dom-node this)) true))))
+
+(defn choice-item-wrapper [_]
   (r/create-class
-    {:component-did-mount
-     (fn [this]
-       (let [{:keys [item selected]} (r/props this)]
-         (if (= (::i item) selected)
-           (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
-     :component-did-update
-     (fn [this]
-       (let [{:keys [item selected]} (r/props this)]
-         (if (= (::i item) selected)
-           (scrollIntoContainerView (r/dom-node this) (.-parentNode (r/dom-node this)) true))))
+    {:component-did-mount scroll-into-selected
+     :component-did-update scroll-into-selected
      :render
      (fn [this]
-       (let [{:keys [item selected opts cb]} (r/props this)
-             {:keys [item->key item->text value item->value item->items]} opts]
-         [:div
-          [:div.autocomplete__item
-           {:key (item->key item)
-            :on-click (fn [_]
-                        (cb item)
-                        nil)
-            :class (str (cond
-                          (= (::i item) selected) "autocomplete__item--selected"
-                          (= value (item->value item)) "autocomplete__item--active"))}
-           [:div
-            {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
-            (or (::text item) (item->text item))]]
-
-          (if item->items
-            (if-let [subitems (item->items item)]
-              [autocomplete-contents-list subitems selected opts]))]))}))
+       [choice-item (r/props this)])}))
 
 (def ^:private defaults
   {:value->text get
@@ -294,7 +301,7 @@
 
 (defn create-new-item [search selected {:keys [create-cb] :as opts}]
   (if (and create-cb (seq search))
-    [choice-item
+    [choice-item-wrapper
      {:item {::i +create-item-index+
              ::text (str "Add " search "...")}
       :cb (fn [_] (create-cb search))
@@ -306,10 +313,11 @@
   [:div
    (for [item results]
      ^{:key (item->key item)}
-     [choice-item {:item item
-                   :selected selected
-                   :cb (:select-cb opts)
-                   :opts opts}])])
+     [choice-item-wrapper
+      {:item item
+       :selected selected
+       :cb (:select-cb opts)
+       :opts opts}])])
 
 (defn autocomplete-contents-top
   [results selected {:keys [create no-results-text] :as opts}]
