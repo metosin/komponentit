@@ -6840,6 +6840,18 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 .autocomplete__item-text {
   padding: 2px 4px;
 }
+.autocomplete__no-results {
+  padding: 4px 8px;
+}
+.autocomplete__sub-items div.autocomplete__item {
+  padding-left: 30px;
+}
+.autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+  padding-left: 60px;
+}
+.autocomplete__sub-items .autocomplete__sub-items .autocomplete__sub-items div.autocomplete__item {
+  padding-left: 90px;
+}
 .autocomplete__remove-item-button {
   color: #444 !important;
   padding: 2px 4px;
@@ -7045,9 +7057,6 @@ fieldset[disabled] .month-calendar .selected .btn-date.active {
 }
 .month-calendar a.active {
   text-decoration: underline;
-}
-.selectize-dropdown {
-  width: 100%;
 }
 .needs-attention .form-control,
 .needs-attention .selectize-input,
