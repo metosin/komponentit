@@ -27,13 +27,13 @@
     (->> (remove empty?))
     vec))
 
-(defn default-find-by-selection [{:keys [item->items] :as opts} results selected-index]
+(defn find-by-selection [{:keys [item->items] :as opts} results selected-index]
   (some (fn [item]
           (if (= (::i item) selected-index)
             item
             (if item->items
               (if-let [subitems (item->items item)]
-                (default-find-by-selection opts subitems selected-index)))))
+                (find-by-selection opts subitems selected-index)))))
         results))
 
 (defn create-matcher*
@@ -98,7 +98,7 @@
 (defn limit-selection [n selected f search {:keys [create]}]
   (util/limit (if (and create (seq search)) +create-item-index+ 0) n (f selected)))
 
-(defn key-down [this find-by-selection text {:keys [cb create-cb remove-cb select-cb] :as opts} e]
+(defn key-down [this text {:keys [cb create-cb remove-cb select-cb] :as opts} e]
   (let [{:keys [search results selected n open?]} (r/state this)
         update-selection (fn [f e]
                            (.preventDefault e)
@@ -398,7 +398,6 @@
 
         ;; Dynamic defaults based on other options
         opts (merge {:item->value item->key
-                     :find-by-selection default-find-by-selection
                      :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))}
                     opts)
 
@@ -413,7 +412,7 @@
     opts))
 
 (defn autocomplete-input [opts text this]
-  (let [{:keys [placeholder disabled? find-by-selection on-blur]} opts
+  (let [{:keys [placeholder disabled? on-blur]} opts
         {:keys [open? search initial-search]} (r/state this)]
     [autosize/autosize
      {:input-class "autocomplete__input"
@@ -422,7 +421,7 @@
                    (blur this opts e)
                    (if on-blur (on-blur e)))
       :on-change (partial change this nil opts)
-      :on-key-down (partial key-down this find-by-selection text opts)
+      :on-key-down (partial key-down this text opts)
       :auto-complete false
       :disabled disabled?
       :type "text"
@@ -476,7 +475,6 @@
    :search-fields
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
-   :find-by-selection
    :groups
    :filter-current-opt?
 
@@ -529,7 +527,6 @@
    :search-fields
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
-   :find-by-selection
    :groups
    :filter-current-opt?
 
