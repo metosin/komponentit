@@ -27,10 +27,14 @@
     (->> (remove empty?))
     vec))
 
-(defn default-find-by-selection [data x]
-  (some (fn [v]
-          (if (= (::i v) x) v))
-        data))
+(defn default-find-by-selection [{:keys [item->items] :as opts} results selected-index]
+  (some (fn [item]
+          (if (= (::i item) selected-index)
+            item
+            (if item->items
+              (if-let [subitems (item->items item)]
+                (default-find-by-selection opts subitems selected-index)))))
+        results))
 
 (defn create-matcher*
   "Fields can be either collection containing multiple key for map,
@@ -111,7 +115,7 @@
                 (.stopPropagation e)
                 (if (and create-cb (= +create-item-index+ selected))
                   (create-cb search)
-                  (when-let [v (find-by-selection results selected)]
+                  (when-let [v (find-by-selection opts results selected)]
                     (select-cb v))))
       "Escape" (r/set-state this {:open? false :search nil})
       "Backspace" (cond
