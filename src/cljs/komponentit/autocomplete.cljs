@@ -273,7 +273,8 @@
 (defn scroll-into-selected [this]
   (let [{:keys [item selected]} (r/props this)]
     (if (= (::i item) selected)
-      (scrollIntoContainerView (r/dom-node this) (select-scroll-wrapper (r/dom-node this)) true))))
+      (scrollIntoContainerView (.getElementsByClassName (r/dom-node this) "autocomplete__item")
+                               (select-scroll-wrapper (r/dom-node this)) true))))
 
 (defn choice-item-wrapper [_]
   (r/create-class
