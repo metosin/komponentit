@@ -279,9 +279,7 @@
   (r/create-class
     {:component-did-mount scroll-into-selected
      :component-did-update scroll-into-selected
-     :render
-     (fn [this]
-       [choice-item (r/props this)])}))
+     :reagent-render choice-item}))
 
 (def ^:private defaults
   {:value->text get

@@ -142,3 +142,13 @@ Items can be provided as:
                      {:id 1 :first-name "John" :last-name "Doe"}]
            :value nil})
   {:inspect-data true})
+
+(dc/defcard-rg autocomplete-lots-of-items
+  (fn [value _]
+    [autocomplete/autocomplete
+     {:value @value
+      :cb (fn [item] (reset! value (:key item)))
+      :search-fields [:value]
+      :items (simple-items 5000)}])
+  (r/atom 5)
+  {:inspect-data true})

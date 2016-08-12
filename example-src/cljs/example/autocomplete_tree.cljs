@@ -66,6 +66,45 @@
       :debounce-timeout 250}])
   (r/atom nil))
 
+(defn create-tree [index n depth]
+  (into [] (map (fn [i]
+                  (let [id (swap! index inc)
+                        item {:id id
+                              :name (str "Option " id)}]
+                    (if (> depth 0)
+                      (assoc item :items (create-tree index (/ (- n 2) 2) (dec depth)))
+                      item)))
+                (range (if (> depth 0)
+                         2
+                         n)))))
+
+(def tree-data-large (create-tree (atom 0) 1000 4))
+
+(dc/defcard-rg tree-autocomplete-lots-of-items
+  (fn [value _]
+    [autocomplete/autocomplete
+     {:value @value
+      :cb (fn [item] (reset! value (:id item)))
+      :search-fields [:name]
+      :item->key :id
+      :item->text (fn [item]
+                    (str (::autocomplete/i item) " " (:name item) " (" (:id item) ")"))
+      :value->text (fn [items id]
+                     (if id
+                       ;; FIXME: This is probably ran too often?
+                       (let [items-by-id (tree-items-by-id {} items []) ]
+                         (if-let [{:keys [id name path]} (get items-by-id id)]
+                           (let [path (str/join " > " (map (comp :name items-by-id) path))]
+                             (str (if (seq path) (str path " > "))
+                                  name
+                                  " (" id ")"))
+                           (str "Unknown item, ID: " id)))))
+      ;; Enable tree
+      :item->items :items
+      :items tree-data-large
+      :debounce-timeout 250}])
+  (r/atom nil))
+
 (dc/deftest sub-query-match?-test
   (let [match-fn (autocomplete/create-matcher* [:name])]
     (is (= [["foo"] ["bar"]] (autocomplete/sub-query-match? match-fn {:name "foo"} ["foo" "bar"])))))
