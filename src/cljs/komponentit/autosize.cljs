@@ -17,7 +17,8 @@
         placeholder-sizer-el (atom nil)
         sizer-el (atom nil)]
     (r/create-class
-      {:component-did-mount
+      {:display-name "komponentit.autosize.autosize"
+       :component-did-mount
        (fn [this]
          (let [{:keys [value]} (r/props this)
                sizer-width (.-scrollWidth @sizer-el)

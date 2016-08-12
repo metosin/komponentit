@@ -278,7 +278,8 @@
 
 (defn choice-item-wrapper [_]
   (r/create-class
-    {:component-did-mount scroll-into-selected
+    {:display-name "komponentit.autocomplete.choice_item_wrapper_class"
+     :component-did-mount scroll-into-selected
      :component-did-update scroll-into-selected
      :reagent-render choice-item}))
 
@@ -336,7 +337,8 @@
 (defn autocomplete-contents-wrapper [_ container-state _ _ _ _]
   (let [top? (r/atom false)]
     (r/create-class
-      {:component-did-mount
+      {:display-name "komponentit.autocomplete.autocomplete_contents_wrapper_class"
+       :component-did-mount
        (fn [this]
          (let [el (r/dom-node this)
                rect (.getBoundingClientRect el)
@@ -509,7 +511,8 @@
    :disabled?"
   [opts]
   (r/create-class
-    {:get-initial-state (partial initial-state opts defaults)
+    {:display-name "komponentit.autocomplete.autocomplete_class"
+     :get-initial-state (partial initial-state opts defaults)
      :component-will-receive-props will-receive-props
      :component-will-unmount will-unmount
      :component-did-update did-update
@@ -561,7 +564,8 @@
    :disabled?"
   [opts]
   (r/create-class
-    {:get-initial-state (partial initial-state opts multiple-defaults)
+    {:display-name "komponentit.autocomplete.multiple_autocomplete_class"
+     :get-initial-state (partial initial-state opts multiple-defaults)
      :component-will-receive-props will-receive-props
      :component-will-unmount will-unmount
      :component-did-update did-update

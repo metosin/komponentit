@@ -49,7 +49,8 @@
   (let [open?  (r/atom false)
         listener (atom nil)]
     (r/create-class
-      {:component-did-mount
+      {:display-name "komponentit.dropdown.dropdown_class"
+       :component-did-mount
        (fn [this]
          (reset! listener (events/listen js/window events/EventType.CLICK
                                          (fn [e]

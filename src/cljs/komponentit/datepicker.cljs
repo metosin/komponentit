@@ -22,7 +22,8 @@
         ; Hack to access current value from onSelect
         current-val (atom nil)]
     (r/create-class
-      {:component-did-mount
+      {:display-name "komponentit.datepicker.date_class"
+       :component-did-mount
        (fn [this]
          (reset! el (doto (js/Pikaday. (-> {:field          (r/dom-node this)
                                             ; NOTE: This requires MomentJS
