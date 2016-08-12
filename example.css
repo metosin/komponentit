@@ -6775,6 +6775,7 @@ http://nicolasgallagher.com/micro-clearfix-hack/
   padding: 4px 8px;
   border: 1px solid #444;
   overflow: hidden;
+  cursor: text;
 }
 .autocomplete__control:after {
   position: absolute;
@@ -6869,6 +6870,39 @@ http://nicolasgallagher.com/micro-clearfix-hack/
 }
 .autocomplete__level-9 {
   padding-left: 240px;
+}
+.autocomplete__level-10 {
+  padding-left: 270px;
+}
+.autocomplete__level-11 {
+  padding-left: 300px;
+}
+.autocomplete__level-12 {
+  padding-left: 330px;
+}
+.autocomplete__level-13 {
+  padding-left: 360px;
+}
+.autocomplete__level-14 {
+  padding-left: 390px;
+}
+.autocomplete__level-15 {
+  padding-left: 420px;
+}
+.autocomplete__level-16 {
+  padding-left: 450px;
+}
+.autocomplete__level-17 {
+  padding-left: 480px;
+}
+.autocomplete__level-18 {
+  padding-left: 510px;
+}
+.autocomplete__level-19 {
+  padding-left: 540px;
+}
+.autocomplete__level-19 {
+  padding-left: 570px;
 }
 .autocomplete__remove-item-button {
   color: #444 !important;
