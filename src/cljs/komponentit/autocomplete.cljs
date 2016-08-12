@@ -176,7 +176,7 @@
                                  (swap! n dec)
                                  nil))]
                   (assoc item
-                         ::match? match?
+                         ::full-match? (not not-matched)
                          ::i this-i
                          ;; FIXME: item->items must be key currently
                          item->items filtered-sub-items))
@@ -187,7 +187,7 @@
         (if (and search? term-match-fn query)
           (if item->items
             ;; If item has subitems, show if subitems matched the search
-            (filter (fn [item] (or (::match? item)
+            (filter (fn [item] (or (::full-match? item)
                                    (seq (item->items item))
                                    (query-match? term-match-fn item query))))
             (filter (fn [item] (query-match? term-match-fn item query))))
