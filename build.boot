@@ -22,13 +22,14 @@
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
-                  [cljsjs/react "15.0.2-0" :scope "test"]
+                  [cljsjs/react-with-addons "15.3.0-0" :scope "test"]
                   [devcards "0.2.1-7" :scope "test"]
                   [prismatic/schema "1.1.3" :scope "test"]
 
                   ; LESS
                   ;; FIXME: Drop
-                  [org.webjars/bootstrap "3.3.4"]])
+                  [org.webjars/bootstrap "3.3.4"]]
+  :exclusions '[cljsjs/react])
 
 (require
   '[adzerk.boot-cljs      :refer [cljs]]

@@ -42,7 +42,7 @@
           [:input
            (-> props
                (assoc :style input-style :class input-class)
-               (dissoc :min-width :placeholder-is-min-width?)
+               (dissoc :min-width :placeholder-is-min-width? :input-class)
                ;; Because padding is not applied to sizers,
                ;; width shouldn't take padding into account
                (update :style #(merge {:box-sizing "content-box"} %))
