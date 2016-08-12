@@ -57,9 +57,17 @@
 (defn open [this text]
   (r/set-state this {:open? true :initial-search (if-not (string/blank? text) text)}))
 
-(defn update-search [this v {:keys [->query] :as opts}]
+(defn update-search [this v {:keys [->query debounce-timeout] :as opts}]
   (r/set-state this {:search v :query (->query v)})
-  (r/set-state this (filter-results this opts)))
+  (if debounce-timeout
+    (let [timeout (:timeout (r/state this))]
+      (swap! timeout (fn [current]
+                       (if current
+                         (js/clearTimeout current))
+                       (js/setTimeout (fn [_]
+                                        (r/set-state this (filter-results this opts)))
+                                      debounce-timeout))))
+    (r/set-state this (filter-results this opts))))
 
 (defn reset-search [this opts]
   (r/set-state this {:search nil :query nil})
@@ -374,7 +382,8 @@
        :prepared-items prepared-items
        :width nil
        :height nil
-       :closable nil}
+       :closable nil
+       :timeout (atom nil)}
       ; FIXME: Default opts.
       (filter-results-top prepared-items nil 0 (merge defaults opts)))))
 
@@ -489,7 +498,8 @@
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
    :groups
-   :filter-current-opt?
+   :filter-current-out?
+   :debounce-timeout
 
    Localization
    :placeholder
@@ -541,7 +551,8 @@
    :min-search-length - Required number of characters in search string before results are filtered.
    :->query
    :groups
-   :filter-current-opt?
+   :filter-current-out?
+   :debounce-timeout
 
    Localization
    :placeholder

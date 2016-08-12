@@ -62,7 +62,8 @@
                            (str "Unknown item, ID: " id)))))
       ;; Enable tree
       :item->items :items
-      :items tree-data}])
+      :items tree-data
+      :debounce-timeout 250}])
   (r/atom nil))
 
 (dc/deftest sub-query-match?-test
