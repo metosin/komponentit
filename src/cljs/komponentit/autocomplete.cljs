@@ -189,6 +189,7 @@
             ;; If item has subitems, show if subitems matched the search
             (filter (fn [item] (or (::full-match? item)
                                    (seq (item->items item))
+                                   ;; FIXME: Require for leaf nodes - unncesessary check for other nodes
                                    (query-match? term-match-fn item query))))
             (filter (fn [item] (query-match? term-match-fn item query))))
           identity)
