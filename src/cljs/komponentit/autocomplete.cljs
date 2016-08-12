@@ -83,9 +83,8 @@
     (reset-search this opts))
   nil)
 
-(defn click [this disabled? text e]
-  (when-not disabled?
-    (open this text))
+(defn click [this e]
+  (.focus (aget (.getElementsByClassName (r/dom-node this) "autocomplete__input") 0))
   nil)
 
 (defn focus [this search text e]
@@ -449,7 +448,7 @@
       :disabled disabled?
       :type "text"
       :placeholder placeholder
-      :on-click (partial click this disabled? text)
+      ; :on-click (partial click this disabled? text)
       :value (if open?
                (if initial-search
                  (str initial-search)
@@ -528,8 +527,7 @@
           {:class ctrl-class}
           [:div.autocomplete__control
            {:class (if open? "autocomplete__control--open")
-            ;; FIXME: Why is on-click defined on both selectize-input and input?
-            :on-click (partial click this disabled? text)}
+            :on-click (partial click this)}
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
           (if open?
@@ -581,8 +579,7 @@
           {:class ctrl-class}
           [:div.autocomplete__control
            {:class (if open? "autocomplete__control--open")
-            ;; FIXME: Why is on-click defined on both selectize-input and input?
-            :on-click (partial click this disabled? text)}
+            :on-click (partial click this)}
            [selected-items opts this]
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
