@@ -244,45 +244,41 @@
 
 (declare autocomplete-contents-list)
 
-(defn choice-item [{:keys [item selected opts cb]}]
-  (let [{:keys [item->key item->text value item->value item->items]} opts]
-    [:div
-     [:div.autocomplete__item
-      {:key (item->key item)
-       :on-click (fn [_]
-                   (cb item)
-                   nil)
-       :class (str (cond
-                     (= (::i item) selected) "autocomplete__item--selected"
-                     (= value (item->value item)) "autocomplete__item--active"))}
-      [:div
-       {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
-       (or (::text item) (item->text item))]]
-
-     (if item->items
-       (if-let [subitems (item->items item)]
-         [autocomplete-contents-list subitems selected opts]))]))
-
-(defn select-scroll-wrapper [el]
-  (loop [el (.-parentElement el)]
-    (if el
-      ;; NOTE: This element must only have this class, or this check will break
-      (if (= "autocomplete__dropdown-content" (.-className el))
-        el
-        (recur (.-parentElement el))))))
-
-(defn scroll-into-selected [this]
-  (let [{:keys [item selected]} (r/props this)]
-    (if (= (::i item) selected)
-      (scrollIntoContainerView (.getElementsByClassName (r/dom-node this) "autocomplete__item")
-                               (select-scroll-wrapper (r/dom-node this)) true))))
-
 (defn choice-item-wrapper [_]
-  (r/create-class
-    {:display-name "komponentit.autocomplete.choice_item_wrapper_class"
-     :component-did-mount scroll-into-selected
-     :component-did-update scroll-into-selected
-     :reagent-render choice-item}))
+  (let [choice-item-el (atom nil)
+        choice-item-el-ref #(reset! choice-item-el %)]
+    (r/create-class
+      {:display-name "komponentit.autocomplete.choice_item_wrapper_class"
+       :component-did-mount
+       (fn scroll-into-selected [this]
+         (let [{:keys [item selected scroll-wrapper-el]} (r/props this)]
+           (when (= (::i item) selected)
+             (and @scroll-wrapper-el (scrollIntoContainerView @choice-item-el @scroll-wrapper-el true)))))
+       :component-did-update
+       (fn scroll-into-selected [this]
+         (let [{:keys [item selected scroll-wrapper-el]} (r/props this)]
+           (when (= (::i item) selected)
+             (and @scroll-wrapper-el (scrollIntoContainerView @choice-item-el @scroll-wrapper-el true)))))
+       :reagent-render
+       (fn choice-item-render [{:keys [item selected opts cb scroll-wrapper-el]}]
+         (let [{:keys [item->key item->text value item->value item->items]} opts]
+           [:div
+            [:div.autocomplete__item
+             {:key (item->key item)
+              :on-click (fn [_]
+                          (cb item)
+                          nil)
+              :class (str (cond
+                            (= (::i item) selected) "autocomplete__item--selected"
+                            (= value (item->value item)) "autocomplete__item--active"))
+              :ref choice-item-el-ref}
+             [:div
+              {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
+              (or (::text item) (item->text item))]]
+
+            (if item->items
+              (if-let [subitems (item->items item)]
+                [autocomplete-contents-list subitems selected scroll-wrapper-el opts]))]))})))
 
 (def ^:private defaults
   {:value->text get
@@ -318,7 +314,7 @@
       :opts opts}]))
 
 (defn autocomplete-contents-list
-  [results selected {:keys [item->key] :as opts}]
+  [results selected scroll-wrapper-el {:keys [item->key] :as opts}]
   [:div
    (for [item results]
      ^{:key (item->key item)}
@@ -326,17 +322,20 @@
       {:item item
        :selected selected
        :cb (:select-cb opts)
-       :opts opts}])])
+       :opts opts
+       :scroll-wrapper-el scroll-wrapper-el}])])
 
 (defn autocomplete-contents-top
-  [results selected {:keys [create no-results-text] :as opts}]
+  [results selected scroll-wrapper-el {:keys [create no-results-text] :as opts}]
   (if (seq results)
-    [autocomplete-contents-list results selected opts]
+    [autocomplete-contents-list results selected scroll-wrapper-el opts]
     (if-not create
       [:div.autocomplete__no-results no-results-text])))
 
 (defn autocomplete-contents-wrapper [_ container-state _ _ _ _]
-  (let [top? (r/atom false)]
+  (let [top? (r/atom false)
+        scroll-wrapper-el (atom nil)
+        scroll-wrapper-el-ref #(reset! scroll-wrapper-el %)]
     (r/create-class
       {:display-name "komponentit.autocomplete.autocomplete_contents_wrapper_class"
        :component-did-mount
@@ -354,8 +353,9 @@
           {:class (str (if @top? "autocomplete__dropdown--above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
           [:div.autocomplete__dropdown-content
+           {:ref scroll-wrapper-el-ref}
            [create-new-item search selected opts]
-           [autocomplete-contents-top results selected opts]]])})))
+           [autocomplete-contents-top results selected scroll-wrapper-el opts]]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
