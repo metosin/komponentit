@@ -14,8 +14,11 @@
 (defn autosize [{:keys [min-width placeholder-is-min-width?]
                  :or {min-width 1}}]
   (let [width (r/atom min-width)
+        ;; ref callback function should not change between renders
         placeholder-sizer-el (atom nil)
-        sizer-el (atom nil)]
+        placeholder-sizer-el-ref #(reset! placeholder-sizer-el %)
+        sizer-el (atom nil)
+        sizer-el-ref #(reset! sizer-el %)]
     (r/create-class
       {:display-name "komponentit.autosize.autosize"
        :component-did-mount
@@ -50,10 +53,10 @@
                (assoc-in [:style :width] @width))]
           [:span
            {:style sizer-style
-            :ref #(reset! sizer-el %)}
+            :ref sizer-el-ref}
            value]
           (if placeholder
             [:span
              {:style sizer-style
-              :ref #(reset! placeholder-sizer-el %)}
+              :ref placeholder-sizer-el-ref}
              placeholder])])})))
