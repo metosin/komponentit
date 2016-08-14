@@ -27,13 +27,11 @@
     (->> (remove empty?))
     vec))
 
-(defn find-by-selection [{:keys [item->items] :as opts} results selected-index]
+(defn find-by-selection [results selected-index]
   (some (fn [item]
+          ;; FIXME:
           (if (= (::i item) selected-index)
-            item
-            (if item->items
-              (if-let [subitems (item->items item)]
-                (find-by-selection opts subitems selected-index)))))
+            item))
         results))
 
 (defn create-matcher*
@@ -157,7 +155,7 @@
     :as opts}]
   (let [filter-subitems
         (if item->items
-          (map
+          (mapcat
             (fn [item]
               (if-let [subitems (item->items item)]
                 ;; Check for partial (or full) match and filter subitems with remaining query terms.
@@ -175,12 +173,11 @@
                                (do
                                  (swap! n dec)
                                  nil))]
-                  (assoc item
-                         ::full-match? (not not-matched)
-                         ::i this-i
-                         ;; FIXME: item->items must be key currently
-                         item->items filtered-sub-items))
-                item)))
+                  (cons (assoc item
+                               ::full-match? (not not-matched)
+                               ::i this-i)
+                        filtered-sub-items))
+                [item])))
           identity)
 
         filter-search
@@ -209,12 +206,9 @@
         add-index
         (map (fn [v]
                ;; subitem filter adds some indeces, don't overwrite them
-               (if (::i v)
-                 (assoc v
-                        ::level level)
-                 (assoc v
-                        ::i (swap! n inc)
-                        ::level level))))
+               (cond-> v
+                 (not (::i v)) (assoc ::i (swap! n inc))
+                 (not (::level v)) (assoc ::level level))))
 
         add-highlighted-str
         (if (and search? (seq query))
@@ -274,11 +268,7 @@
               :ref choice-item-el-ref}
              [:div
               {:class (if-let [level (::level item)] (str "autocomplete__level-" level " "))}
-              (or (::text item) (item->text item))]]
-
-            (if item->items
-              (if-let [subitems (item->items item)]
-                [autocomplete-contents-list subitems selected scroll-wrapper-el opts]))]))})))
+              (or (::text item) (item->text item))]]]))})))
 
 (def ^:private defaults
   {:value->text get
