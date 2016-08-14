@@ -25,6 +25,7 @@
                   [cljsjs/react-with-addons "15.3.0-0" :scope "test"]
                   [devcards "0.2.1-7" :scope "test"]
                   [prismatic/schema "1.1.3" :scope "test"]
+                  [binaryage/devtools "0.8.1" :scope "test"]
 
                   ; LESS
                   ;; FIXME: Drop
