@@ -47,13 +47,15 @@
     (fn [item term]
       (some-> item (get fields) (-> (.toLowerCase) (.indexOf term) (not= -1))))))
 
-(declare filter-results)
+(declare filter-results reset-search)
 
-(defn close [this]
-  (r/set-state this {:open? false}))
+(defn close [this opts]
+  (r/set-state this {:open? false})
+  (reset-search this opts))
 
 (defn open [this text]
-  (r/set-state this {:open? true :initial-search (if-not (string/blank? text) text)}))
+  (if-not (:open? (r/state this))
+    (r/set-state this {:open? true :initial-search (if-not (string/blank? text) text)})))
 
 (defn update-search [this v {:keys [->query debounce-timeout] :as opts}]
   (r/set-state this {:search v :query (->query v)})
@@ -77,8 +79,7 @@
   ;; FIXME: Doesn't work on Firefox
   ;; FIXME: Also breaks everything if called each time, because ?!??!?!?
   (when (.-relatedTarget e)
-    (close this)
-    (reset-search this opts))
+    (close this opts))
   nil)
 
 (defn click [this e]
@@ -100,40 +101,54 @@
       (if cb (cb v))))
   nil)
 
+(defn select-cb [{:keys [cb] :as opts} this v]
+  (cb v)
+  (r/set-state this {:search "" :open? false}))
+
+(defn create-cb [{:keys [create] :as opts} this s]
+  (when create
+    (create s)
+    (r/set-state this {:search nil :open? false})))
+
 (defn limit-selection [n selected f search {:keys [create]}]
   (util/limit (if (and create (seq search)) +create-item-index+ 0) n (f selected)))
 
-(defn key-down [this text {:keys [cb create-cb remove-cb select-cb] :as opts} e]
-  (let [{:keys [search results selected n open?]} (r/state this)
-        update-selection (fn [f e]
-                           (.preventDefault e)
-                           (.stopPropagation e)
-                           (r/set-state this {:selected (limit-selection n (:selected (r/state this)) f search opts)}))
-        _ (if-not open?
-            (open this text))
-        ;; Hack: get new inital-search
-        {:keys [initial-search]} (r/state this)]
+(defn update-selection [this f opts e]
+  (.preventDefault e)
+  (.stopPropagation e)
+  (let [{:keys [selected search n search]} (r/state this)]
+    (r/set-state this {:selected (limit-selection n selected f search opts)})))
 
-    (case (.-key e)
-      "Enter" (do
-                (.preventDefault e)
-                (.stopPropagation e)
-                (if (and create-cb (= +create-item-index+ selected))
-                  (create-cb search)
-                  (when-let [v (find-by-selection opts results selected)]
-                    (select-cb v))))
-      "Escape" (r/set-state this {:open? false :search nil})
-      "Backspace" (cond
-                    remove-cb (remove-cb (last (:value opts)))
-                    initial-search (do
-                                     (r/set-state this {:initial-search nil :search ""})
-                                     (cb nil)
-                                     ;; prevent on-change event after this
-                                     (.preventDefault e)
-                                     (.stopPropagation e)))
-      "ArrowUp" (update-selection dec e)
-      "ArrowDown" (update-selection inc e)
-      nil)))
+(defn handle-enter [this opts e]
+  (.preventDefault e)
+  (.stopPropagation e)
+  (let [{:keys [results selected search]} (r/state this)]
+    (if (= +create-item-index+ selected)
+      (create-cb opts this search)
+      (when-let [v (find-by-selection results selected)]
+        (select-cb opts this v)))))
+
+(defn handle-backspace [this {:keys [cb remove-cb] :as opts} e]
+  (let [{:keys [initial-search]} (r/state this)]
+    (cond
+      ;; FIXME: last? only for multiple select.
+      remove-cb (remove-cb (last (:value opts)))
+      initial-search (do
+                       (r/set-state this {:initial-search nil :search ""})
+                       (cb nil)
+                       ;; prevent on-change event after this
+                       (.preventDefault e)
+                       (.stopPropagation e)))))
+
+(defn key-down [this text opts e]
+  (open this text)
+  (case (.-key e)
+    "Enter"     (handle-enter this opts e)
+    "Escape"    (close this opts)
+    "Backspace" (handle-backspace this opts e)
+    "ArrowUp"   (update-selection this dec opts e)
+    "ArrowDown" (update-selection this inc opts e)
+    nil))
 
 (defn prepare-items [items {:keys [prepare-xform] :as opts}]
   ;; FIXME: remove map-to-seq
@@ -338,7 +353,7 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected search {:keys [create multiple? groups item->key no-results-text select-cb] :as opts}]
+       (fn [results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
          [:div.autocomplete__dropdown
           {:class (str (if @top? "autocomplete__dropdown--above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
@@ -398,8 +413,7 @@
   (r/set-state this {:closable (mixins/create-closable (fn [e]
                                                          ;; Only close if the clicked element was outside this autocomplete el
                                                          (when-not (dom/contains (r/dom-node this) (.-target e))
-                                                           (close this)
-                                                           (reset-search this opts))))})
+                                                           (close this opts))))})
   (update-el-dimensions this)
   (focus-input this))
 
@@ -413,16 +427,7 @@
         ;; Dynamic defaults based on other options
         opts (merge {:item->value item->key
                      :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))}
-                    opts)
-
-        opts (assoc opts
-                    :create-cb (if-let [create (:create opts)]
-                              (fn [s]
-                                (create s)
-                                (r/set-state this {:search nil :open? false})))
-                    :select-cb (fn [v]
-                                 ((:cb opts) v)
-                                 (r/set-state this {:search "" :open? false})))]
+                    opts)]
     opts))
 
 (defn autocomplete-input [opts text this]
@@ -463,7 +468,7 @@
                           nil)}
              "×"])]))]))
 
-(defn autocomplete-clear [{:keys [value select-cb remove-cb]}]
+(defn autocomplete-clear [this {:keys [value remove-cb] :as opts}]
   (if (if (coll? value)
         (seq value)
         value)
@@ -472,7 +477,7 @@
                   (if remove-cb
                     (doseq [v value]
                       (remove-cb v))
-                    (select-cb nil)))}]))
+                    (select-cb opts this nil)))}]))
 
 (defn autocomplete
   ":value - (required) IDeref or value
@@ -522,7 +527,7 @@
            {:class (if open? "autocomplete__control--open")
             :on-click (partial click this)}
            [autocomplete-input opts text this]
-           [autocomplete-clear opts]]
+           [autocomplete-clear this opts]]
           (if open?
             [autocomplete-contents-wrapper results {:width width :height height} selected search opts])]))}))
 
