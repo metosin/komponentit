@@ -18,23 +18,30 @@
   - `:text` Text
   "
   [open?
-   {:keys [on-change close-on-click? active-item-class]
-    :or {active-item-class "active"}
+   {:keys [on-change close-on-click? active-item-class
+           separator-class menu-item-class menu-item-a-class]
+    :or {active-item-class "active"
+         separator-class "divider"}
     :as dropdown-opts}
-   {:keys [separator key text value href on-click] :as item-opts}]
-  (cond
-    separator [:li.divider]
-    :else
-    [:li {:key key
-          :class (str (if (and value (= (:value dropdown-opts) value)) active-item-class))}
-     [:a {:href (or href "#")
-          :on-click (fn [e]
-                      (if-not href (.preventDefault e))
-                      (if-not (false? close-on-click?) (reset! open? false))
-                      (if on-click (on-click e))
-                      (if on-change (on-change item-opts))
-                      nil)}
-      text]]))
+   {:keys [separator key text value href on-click]
+    :as item-opts}]
+  (let [menu-item-class (or (:menu-item-class item-opts) (:menu-item-class dropdown-opts))
+        menu-item-a-class (or (:menu-item-a-class item-opts) (:menu-item-a-class dropdown-opts))]
+    (cond
+      separator [:li
+                 {:class separator-class}]
+      :else
+      [:li {:key key
+            :class (str menu-item-class (if (and value (= (:value dropdown-opts) value)) active-item-class))}
+       [:a {:href (or href "#")
+            :class menu-item-a-class
+            :on-click (fn [e]
+                        (if-not href (.preventDefault e))
+                        (if-not (false? close-on-click?) (reset! open? false))
+                        (if on-click (on-click e))
+                        (if on-change (on-change item-opts))
+                        nil)}
+        text]])))
 
 (defn dropdown
   "- `:text` Text for dropdown toggle element.
@@ -66,7 +73,7 @@
              :as opts}]
          [el
           open?
-          (if open?
+          (if @open?
             (into [:ul {:class dropdown-class}]
                   (if children
                     children
@@ -78,10 +85,20 @@
   (swap! open? not)
   nil)
 
-(defn dropdown-li' [open? dropdown {:keys [text caret? li-class open-class a-class]
-                                    :or {a-class "dropdown-toggle"
-                                         open-class "open"
-                                         li-class "dropdown"}}]
+(defn caret'
+  [open? {:keys [caret? caret-class caret-up-class]
+          :or {caret-class "caret"
+               caret-up-class "caret"}}]
+  (if-not (false? caret?)
+    [:span " "
+     [:span {:class (if @open? caret-up-class caret-class)}]]))
+
+(defn dropdown-li'
+  [open? dropdown {:keys [text li-class open-class a-class]
+                   :or {a-class "dropdown-toggle"
+                        open-class "open"
+                        li-class "dropdown"}
+                   :as opts}]
   [:li {:class (str li-class " " (if @open? open-class))}
    [:a
     {:class a-class
@@ -90,20 +107,20 @@
      :aria-haspopup true
      :aria-expanded @open?}
     text
-    (if-not (false? caret?)
-      [:span " "
-       [:span.caret]])]
+    [caret' open? opts]]
    dropdown])
 
 (defn dropdown-li [opts]
   [dropdown (assoc opts :el dropdown-li')])
 
-(defn dropdown-button' [open? dropdown {:keys [text caret? button-container-class open-class button-class]
-                                        :or {button-container-class "btn-group"
-                                             open-class "open"
-                                             button-class "btn btn-default dropdown-toggle"}}]
+(defn dropdown-button'
+  [open? dropdown {:keys [text container-class open-class button-class]
+                   :or {container-class "btn-group"
+                        open-class "open"
+                        button-class "btn btn-default dropdown-toggle"}
+                   :as opts}]
   [:div
-   {:class (str button-container-class " " (if @open? open-class))}
+   {:class (str container-class " " (if @open? open-class))}
    [:button
     {:class button-class
      :type "button"
@@ -111,9 +128,7 @@
      :aria-haspopup true
      :aria-expanded @open?}
     text
-    (if-not (false? caret?)
-      [:span " "
-       [:span.caret]])]
+    [caret' open? opts]]
    dropdown])
 
 (defn dropdown-button [opts]

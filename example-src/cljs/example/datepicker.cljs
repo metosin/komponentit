@@ -8,7 +8,7 @@
 (dc/defcard-rg datepicker
   (fn [date _]
     [datepicker/date {:value @date
-                      :on-select (fn [x] (reset! date x))}])
+                      :on-change (fn [x] (reset! date x))}])
   (r/atom nil)
   {:inspect-data true})
 
@@ -17,7 +17,7 @@
     (let [{:keys [date disabled?]} @state]
       [:div
        [datepicker/date {:value         date
-                         :on-select     (fn [x] (swap! state assoc :date x))
+                         :on-change     (fn [x] (swap! state assoc :date x))
                          :week-numbers? true
                          :disabled?     disabled?}]
        [:div {:style {:margin-top "20px"}}
@@ -34,7 +34,7 @@
   "The selectable date can be limited with min and max dates."
   (fn [date _]
     [datepicker/date {:value @date
-                      :on-select (fn [x] (reset! date x))
+                      :on-change (fn [x] (reset! date x))
                       :min-date (Date. 2015 9 10)
                       :max-date (Date. 2015 9 30)}])
   (r/atom (Date. 2015 9 22))
@@ -46,11 +46,11 @@
     [:div
      [:label "Start"]
      [datepicker/date {:value (:start @state)
-                       :on-select (fn [x] (swap! state assoc :start x))
+                       :on-change (fn [x] (swap! state assoc :start x))
                        :max-date (:end @state)}]
      [:label "End"]
      [datepicker/date {:value (:end @state)
-                       :on-select (fn [x] (swap! state assoc :end x))
+                       :on-change (fn [x] (swap! state assoc :end x))
                        :min-date (:start @state)}] ])
   (r/atom {:start (Date. 2015 9 22)
            :end   (Date. 2015 9 25)})
@@ -59,7 +59,7 @@
 (dc/defcard-rg clearable
   (fn [date _]
     [datepicker/date {:value @date
-                      :on-select (fn [x] (reset! date x))
+                      :on-change (fn [x] (reset! date x))
                       :clearable? true}])
   (r/atom nil)
   {:inspect-data true})
@@ -68,7 +68,7 @@
   (fn [date _]
     [:div
      [datepicker/date {:value @date
-                       :on-select (fn [x] (reset! date x))
+                       :on-change (fn [x] (reset! date x))
                        :date-time? true
                        :clearable? true}]
      [timepicker/timepicker {:value @date

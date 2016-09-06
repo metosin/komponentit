@@ -11,15 +11,17 @@
   "Returns a function which can be called to remove the event handlers."
   [close-cb]
   (let [click-handler
-        (events/listen js/window EventType.CLICK (fn [e]
-                                                   (close-cb e)
-                                                   nil))
+        (events/listen js/window EventType.CLICK
+                       (fn [e]
+                         (close-cb e)
+                         nil))
         key-handler
-        (events/listen js/window EventType.KEYUP (fn [e]
-                                                   (case (.-key e)
-                                                     "Esc" (close-cb e)
-                                                     nil)
-                                                   nil))]
+        (events/listen js/window EventType.KEYDOWN
+                       (fn [e]
+                         (case (.-keyCode e)
+                           27 (close-cb e)
+                           nil)
+                         nil))]
     (fn []
       (events/unlistenByKey click-handler)
       (events/unlistenByKey key-handler))))

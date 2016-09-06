@@ -1,9 +1,10 @@
 (ns komponentit.datepicker
   (:require [reagent.core :as r]
-            [reagent.ratom :refer-macros [reaction run!]]
-            [goog.string :as gs]
+            [clojure.string :as string]
             [komponentit.date :as date]
-            cljsjs.pikaday.with-moment)
+            [komponentit.calendar :as calendar]
+            [komponentit.mixins :as mixins]
+            [goog.dom :as dom])
   (:import [goog.date Date UtcDateTime]))
 
 (defn- clone-date [{:keys [date-time?]} value]
@@ -16,62 +17,56 @@
         (.setSeconds 0))
       (Date.))))
 
-(defn date [{:keys [value on-select on-blur datepicker-i18n min-date max-date date-time? attrs clearable? disabled? on-clear week-numbers?]
-             :as   opts}]
-  (let [el (atom nil)
-        ; Hack to access current value from onSelect
-        current-val (atom nil)]
-    (r/create-class
-      {:display-name "komponentit.datepicker.date_class"
-       :component-did-mount
-       (fn [this]
-         (reset! el (doto (js/Pikaday. (-> {:field          (r/dom-node this)
-                                            ; NOTE: This requires MomentJS
-                                            :format         "D.M.YYYY"
-                                            :firstDay       1
-                                            :showWeekNumber week-numbers?
-                                            :onSelect       (fn [date]
-                                                              (on-select (doto (clone-date opts @current-val)
-                                                                           (.setYear (.getFullYear date))
-                                                                           (.setMonth (.getMonth date))
-                                                                           (.setDate (.getDate date)))))}
-                                           (cond->
-                                             datepicker-i18n (assoc :i18n datepicker-i18n))
-                                           clj->js))
-                      ; For some reason setting these at constructor didn't work
-                      (.setDate (date/date-format value "yyyy-MM-dd"))
-                      (cond-> min-date (.setMinDate min-date))
-                      (cond-> max-date (.setMaxDate max-date)))))
-       :component-did-update
-       (fn [this _]
-         (let [{:keys [min-date max-date]} (r/props this)]
-           (if min-date (.setMinDate @el min-date))
-           (if max-date (.setMaxDate @el max-date))))
-       :reagent-render
-       (fn [{:keys [value on-blur attrs clearable? disabled? on-clear]}]
-         (reset! current-val value)
-         [:div.input-group (if disabled? {:style {:pointer-events "none"}})
-          [:span.input-group-addon
-           [:span.glyphicon.glyphicon-calendar]]
-          [:input.form-control
-           (merge
-             attrs
-             {:type      "text"
-              :value     (or (date/date->str value) "")
-              ; To silence reagent warnings
-              :on-change identity
-              :on-blur   on-blur
-              :disabled  disabled?})]
-          (if clearable?
-            [:span.input-group-btn
-             [:button.btn.btn-default
-              {:type     "button"
-               :disabled disabled?
-               :on-click (fn [e]
-                           (if on-clear
-                             (on-clear e)
-                             (on-select nil))
-                           ; Hide datepicker
-                           (.hide @el)
-                           nil)}
-              "×"]])])})))
+(def default-i18n
+  {:date-format "d.M.yyyy"})
+
+(defn loc [i18n k]
+  (or (get i18n k)
+      (get default-i18n k)))
+
+(defn date [{:keys [value on-change i18n min-date max-date date-time? attrs clearable? disabled? week-numbers?]
+             :as opts}]
+  (r/with-let [open? (r/atom false)
+               input-value (r/atom nil)
+               el (atom nil)
+               closable (mixins/create-closable (fn [e]
+                                                  (when (or (= "keydown" (.-type e))
+                                                            (and @el (not (dom/contains @el (.-target e)))))
+                                                    (reset! open? false))))]
+    [:div.datepicker
+     {:class (str (if disabled? "datepicker--disabled"))
+      :ref #(reset! el %)}
+     [:input.datepicker__input
+      (merge
+        attrs
+        {:type      "text"
+         :value     (or @input-value (date/date->str value) "")
+         :on-change (fn [e]
+                      (reset! input-value (string/trim (.. e -target -value))))
+         :on-focus  (fn [_]
+                      (reset! open? true))
+         :on-blur   (fn [_]
+                      (reset! input-value nil))
+         :on-key-down (fn [e]
+                        (case (.-key e)
+                          "Enter" (do
+                                    (on-change (date/date-read @input-value (loc i18n :date-format)))
+                                    (reset! input-value nil))
+                          nil))
+         :disabled  disabled?})]
+     (if @open?
+       [calendar/month-calendar
+        {:container-class "datepicker__calendar-dropdown month-calendar"
+         :value value
+         :on-change on-change
+         :week-numbers? week-numbers?
+         :i18n i18n
+         :date-input? false}])
+     (if clearable?
+       [:button.datepicker__clear-button
+        {:type     "button"
+         :disabled disabled?
+         :on-click (fn [e]
+                     (if on-change (on-change nil))
+                     nil)}])]
+    (finally (closable))))

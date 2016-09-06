@@ -36,36 +36,37 @@
 (defn last-day-of-the-week [day]
   (t/plus day (t/days (- 7 (t/day-of-week day)))))
 
-(defn date-input [value type on-change {:keys [icons i18n]}]
+(defn date-input [_]
   (let [input-value (r/atom nil)]
-    (fn [value type on-change]
-      [:form
-       {:on-submit (fn [e]
-                     (.preventDefault e)
-                     (.stopPropagation e)
-                     (on-change (date/date-read @input-value (loc i18n :date-format)))
-                     (reset! input-value nil)
-                     nil)}
-       [:div.input-group.input-group-sm
-        [:span.input-group-addon type]
-        [:input.form-control
-         {:type "text"
-          :on-change (fn [e]
-                       (let [x (string/trim (.. e -target -value))]
-                         (reset! input-value x)))
-          :on-blur (fn [e]
-                     (if (seq @input-value)
-                       (on-change (date/date-read @input-value (loc i18n :date-format))))
-                     (reset! input-value nil)
-                     nil)
-          :placeholder (loc i18n :date-placeholder)
-          :value (str (or @input-value
-                          (date/date-format value (loc i18n :date-format))))}]
-        (if (and @input-value (not (date/date-read @input-value (loc i18n :date-format))))
-          [:span.input-group-btn [:span.btn.btn-danger (icon icons :warning) #_[:i.fa.fa-warning]]])
-        (if (and @input-value (date/date-read @input-value (loc i18n :date-format)))
-          [:span.input-group-btn [:button.btn.btn-success {:type "submit"} (icon icons :submit) #_ [:i.fa.fa-check]]])
-        ]])))
+    (fn [{:keys [value type on-change opts]}]
+      (let [{:keys [icons i18n]} opts]
+        [:form
+         {:on-submit (fn [e]
+                       (.preventDefault e)
+                       (.stopPropagation e)
+                       (on-change (date/date-read @input-value (loc i18n :date-format)))
+                       (reset! input-value nil)
+                       nil)}
+         [:div.input-group.input-group-sm
+          [:span.input-group-addon type]
+          [:input.form-control
+           {:type "text"
+            :on-change (fn [e]
+                         (let [x (string/trim (.. e -target -value))]
+                           (reset! input-value x)))
+            :on-blur (fn [e]
+                       (if (seq @input-value)
+                         (on-change (date/date-read @input-value (loc i18n :date-format))))
+                       (reset! input-value nil)
+                       nil)
+            :placeholder (loc i18n :date-placeholder)
+            :value (str (or @input-value
+                            (date/date-format value (loc i18n :date-format))))}]
+          (if (and @input-value (not (date/date-read @input-value (loc i18n :date-format))))
+            [:span.input-group-btn [:span.btn.btn-danger (icon icons :warning)]])
+          (if (and @input-value (date/date-read @input-value (loc i18n :date-format)))
+            [:span.input-group-btn [:button.btn.btn-success {:type "submit"} (icon icons :submit)]])
+          ]]))))
 
 (defn- build-month [day]
   (let [start (t/first-day-of-the-month day)
@@ -81,7 +82,10 @@
 (defn month-calendar [_]
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
-    (fn [{:keys [value start end text value on-change icons week-numbers? date-input? i18n] :as opts}]
+    (fn [{:keys [container-class
+                 start end text value on-change icons week-numbers? date-input? i18n]
+          :or {container-class "month-calendar"}
+          :as opts}]
       ; HACK: Is there any better way to reset month to default when value changes?
       (if (not= value @prev-val)
         (reset! month-x nil))
@@ -95,9 +99,11 @@
                         (reset! month-x nil)
                         (on-change x))
             month (build-month date)]
-        [:div.month-calendar
+        [:div
+         {:class container-class}
          [:table
-          {:class (str "table " (if week-numbers? "with-week-numbers "))}
+          {:class (str "month-calendar__table "
+                       (if week-numbers? "month-calendar__week-numbers "))}
           [:thead
            (if (or (true? date-input?) (nil? date-input?))
              [:tr.head1
@@ -105,16 +111,18 @@
                [:button.btn.btn-date.prev
                 {:type "button"
                  :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
-                (icon icons :previous)
-                #_[:i.fa.fa-caret-left]]]
+                (icon icons :previous)]]
               [:th {:col-span (if week-numbers? 6 5)}
-               [date-input value text on-change opts]]
+               [date-input
+                {:value value
+                 :text text
+                 :on-change on-change
+                 :opts opts}]]
               [:th.next
                [:button.btn.btn-date.next
                 {:type "button"
                  :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
-                (icon icons :next)
-                #_[:i.fa.fa-caret-right]]]])
+                (icon icons :next)]]])
            (if (or (true? date-input?) (nil? date-input?))
              [:tr
               [:th.text-center {:col-span (if week-numbers? 8 7)}
@@ -124,16 +132,14 @@
                [:button.btn.btn-date.prev
                 {:type "button"
                  :on-click (fn [_] (swap! month-x (fnil dec 0)) nil)}
-                (icon icons :previous)
-                #_[:i.fa.fa-caret-left]]]
+                (icon icons :previous)]]
               [:th.text-center {:col-span (if week-numbers? 6 5)}
                (string/capitalize (date/date-format date (loc i18n :month-format)))]
               [:th.next
                [:button.btn.btn-date.next
                 {:type "button"
                  :on-click (fn [_] (swap! month-x (fnil inc 0)) nil)}
-                (icon icons :next)
-                #_[:i.fa.fa-caret-right]]] ])
+                (icon icons :next)]]])
            [:tr
             (if week-numbers? [:th (loc i18n :week-short)])
             (for [day (first month)

@@ -7,11 +7,12 @@
   [_]
   (let [temp (reagent/atom nil)
         timeout (atom nil)]
-    (fn [{:keys [value value-fn text-fn on-change type on-blur]
+    (fn [{:keys [value value-fn text-fn on-change type on-blur timeout-ms]
           :or {text-fn identity
-               value-fn identity}
+               value-fn identity
+               timeout-ms 250}
           :as opts}]
-      [:input.form-control
+      [:input
        (assoc opts
               :value (or @temp (text-fn value) "")
               :on-change (fn [e]
@@ -20,7 +21,7 @@
                                               (if current (js/clearTimeout current))
                                               (js/setTimeout (fn [_]
                                                                (on-change (value-fn v)))
-                                                             250)))
+                                                             timeout-ms)))
                              (reset! temp v)))
               :on-blur (fn [e]
                          (swap! temp (fn [x]
@@ -62,7 +63,7 @@
       [{:keys [value on-change on-blur multiplier]
         :or {multiplier 1}
         :as opts}]
-      [:input.form-control
+      [:input
        (assoc opts
               :value (or @temp (number->str value multiplier) "")
               :on-change (fn [e]
@@ -96,7 +97,7 @@
     :or {text-fn str
          value-fn identity}
     :as opts}]
-  [:textarea.form-control
+  [:textarea
    (assoc opts
           :value (or (text-fn value) "")
           :on-change #(on-change (value-fn (.. % -target -value)))
@@ -104,7 +105,7 @@
 
 (defn static
   [{:keys [value] :as opts}]
-  [:p.form-control-static
+  [:p
    (if (map? opts) opts {})
    value])
 
@@ -114,7 +115,7 @@
   [{:keys [value on-change on-blur empty-option? options value-fn]
     :or {value-fn identity}
     :as opts}]
-  [:select.form-control
+  [:select
    (assoc opts
           :value (or value
                      (if empty-option? +empty-value+)

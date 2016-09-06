@@ -102,7 +102,7 @@
   nil)
 
 (defn select-cb [{:keys [cb] :as opts} this v]
-  (cb v)
+  (if cb (cb v))
   (r/set-state this {:search "" :open? false}))
 
 (defn create-cb [{:keys [create] :as opts} this s]
@@ -135,7 +135,7 @@
       remove-cb (remove-cb (last (:value opts)))
       initial-search (do
                        (r/set-state this {:initial-search nil :search ""})
-                       (cb nil)
+                       (if cb (cb nil))
                        ;; prevent on-change event after this
                        (.preventDefault e)
                        (.stopPropagation e)))))
@@ -275,7 +275,7 @@
             [:div.autocomplete__item
              {:key (item->key item)
               :on-click (fn [_]
-                          (cb item)
+                          (if cb (cb item))
                           nil)
               :class (str (cond
                             (= (::i item) selected) "autocomplete__item--selected"
@@ -411,8 +411,8 @@
 
 (defn- did-mount [opts this]
   (r/set-state this {:closable (mixins/create-closable (fn [e]
-                                                         ;; Only close if the clicked element was outside this autocomplete el
-                                                         (when-not (dom/contains (r/dom-node this) (.-target e))
+                                                         (when (or (= "keydown" (.-type e))
+                                                                   (not (dom/contains (r/dom-node this) (.-target e))))
                                                            (close this opts))))})
   (update-el-dimensions this)
   (focus-input this))
@@ -421,8 +421,6 @@
   (let [;; Static defaults
         {:keys [item->key search-fields create cb] :as opts}
         (merge defaults opts)
-
-        _ (assert (ifn? (:cb opts)) "Callback function is required")
 
         ;; Dynamic defaults based on other options
         opts (merge {:item->value item->key
@@ -517,8 +515,8 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [items open? results search selected n width height]} (r/state this)
-             {:keys [value cb value->text item->key item->value groups ctrl-class disabled?] :as opts} (build-options opts defaults this)
+             {:keys [items open? results search selected width height]} (r/state this)
+             {:keys [value value->text ctrl-class] :as opts} (build-options opts defaults this)
              text (value->text items value)]
 
          [:div.autocomplete.autocomplete--single
@@ -570,8 +568,8 @@
      :render
      (fn [this]
        (let [opts (r/props this)
-             {:keys [open? results search selected n width height]} (r/state this)
-             {:keys [value cb item->key item->value groups ctrl-class disabled?] :as opts} (build-options opts multiple-defaults this)
+             {:keys [open? results search selected width height]} (r/state this)
+             {:keys [ctrl-class] :as opts} (build-options opts multiple-defaults this)
              text ""]
 
          [:div.autocomplete
