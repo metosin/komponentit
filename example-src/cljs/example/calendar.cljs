@@ -7,10 +7,10 @@
 
 (dc/defcard "# Work in progress")
 
-(dc/defcard-rg month-calendar
+(dc/defcard-rg calendar
   (fn [date _]
     [:div
-     [calendar/month-calendar
+     [calendar/calendar
       {:text "Foo"
        :value @date
        :on-change (fn [x] (reset! date x))}]])

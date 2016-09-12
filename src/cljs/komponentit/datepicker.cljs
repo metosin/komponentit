@@ -55,8 +55,8 @@
                           nil))
          :disabled  disabled?})]
      (if @open?
-       [calendar/month-calendar
-        {:container-class "datepicker__calendar-dropdown month-calendar"
+       [calendar/calendar
+        {:container-class "datepicker__calendar-dropdown calendar"
          :value value
          :on-change on-change
          :week-numbers? week-numbers?
