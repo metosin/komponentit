@@ -1,7 +1,8 @@
 (ns komponentit.currency-input
   (:require [reagent.core :as r]
             [reagent.ratom :refer-macros [reaction]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [komponentit.input :as input]))
 
 (defn- zero-to-end [s]
   (if (= 1 (count s))
@@ -27,30 +28,16 @@
          delimiter
          (padded-value (str (mod (js/Math.abs value) 100))))))
 
-;; TODO: Refactor to use number input
-
-(defn currency-input [{:keys [value on-change on-blur currency-symbol delimiter]}]
-  (let [temp (r/atom nil)]
-    (fn [{:keys [value on-change on-blur currency-symbol delimiter]}]
-      [:span.input-group
-       [:input.form-control
-        {:value (or @temp (currency->str value (or delimiter ".")))
-         :on-change (fn [e]
-                      (reset! temp (.. e -target -value))
-                      nil)
-         :on-blur (fn [e]
-                    (if @temp
-                      (on-change (str->currency @temp)))
-                    (reset! temp nil)
-                    (if on-blur
-                      (on-blur e))
-                    nil)
-         :on-key-press (fn [e]
-                         (case (.-key e)
-                           "Enter" (do
-                                     (if @temp
-                                       (on-change (str->currency @temp)))
-                                     (reset! temp nil))
-                           nil)
-                         nil)}]
-       [:span.input-group-addon (or currency-symbol "€")]])))
+(defn currency-input
+  [{:keys [currency-symbol delimiter]
+    :or {delimiter "."}
+    :as opts}]
+  [:span
+   [input/input
+    (-> opts
+        (dissoc :current-symbol :delimiter)
+        (assoc
+          :value-fn #(str->currency %)
+          :text-fn #(currency->str % delimiter)))]
+   (if currency-symbol
+     [:span.input-group-addon currency-symbol])])

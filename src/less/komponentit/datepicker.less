@@ -1,15 +1,16 @@
-.datepicker {
+.datepicker__container {
   position: relative;
 }
 
-.datepicker__input {
+.datepicker {
   width: 100%;
 }
 
-.datepicker__calendar-dropdown {
+.datepicker__dropdown {
   z-index: 1000;
   background: #fff;
   border: 1px solid #ccc;
   position: absolute;
-  top: 20px;
+  top: ~"calc(100% - 1px)";
+  min-width: 220px;
 }

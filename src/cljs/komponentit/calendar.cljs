@@ -52,7 +52,7 @@
                         (let [x (string/trim (.. e -target -value))]
                           (reset! input-value x)))
            :on-blur (fn [e]
-                      (if (seq @input-value)
+                      (if (and on-change (seq @input-value))
                         (on-change (date/date-read @input-value (loc i18n :date-format))))
                       (reset! input-value nil)
                       nil)
@@ -98,7 +98,8 @@
                     value')
             on-change (fn [x]
                         (reset! month-x nil)
-                        (on-change x))
+                        (if on-change
+                          (on-change x)))
             month (build-month date)
             month-name (string/capitalize (date/date-format date (loc i18n :month-format)))
             date-input? (or (true? date-input?) (nil? date-input?))]
@@ -120,7 +121,7 @@
                  [date-input
                   {:value value
                    :text text
-                   :on-change on-change
+                   :on-change (or on-change identity)
                    :opts opts}])
                [:span.calendar-header__month-name month-name]]
 
@@ -175,7 +176,9 @@
 (defn quicklist-item [{:keys [item opts]}]
   (let [{:keys [start end on-change i18n]} opts]
     [:a.calendar-quicklist__item
-     {:on-click (fn [_] (on-change (select-keys item [:start :end])))
+     {:on-click (fn [_]
+                  (if on-change
+                    (on-change (select-keys item [:start :end]))))
       :class (str (if (and (.equals (:start item) start) (.equals (:end item) end))
                     "calendar-quicklist__item--active "))}
      (:name item)]) )
@@ -225,16 +228,21 @@
            :container-class "date-range__calendar"
            :text (loc i18n :start)
            :value start
-           :on-change (fn [x] (on-change (set-start {:end end} x))))]
+           :on-change (fn [x]
+                        (if on-change
+                          (on-change (set-start {:end end} x)))))]
    [calendar
     (assoc opts
            :container-class "date-range__calendar"
            :text (loc i18n :end)
            :value end
-           :on-change (fn [x] (on-change (set-end {:start start} x))))]
+           :on-change (fn [x]
+                        (if on-change
+                          (on-change (set-end {:start start} x)))))]
    (if (or (true? quicklist?) (nil? quicklist?))
      [quicklist
       (assoc opts
              :container-class "date-range__quicklist"
              :on-change (fn [{:keys [start end] :as x}]
-                          (on-change x)))])])
+                          (if on-change
+                            (on-change x))))])])

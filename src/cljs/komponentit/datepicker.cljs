@@ -24,7 +24,10 @@
   (or (get i18n k)
       (get default-i18n k)))
 
-(defn date [{:keys [value on-change i18n min-date max-date date-time? attrs clearable? disabled? week-numbers?]
+(defn date [{:keys [value on-change i18n min-date max-date date-time? attrs clearable? disabled? week-numbers?
+                    container-class input-class]
+             :or {container-class "datepicker__container "
+                  input-class "datepicker "}
              :as opts}]
   (r/with-let [open? (r/atom false)
                input-value (r/atom nil)
@@ -33,13 +36,15 @@
                                                   (when (or (= "keydown" (.-type e))
                                                             (and @el (not (dom/contains @el (.-target e)))))
                                                     (reset! open? false))))]
-    [:div.datepicker
-     {:class (str (if disabled? "datepicker--disabled"))
+    [:div
+     {:class (str container-class
+                  (if disabled? "datepicker--disabled "))
       :ref #(reset! el %)}
-     [:input.datepicker__input
+     [:input
       (merge
         attrs
-        {:type      "text"
+        {:class     input-class
+         :type      "text"
          :value     (or @input-value (date/date->str value) "")
          :on-change (fn [e]
                       (reset! input-value (string/trim (.. e -target -value))))
@@ -50,13 +55,14 @@
          :on-key-down (fn [e]
                         (case (.-key e)
                           "Enter" (do
-                                    (on-change (date/date-read @input-value (loc i18n :date-format)))
+                                    (if on-change
+                                      (on-change (date/date-read @input-value (loc i18n :date-format))))
                                     (reset! input-value nil))
                           nil))
          :disabled  disabled?})]
      (if @open?
        [calendar/calendar
-        {:container-class "datepicker__calendar-dropdown calendar"
+        {:container-class "datepicker__dropdown calendar"
          :value value
          :on-change on-change
          :week-numbers? week-numbers?

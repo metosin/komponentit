@@ -103,6 +103,10 @@
 
 (defn select-cb [{:keys [cb] :as opts} this v]
   (if cb (cb v))
+  (r/set-state this {:initial-search nil :search "" :open? false}))
+
+(defn remove-cb [{:keys [remove-cb] :as opts} this v]
+  (if remove-cb (remove-cb v))
   (r/set-state this {:search "" :open? false}))
 
 (defn create-cb [{:keys [create] :as opts} this s]
@@ -128,11 +132,17 @@
       (when-let [v (find-by-selection results selected)]
         (select-cb opts this v)))))
 
-(defn handle-backspace [this {:keys [cb remove-cb] :as opts} e]
+(defn clear-cb [{:keys [cb value] :as opts} this]
+  (if (:remove-cb opts)
+    (remove-cb opts this (last value))
+    (do (if cb (cb nil))
+        (r/set-state this {:initial-search nil :search "" :open? true}))))
+
+(defn handle-backspace [this {:keys [cb] :as opts} e]
   (let [{:keys [initial-search]} (r/state this)]
     (cond
       ;; FIXME: last? only for multiple select.
-      remove-cb (remove-cb (last (:value opts)))
+      (:remove-cb opts) (remove-cb opts this (last (:value opts)))
       initial-search (do
                        (r/set-state this {:initial-search nil :search ""})
                        (if cb (cb nil))
@@ -319,25 +329,25 @@
       :opts opts}]))
 
 (defn autocomplete-contents-list
-  [results selected scroll-wrapper-el {:keys [item->key] :as opts}]
+  [this results selected scroll-wrapper-el {:keys [item->key] :as opts}]
   [:div
    (for [item results]
      ^{:key (item->key item)}
      [choice-item-wrapper
       {:item item
        :selected selected
-       :cb (:select-cb opts)
+       :cb #(select-cb opts this item)
        :opts opts
        :scroll-wrapper-el scroll-wrapper-el}])])
 
 (defn autocomplete-contents-top
-  [results selected scroll-wrapper-el {:keys [create no-results-text] :as opts}]
+  [this results selected scroll-wrapper-el {:keys [create no-results-text] :as opts}]
   (if (seq results)
-    [autocomplete-contents-list results selected scroll-wrapper-el opts]
+    [autocomplete-contents-list this results selected scroll-wrapper-el opts]
     (if-not create
       [:div.autocomplete__no-results no-results-text])))
 
-(defn autocomplete-contents-wrapper [_ container-state _ _ _ _]
+(defn autocomplete-contents-wrapper [_ _ container-state _ _ _ _]
   (let [top? (r/atom false)
         scroll-wrapper-el (atom nil)
         scroll-wrapper-el-ref #(reset! scroll-wrapper-el %)]
@@ -353,14 +363,14 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
+       (fn [this results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
          [:div.autocomplete__dropdown
           {:class (str (if @top? "autocomplete__dropdown--above "))
            :style (if @top? {:bottom (str (:height container-state) "px")})}
           [:div.autocomplete__dropdown-content
            {:ref scroll-wrapper-el-ref}
            [create-new-item search selected opts]
-           [autocomplete-contents-top results selected scroll-wrapper-el opts]]])})))
+           [autocomplete-contents-top this results selected scroll-wrapper-el opts]]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -429,7 +439,7 @@
     opts))
 
 (defn autocomplete-input [opts text this]
-  (let [{:keys [placeholder disabled? on-blur]} opts
+  (let [{:keys [placeholder disabled on-blur]} opts
         {:keys [open? search initial-search]} (r/state this)]
     [autosize/autosize
      {:input-class "autocomplete__input"
@@ -440,7 +450,7 @@
       :on-change (partial change this nil opts)
       :on-key-down (partial key-down this text opts)
       :auto-complete false
-      :disabled disabled?
+      :disabled disabled
       :type "text"
       :placeholder placeholder
       ; :on-click (partial click this disabled? text)
@@ -451,7 +461,7 @@
                text)}]))
 
 (defn selected-items [opts this]
-  (let [{:keys [value item-removable? remove-cb value->text]} opts
+  (let [{:keys [value item-removable? value->text]} opts
         {:keys [items]} (r/state this)]
     [:div.autocomplete__selected-items
      (for [x value]
@@ -462,20 +472,21 @@
           (if removable?
             [:a.autocomplete__remove-item-button
              {:on-click (fn [e]
-                          (remove-cb x)
+                          (remove-cb opts this x)
                           nil)}
              "×"])]))]))
 
-(defn autocomplete-clear [this {:keys [value remove-cb] :as opts}]
+(defn autocomplete-clear [this {:keys [disabled value] :as opts}]
   (if (if (coll? value)
         (seq value)
         value)
     [:span.autocomplete__clear-button
-     {:on-click (fn [_]
-                  (if remove-cb
-                    (doseq [v value]
-                      (remove-cb v))
-                    (select-cb opts this nil)))}]))
+     {:on-click (fn [e]
+                  (when-not disabled
+                    (clear-cb opts this))
+                  (focus-input this)
+                  (.stopPropagation e)
+                  (.preventDefault e))}]))
 
 (defn autocomplete
   ":value - (required) IDeref or value
@@ -502,7 +513,7 @@
 
    Style
    :ctrl-class
-   :disabled?"
+   :disabled"
   [opts]
   (r/create-class
     {:display-name "komponentit.autocomplete.autocomplete_class"
@@ -516,18 +527,19 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [items open? results search selected width height]} (r/state this)
-             {:keys [value value->text ctrl-class] :as opts} (build-options opts defaults this)
+             {:keys [value value->text ctrl-class disabled] :as opts} (build-options opts defaults this)
              text (value->text items value)]
 
          [:div.autocomplete.autocomplete--single
           {:class ctrl-class}
           [:div.autocomplete__control
-           {:class (if open? "autocomplete__control--open")
+           {:class (str (if open? "autocomplete__control--open ")
+                        (if disabled "autocomplete__control--disabled"))
             :on-click (partial click this)}
            [autocomplete-input opts text this]
            [autocomplete-clear this opts]]
           (if open?
-            [autocomplete-contents-wrapper results {:width width :height height} selected search opts])]))}))
+            [autocomplete-contents-wrapper this results {:width width :height height} selected search opts])]))}))
 
 (defn multiple-autocomplete
   ":value - (required) IDeref or value
@@ -555,7 +567,7 @@
 
    Style
    :ctrl-class
-   :disabled?"
+   :disabled"
   [opts]
   (r/create-class
     {:display-name "komponentit.autocomplete.multiple_autocomplete_class"
@@ -569,13 +581,14 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [open? results search selected width height]} (r/state this)
-             {:keys [ctrl-class] :as opts} (build-options opts multiple-defaults this)
+             {:keys [ctrl-class disabled] :as opts} (build-options opts multiple-defaults this)
              text ""]
 
          [:div.autocomplete
           {:class ctrl-class}
           [:div.autocomplete__control
-           {:class (if open? "autocomplete__control--open")
+           {:class (str (if open? "autocomplete__control--open ")
+                        (if disabled "autocomplete__control--disabled"))
             :on-click (partial click this)}
            [selected-items opts this]
            [autocomplete-input opts text this]

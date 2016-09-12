@@ -20,19 +20,24 @@
                              (swap! timeout (fn [current]
                                               (if current (js/clearTimeout current))
                                               (js/setTimeout (fn [_]
-                                                               (on-change (value-fn v)))
+                                                               (if on-change
+                                                                 (on-change (value-fn v))))
                                                              timeout-ms)))
                              (reset! temp v)))
               :on-blur (fn [e]
                          (swap! temp (fn [x]
-                                       (if x (on-change (value-fn x)))
+                                       (if x
+                                         (if on-change
+                                           (on-change (value-fn x))))
                                        nil))
                          (if on-blur
                            (on-blur e)))
               :on-key-press (fn [e]
                               (case (.-key e)
                                 "Enter" (swap! temp (fn [x]
-                                                      (if x (on-change (value-fn x)))
+                                                      (if x
+                                                        (if on-change
+                                                          (on-change (value-fn x))))
                                                       nil))
                                 nil)))])))
 

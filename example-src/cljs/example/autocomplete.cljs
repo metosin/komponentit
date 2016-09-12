@@ -2,7 +2,8 @@
   (:require [komponentit.autocomplete :as autocomplete]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [example.options :as options]))
 
 (defn simple-items [n]
   (into (sorted-map)
@@ -39,13 +40,22 @@ Items can be provided as:
 ")
 
 (dc/defcard-rg simple-autocomplete
-  (fn [value _]
-    [autocomplete/autocomplete
-     {:value @value
-      :cb (fn [item] (reset! value (:key item)))
-      :search-fields [:value]
-      :items (simple-items 50)}])
-  (r/atom 5)
+  (fn [state _]
+    [:div
+     [options/table
+      (:options @state)
+      (fn [k v] (swap! state assoc-in [:options k] v))
+      [[:disabled :bool]]]
+
+     [autocomplete/autocomplete
+      (merge (:options @state)
+             {:value (:value @state)
+              :cb (fn [item]
+                    (js/console.log item)
+                    (swap! state assoc :value (:key item)))
+              :search-fields [:value]
+              :items (simple-items 50)})]])
+  (r/atom {:value 5})
   {:inspect-data true})
 
 (dc/defcard-rg autocomplete-multiple
