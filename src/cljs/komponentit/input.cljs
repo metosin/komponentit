@@ -7,39 +7,41 @@
   [_]
   (let [temp (reagent/atom nil)
         timeout (atom nil)]
-    (fn [{:keys [value value-fn text-fn on-change type on-blur timeout-ms]
+    (fn [{:keys [el value value-fn text-fn on-change type on-blur timeout-ms]
           :or {text-fn identity
                value-fn identity
-               timeout-ms 250}
+               timeout-ms 250
+               el :input}
           :as opts}]
-      [:input
-       (assoc opts
-              :value (or @temp (text-fn value) "")
-              :on-change (fn [e]
-                           (let [v (.. e -target -value)]
-                             (swap! timeout (fn [current]
-                                              (if current (js/clearTimeout current))
-                                              (js/setTimeout (fn [_]
-                                                               (if on-change
-                                                                 (on-change (value-fn v))))
-                                                             timeout-ms)))
-                             (reset! temp v)))
-              :on-blur (fn [e]
-                         (swap! temp (fn [x]
-                                       (if x
-                                         (if on-change
-                                           (on-change (value-fn x))))
-                                       nil))
-                         (if on-blur
-                           (on-blur e)))
-              :on-key-press (fn [e]
-                              (case (.-key e)
-                                "Enter" (swap! temp (fn [x]
-                                                      (if x
-                                                        (if on-change
-                                                          (on-change (value-fn x))))
-                                                      nil))
-                                nil)))])))
+      [el
+       (-> opts
+           (assoc
+             :value (or @temp (text-fn value) "")
+             :on-change (fn [e]
+                          (let [v (.. e -target -value)]
+                            (swap! timeout (fn [current]
+                                             (if current (js/clearTimeout current))
+                                             (js/setTimeout (fn [_]
+                                                              (if on-change
+                                                                (on-change (value-fn v))))
+                                                            timeout-ms)))
+                            (reset! temp v)))
+             :on-blur (fn [e]
+                        (swap! temp (fn [x]
+                                      (if x
+                                        (if on-change
+                                          (on-change (value-fn x))))
+                                      nil))
+                        (if on-blur
+                          (on-blur e)))
+             :on-key-press (fn [e]
+                             (case (.-key e)
+                               "Enter" (swap! temp (fn [x]
+                                                     (if x
+                                                       (if on-change
+                                                         (on-change (value-fn x))))
+                                                     nil))
+                               nil))))])))
 
 (defn text
   [{:keys [value on-change] :as opts}]
@@ -61,36 +63,15 @@
     (str (long (/ value multiplier)))))
 
 (defn number
-  [_]
-  (let [temp (reagent/atom nil)
-        timeout (atom nil)]
-    (fn
-      [{:keys [value on-change on-blur multiplier]
-        :or {multiplier 1}
-        :as opts}]
-      [:input
-       (assoc opts
-              :value (or @temp (number->str value multiplier) "")
-              :on-change (fn [e]
-                           (let [v (.. e -target -value)]
-                             (swap! timeout (fn [current]
-                                              (if current (js/clearTimeout current))
-                                              (js/setTimeout (fn [_]
-                                                               (on-change (str->number v multiplier)))
-                                                             250)))
-                             (reset! temp v)))
-              :on-blur (fn [e]
-                         (swap! temp (fn [x]
-                                       (if x (on-change (str->number x multiplier)))
-                                       nil))
-                         (if on-blur
-                           (on-blur e)))
-              :on-key-press (fn [e]
-                              (case (.-key e)
-                                "Enter" (swap! temp (fn [x]
-                                                      (if x (on-change (str->number x multiplier)))
-                                                      nil))
-                                nil)))])))
+  [{:keys [value on-change on-blur multiplier]
+    :or {multiplier 1}
+    :as opts}]
+  [input
+   (-> opts
+       (dissoc :multiplier)
+       (assoc
+         :value-fn #(str->number % multiplier)
+         :text-fn #(number->str % multiplier)))])
 
 (defn password
   [{:as opts}]
@@ -98,15 +79,11 @@
                 :type "password")])
 
 (defn textarea
-  [{:keys [value value-fn text-fn on-blur on-change]
-    :or {text-fn str
-         value-fn identity}
-    :as opts}]
-  [:textarea
+  [opts]
+  [input
    (assoc opts
-          :value (or (text-fn value) "")
-          :on-change #(on-change (value-fn (.. % -target -value)))
-          :on-blur on-blur)])
+          :el :textarea
+          :type nil)])
 
 (defn static
   [{:keys [value] :as opts}]
