@@ -89,32 +89,33 @@
 
 (defn node-styles [el]
   (let [style (js/window.getComputedStyle el)]
-    {:border-box? (= "border-box" (.getPropertyValue style "box-sizing"))
-     :border-size (+ (js/parseFloat (.getPropertyValue style "border-bottom-width"))
-                     (js/parseFloat (.getPropertyValue style "border-top-width")))
-     :padding-size (+ (js/parseFloat (.getPropertyValue style "padding-bottom"))
-                      (js/parseFloat (.getPropertyValue style "padding-top")))
+    {:box-sizing (.getPropertyValue style "box-sizing")
+     :border-size (+ (or (js/parseFloat (.getPropertyValue style "border-bottom-width")) 0)
+                     (or (js/parseFloat (.getPropertyValue style "border-top-width")) 0))
+     :padding-size (+ (or (js/parseFloat (.getPropertyValue style "padding-bottom")) 0)
+                      (or (js/parseFloat (.getPropertyValue style "padding-top")) 0))
      :sizer-style (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
                           "" size-style-props)}))
 
 (defonce textarea-sizer (delay (doto (js/document.createElement "textarea")
                                  (js/document.body.appendChild))))
 
-(defn node-height [value min-rows max-rows {:keys [border-box? border-size padding-size sizer-style]}]
+(defn node-height [value min-rows max-rows {:keys [box-sizing border-size padding-size sizer-style]}]
   (let [_ (set! (.-value @textarea-sizer) value)
         _ (set! (.-style @textarea-sizer) (str textarea-sizer-style-str sizer-style))
         height (.-scrollHeight @textarea-sizer)
-        height (if border-box?
-                 (+ height border-size)
-                 (- height padding-size))
+        height (case box-sizing
+                 "border-box" (+ height border-size)
+                 "content-box" (- height padding-size)
+                 height)
         single-row-height (when (or min-rows max-rows)
                             (set! (.-value @textarea-sizer) "x")
                             (- (.-scrollHeight @textarea-sizer) padding-size))
         min-height (if min-rows
-                     (+ (* min-rows single-row-height) (if border-box? (+ padding-size border-size)) 0)
+                     (+ (* min-rows single-row-height) (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
                      (- js/Infinity))
         max-height (if max-rows
-                     (+ (* max-rows single-row-height) (if border-box? (+ padding-size border-size) 0))
+                     (+ (* max-rows single-row-height) (if (= "border-box" box-sizing) (+ padding-size border-size) 0))
                      js/Infinity)
         height (min max-height (max min-height height))]
     {:height height
