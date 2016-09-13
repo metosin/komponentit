@@ -10,20 +10,20 @@
      [:div
       [:label "Input"]
       [:div
-       [autosize/autosize
+       [autosize/input
         {:value @value
          :on-change (fn [e] (reset! value (.. e -target -value)))}]]]
      [:div
       [:label "Input with placeholder"]
       [:div
-       [autosize/autosize
+       [autosize/input
         {:value @value
          :placeholder "placeholder"
          :on-change (fn [e] (reset! value (.. e -target -value)))}]]]
      [:div
       [:label "Input with placeholder as min width"]
       [:div
-       [autosize/autosize
+       [autosize/input
         {:value @value
          :placeholder "placeholder"
          :placeholder-is-min-width? true
@@ -31,3 +31,18 @@
   (r/atom "abc")
   {:inspect-data true})
 
+(dc/defcard-rg textarea-example
+  (fn [value _]
+    [:div
+     [:div
+      [:label "Textarea"]
+      [:div
+       [autosize/textarea
+        {:value @value
+         :on-change (fn [e] (reset! value (.. e -target -value)))}]]]])
+  (r/atom "abc
+foo
+
+bar
+zzz")
+  {:inspect-data true})

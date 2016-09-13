@@ -441,7 +441,7 @@
 (defn autocomplete-input [opts text this]
   (let [{:keys [placeholder disabled on-blur]} opts
         {:keys [open? search initial-search]} (r/state this)]
-    [autosize/autosize
+    [autosize/input
      {:input-class "autocomplete__input"
       :on-focus  (partial focus this search text)
       :on-blur   (fn [e]
