@@ -4,6 +4,13 @@
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]))
 
+(dc/defcard
+  (str
+"# Input
+" (:doc (meta #'autosize/input)) "
+# Textarea
+" (:doc (meta #'autosize/textarea))))
+
 (dc/defcard-rg autosize-example
   (fn [value _]
     [:div
@@ -39,10 +46,18 @@
       [:div
        [autosize/textarea
         {:value @value
-         :on-change (fn [e] (reset! value (.. e -target -value)))}]]]])
+         :on-change (fn [e] (reset! value (.. e -target -value)))}]]]
+     [:div
+      [:label "Textarea with min- and max-rows"]
+      [:div
+       [autosize/textarea
+        {:value @value
+         :on-change (fn [e] (reset! value (.. e -target -value)))
+         :min-rows 3
+         :max-rows 10}]]] ])
   (r/atom "abc
-foo
+          foo
 
-bar
-zzz")
+          bar
+          zzz")
   {:inspect-data true})
