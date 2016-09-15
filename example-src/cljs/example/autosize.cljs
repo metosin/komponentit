@@ -56,8 +56,8 @@
          :min-rows 3
          :max-rows 10}]]] ])
   (r/atom "abc
-          foo
+foo
 
-          bar
-          zzz")
+bar
+zzz")
   {:inspect-data true})
