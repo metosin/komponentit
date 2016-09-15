@@ -9,6 +9,12 @@
 (defn wrapper [s]
   [:span {:style {:background "#ccccff"}} s])
 
+(dc/defcard
+  (str
+"# Highlight ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/highlight.cljs))
+
+Highlights matches in a string."))
+
 (dc/defcard-rg highlight-example
   [:ul
    [:li [highlight-string "Pekka" ["pek"] wrapper]]

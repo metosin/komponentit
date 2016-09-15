@@ -81,7 +81,8 @@
   (let [month-x (r/atom nil)
         prev-val (atom nil)]
     (fn [{:keys [container-class calendar-class calendar-date-class
-                 start end text value on-change week-numbers? date-input? i18n]
+                 start end text value on-change week-numbers? date-input? i18n
+                 min-date max-date]
           :or {container-class "calendar__container"
                calendar-class "calendar"
                calendar-date-class "calendar__date"}
@@ -146,6 +147,8 @@
                     :let [date (:date day)
                           day-num (date/date-format date "d")
                           out? (:out? day)
+                          disabled? (or (and min-date (< date min-date))
+                                        (and max-date (> date max-date)))
                           selected? (or (and value (.equals value date))
                                         (and start end (<= start date end))
                                         (and start (.equals date start))
@@ -155,6 +158,8 @@
                   :class (str "calendar__date "
                               (if week-numbers?
                                 "calendar__date--with-week-numbers ")
+                              (if disabled?
+                                "calendar__date--disabled ")
                               (if out?
                                 "calendar__date--out ")
                               (if selected?
@@ -170,7 +175,8 @@
                                (if selected?
                                  "calendar__date-button--selected "))
                    :type "button"
-                   :on-click #(on-change date)}
+                   :on-click #(on-change date)
+                   :disabled disabled?}
                   day-num]])])]]]))))
 
 (defn quicklist-item [{:keys [item opts]}]

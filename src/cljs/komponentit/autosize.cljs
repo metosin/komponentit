@@ -45,6 +45,7 @@
        :reagent-render
        (fn [{:keys [class style input-class input-style value placeholder] :as props}]
          ;; FIXME: Maybe use global sizer element, like textarea?
+         ;; FIXME: ^ doesn't currently use same style as input element, so broken with some styles
          [:div
           {:class class
            :style (merge {:display "inline-block"}

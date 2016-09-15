@@ -1,9 +1,14 @@
 (ns example.datepicker
   (:require [komponentit.datepicker :as datepicker]
             [komponentit.timepicker :as timepicker]
+            [example.options :as options]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true])
   (:import [goog.date Date UtcDateTime]))
+
+(dc/defcard
+  (str
+"# Datepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/datepicker.cljs))"))
 
 (dc/defcard-rg datepicker
   (fn [date _]
@@ -14,19 +19,17 @@
 
 (dc/defcard-rg datepicker-disabled
   (fn [state _]
-    (let [{:keys [date disabled?]} @state]
+    (let [{:keys [date disabled]} @state]
       [:div
+       [options/table
+        @state
+        (fn [k v] (swap! state assoc k v))
+        [[:disabled :bool]]]
        [datepicker/date {:value         date
                          :on-change     (fn [x] (swap! state assoc :date x))
                          :week-numbers? true
-                         :disabled?     disabled?}]
-       [:div {:style {:margin-top "20px"}}
-        [:input {:type      :checkbox
-                 :checked   disabled?
-                 :id        "disabled-checkbox"
-                 :on-change (fn [e] (->> e .-target .-checked (swap! state assoc :disabled?)))}]
-        [:label {:for "disabled-checkbox" :style {:padding-left "10px"}} "Disabled?"]]]))
-  (r/atom {:date nil :disabled? true})
+                         :disabled      disabled}]]))
+  (r/atom {:date nil :disabled true})
   {:inspect-data true})
 
 
@@ -36,8 +39,8 @@
     [datepicker/date {:value @date
                       :on-change (fn [x] (reset! date x))
                       :min-date (Date. 2015 9 10)
-                      :max-date (Date. 2015 9 30)}])
-  (r/atom (Date. 2015 9 22))
+                      :max-date (Date. 2015 9 20)}])
+  (r/atom (Date. 2015 9 15))
   {:inspect-data true})
 
 (dc/defcard-rg datepicker-min-and-max-two-fields

@@ -3,6 +3,10 @@
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]))
 
+(dc/defcard
+  (str
+"# Filepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/filepicker.cljs))"))
+
 (dc/defcard-rg filepicker
   (fn [value1 _]
     [filepicker/filepicker {:value @value1

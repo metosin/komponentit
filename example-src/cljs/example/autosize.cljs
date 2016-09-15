@@ -6,9 +6,11 @@
 
 (dc/defcard
   (str
-"# Input
+"# Autosize ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/autosize.cljs))
+
+## Input
 " (:doc (meta #'autosize/input)) "
-# Textarea
+## Textarea
 " (:doc (meta #'autosize/textarea))))
 
 (dc/defcard-rg autosize-example

@@ -24,7 +24,7 @@
   (or (get i18n k)
       (get default-i18n k)))
 
-(defn date [{:keys [value on-change i18n min-date max-date date-time? attrs clearable? disabled? week-numbers?
+(defn date [{:keys [value on-change i18n min-date max-date date-time? clearable? disabled week-numbers?
                     container-class input-class]
              :or {container-class "datepicker__container "
                   input-class "datepicker "}
@@ -38,40 +38,45 @@
                                                     (reset! open? false))))]
     [:div
      {:class (str container-class
-                  (if disabled? "datepicker--disabled "))
+                  (if disabled "datepicker--disabled "))
       :ref #(reset! el %)}
      [:input
-      (merge
-        attrs
-        {:class     input-class
-         :type      "text"
-         :value     (or @input-value (date/date->str value) "")
-         :on-change (fn [e]
-                      (reset! input-value (string/trim (.. e -target -value))))
-         :on-focus  (fn [_]
-                      (reset! open? true))
-         :on-blur   (fn [_]
-                      (reset! input-value nil))
-         :on-key-down (fn [e]
-                        (case (.-key e)
-                          "Enter" (do
-                                    (if on-change
-                                      (on-change (date/date-read @input-value (loc i18n :date-format))))
-                                    (reset! input-value nil))
-                          nil))
-         :disabled  disabled?})]
+      {:class     input-class
+       :type      "text"
+       :value     (or @input-value (date/date->str value) "")
+       :on-change (fn [e]
+                    (reset! input-value (string/trim (.. e -target -value))))
+       :on-focus  (fn [_]
+                    (reset! open? true))
+       :on-blur   (fn [_]
+                    (reset! input-value nil))
+       :on-key-down (fn [e]
+                      (case (.-key e)
+                        "Enter" (do
+                                  (when on-change
+                                    (let [v (date/date-read @input-value (loc i18n :date-format))]
+                                      (if (<= min-date v max-date)
+                                        (on-change v)))
+                                    (reset! open? false))
+                                  (reset! input-value nil))
+                        nil))
+       :disabled  disabled}]
      (if @open?
        [calendar/calendar
         {:container-class "datepicker__dropdown calendar"
          :value value
-         :on-change on-change
+         :on-change (fn [v]
+                      (reset! open? false)
+                      (if on-change (on-change v)))
          :week-numbers? week-numbers?
          :i18n i18n
-         :date-input? false}])
+         :date-input? false
+         :min-date min-date
+         :max-date max-date}])
      (if clearable?
        [:button.datepicker__clear-button
         {:type     "button"
-         :disabled disabled?
+         :disabled disabled
          :on-click (fn [e]
                      (if on-change (on-change nil))
                      nil)}])]

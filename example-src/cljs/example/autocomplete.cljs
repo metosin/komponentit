@@ -12,7 +12,7 @@
              (range n))))
 
 (dc/defcard
-"# Autocomplete
+"# Autocomplete ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/autocomplete.cljs))
 
 ## Features
 

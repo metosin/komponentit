@@ -7,7 +7,7 @@
   (:import [goog.date Date]))
 
 (dc/defcard (str
-"# Dropdowns
+"# Dropdowns ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/dropdown.cljs))
 
 There are currently two types of dropdowns on the basis of their container elements:
 `[dropdown-button]` (&lt;button&gt;) and `[dropdown-li]` (&lt;li&gt;).

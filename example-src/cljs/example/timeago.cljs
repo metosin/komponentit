@@ -7,7 +7,7 @@
 
 (dc/defcard
   (str
-"# Timeago
+"# Timeago ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/timeago.cljs))
 " (:doc (meta #'timeago/timeago))))
 
 (defn in [x interval]

@@ -141,6 +141,10 @@
   color: #bbb;
 }
 
+.calendar__date--disabled {
+  color: #bbb;
+}
+
 .calendar__date--selected {
 }
 
@@ -151,6 +155,14 @@
   background: lighten(average(green, #ccc), 20%);
   &:hover {
     background: lighten(green, 10%);
+  }
+}
+
+.calendar__date-button[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+  &:hover {
+    background: lighten(average(green, #ccc), 20%);
   }
 }
 

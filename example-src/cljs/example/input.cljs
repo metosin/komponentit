@@ -1,17 +1,37 @@
 (ns example.input
   (:require [komponentit.input :as input]
+            [komponentit.autosize :as autosize]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [example.options :as options]))
 
+(dc/defcard
+  (str
+"# Inputs ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/input.cljs))
+
+Collection of input elements which only call `on-change` after small timeout, on
+`on-blur` event or when Enter is pressed. This allows good performance where
+`on-change` might trigger many re-renders."))
+
 (dc/defcard-rg text-input
-  "The state is updated when user presses Enter or leaves the input (on-blur event, tab, clicks elsewhere etc.)"
   (fn [value _]
     [:div
      [input/text
       {:value @value
-       :on-change (fn [x] (reset! value x))}]])
+       :on-change #(reset! value %)}]])
   (r/atom "Hello World")
+  {:inspect-data true})
+
+(dc/defcard-rg autosize-input
+  "The input element is configurable with `:el` option so any element behaving like a
+  input is supported, like for example [autosize](#!/example.autosize) components"
+  (fn [value _]
+    [:div
+     [input/input
+      {:el autosize/input
+       :value @value
+       :on-change #(reset! value %)}]])
+  (r/atom "Hello")
   {:inspect-data true})
 
 (dc/defcard-rg number-input

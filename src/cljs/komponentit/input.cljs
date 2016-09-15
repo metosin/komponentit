@@ -18,6 +18,7 @@
            (assoc
              :value (or @temp (text-fn value) "")
              :on-change (fn [e]
+                          ;; FIXME: is it problem that this is hardcoded?
                           (let [v (.. e -target -value)]
                             (swap! timeout (fn [current]
                                              (if current (js/clearTimeout current))
@@ -98,15 +99,17 @@
     :or {value-fn identity}
     :as opts}]
   [:select
-   (assoc opts
-          :value (or value
-                     (if empty-option? +empty-value+)
-                     "")
-          :on-change (fn [e]
-                       (let [v (.. e -target -value)
-                             v (if (= +empty-value+ v) nil v)]
-                         (on-change (value-fn v))))
-          :on-blur on-blur)
+   (-> opts
+       (dissoc :empty-option? :value-fn :options)
+       (assoc
+         :value (or value
+                    (if empty-option? +empty-value+)
+                    "")
+         :on-change (fn [e]
+                      (let [v (.. e -target -value)
+                            v (if (= +empty-value+ v) nil v)]
+                        (on-change (value-fn v))))
+         :on-blur on-blur))
    (if empty-option?
      [:option {:value +empty-value+} "---"])
    (for [{:keys [value text]} options]

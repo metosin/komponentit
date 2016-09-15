@@ -5,7 +5,7 @@
             [example.options :as options])
   (:import [goog.date Date]))
 
-(dc/defcard "# Work in progress")
+(dc/defcard "# Calendar ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/calendar.cljs))")
 
 (dc/defcard-rg calendar
   (fn [date _]
