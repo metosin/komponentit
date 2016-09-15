@@ -112,10 +112,12 @@
                             (set! (.-value @textarea-sizer) "x")
                             (- (.-scrollHeight @textarea-sizer) padding-size))
         min-height (if min-rows
-                     (+ (* min-rows single-row-height) (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
+                     (+ (* min-rows single-row-height)
+                        (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
                      (- js/Infinity))
         max-height (if max-rows
-                     (+ (* max-rows single-row-height) (if (= "border-box" box-sizing) (+ padding-size border-size) 0))
+                     (+ (* max-rows single-row-height)
+                        (if (= "border-box" box-sizing) (+ padding-size border-size) 0))
                      js/Infinity)
         height (min max-height (max min-height height))]
     {:height height
