@@ -150,5 +150,6 @@
        (fn [{:keys [style value min-rows max-rows] :as props}]
          [:textarea
           (-> props
+              (dissoc :min-rows :max-rows)
               (assoc :ref el-ref
                      :style (merge style (node-height value min-rows max-rows (:sizer-style @state)))))])})))
