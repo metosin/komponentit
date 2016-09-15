@@ -287,6 +287,9 @@
 .calendar__date--out {
   color: #bbb;
 }
+.calendar__date--disabled {
+  color: #bbb;
+}
 .calendar__date-button {
   background: #eee;
   cursor: pointer;
@@ -298,6 +301,13 @@
 }
 .calendar__date-button:hover {
   background: #00b300;
+}
+.calendar__date-button[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.calendar__date-button[disabled]:hover {
+  background: #a6cca6;
 }
 .calendar__date-button--selected {
   background: green;
@@ -320,6 +330,6 @@
   border: 1px solid #ccc;
   position: absolute;
   top: calc(100% - 1px);
-  min-width: 220px;
+  width: 280px;
 }
 /*# sourceMappingURL=example.main.css.map */
