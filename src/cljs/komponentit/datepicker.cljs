@@ -24,6 +24,13 @@
   (or (get i18n k)
       (get default-i18n k)))
 
+(defn validate [{:keys [min-date max-date] :as opts} v]
+  (cond
+    (and min-date max-date) (<= min-date v max-date)
+    min-date (<= min-date v)
+    max-date (<= v max-date)
+    :else true))
+
 (defn date [{:keys [value on-change i18n min-date max-date date-time? clearable? disabled week-numbers?
                     container-class input-class]
              :or {container-class "datepicker__container "
@@ -54,9 +61,13 @@
                       (case (.-key e)
                         "Enter" (do
                                   (when on-change
-                                    (let [v (date/date-read @input-value (loc i18n :date-format))]
-                                      (if (<= min-date v max-date)
-                                        (on-change v)))
+                                    ;; if empty, enter runs default action = sends form
+                                    (when (seq @input-value)
+                                      ;; stop form send
+                                      (.preventDefault e)
+                                      (let [v (date/date-read @input-value (loc i18n :date-format))]
+                                        (if (validate opts v)
+                                          (on-change v))))
                                     (reset! open? false))
                                   (reset! input-value nil))
                         nil))
