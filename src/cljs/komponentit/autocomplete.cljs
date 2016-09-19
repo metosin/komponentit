@@ -47,7 +47,7 @@
     (fn [item term]
       (some-> item (get fields) (-> (.toLowerCase) (.indexOf term) (not= -1))))))
 
-(declare filter-results reset-search)
+(declare filter-results reset-search prepare-items)
 
 (defn close [this opts]
   (r/set-state this {:open? false})
@@ -57,7 +57,7 @@
   (if-not (:open? (r/state this))
     (r/set-state this {:open? true :initial-search (if-not (string/blank? text) text)})))
 
-(defn update-search [this v {:keys [->query debounce-timeout] :as opts}]
+(defn update-search [this v {:keys [->query debounce-timeout items get-items] :as opts}]
   (r/set-state this {:search v :query (->query v)})
   (if debounce-timeout
     (let [timeout (:timeout (r/state this))]
@@ -65,13 +65,27 @@
                        (if current
                          (js/clearTimeout current))
                        (js/setTimeout (fn [_]
-                                        (r/set-state this (filter-results this opts)))
+                                        (if items
+                                          (r/set-state this (filter-results this opts))
+                                          (get-items (:query (r/state this))
+                                                     (fn [new-items]
+                                                       (r/set-state this {:prepared-items (prepare-items new-items opts)})
+                                                       (r/set-state this (filter-results this opts))))))
                                       debounce-timeout))))
-    (r/set-state this (filter-results this opts))))
+    (if items
+      (r/set-state this (filter-results this opts))
+      (get-items (:query (r/state this))
+                 (fn [new-items]
+                   (r/set-state this {:prepared-items (prepare-items new-items opts)})
+                   (r/set-state this (filter-results this opts)))))))
 
-(defn reset-search [this opts]
+(defn reset-search [this {:keys [items get-items] :as opts}]
   (r/set-state this {:search nil :query nil})
-  (r/set-state this (filter-results this opts)))
+  (if items
+    (r/set-state this (filter-results this opts))
+    (get-items nil (fn [new-items]
+                     (r/set-state this {:prepared-items (prepare-items new-items opts)})
+                     (r/set-state this (filter-results this opts))))))
 
 (defn blur [this opts e]
   ;; Check relatedTarget to see  if focus moved out of the browser
@@ -139,8 +153,9 @@
         (r/set-state this {:initial-search nil :search "" :open? true}))))
 
 (defn handle-backspace [this {:keys [cb] :as opts} e]
-  (let [{:keys [initial-search]} (r/state this)]
+  (let [{:keys [initial-search search]} (r/state this)]
     (cond
+      (seq search) nil
       ;; FIXME: last? only for multiple select.
       (:remove-cb opts) (remove-cb opts this (last (:value opts)))
       initial-search (do
@@ -190,14 +205,16 @@
                       match? (boolean (seq matched))
                       ;; Add indeces here, so top level items have the smaller index than sub items.
                       ;; Reserve index for this item
-                      this-i (swap! n inc)
+                      this-i (if (:selectable? item true)
+                               (swap! n inc))
                       filtered-sub-items (filter-results' n search? (inc level) subitems not-matched selected opts)
                       ;; If this item is filtered out because of no items, release the index
-                      this-i (if (seq filtered-sub-items)
-                               this-i
-                               (do
-                                 (swap! n dec)
-                                 nil))]
+                      this-i (if (:selectable? item true)
+                               (if (seq filtered-sub-items)
+                                 this-i
+                                 (do
+                                   (swap! n dec)
+                                   nil)))]
                   (cons (assoc item
                                ::full-match? (not not-matched)
                                ::i this-i)
@@ -232,7 +249,7 @@
         (map (fn [v]
                ;; subitem filter adds some indeces, don't overwrite them
                (cond-> v
-                 (not (::i v)) (assoc ::i (swap! n inc))
+                 (and (not (::i v)) (:selectable? v true)) (assoc ::i (swap! n inc))
                  (not (::level v)) (assoc ::level level))))
 
         add-highlighted-str
@@ -287,7 +304,8 @@
               :on-click (fn [_]
                           (if cb (cb item))
                           nil)
-              :class (str (cond
+              :class (str (:class item) " "
+                          (cond
                             (= (::i item) selected) "autocomplete__item--selected"
                             (= value (item->value item)) "autocomplete__item--active"))
               :ref choice-item-el-ref}
@@ -388,13 +406,13 @@
     (some-> this r/dom-node (.getElementsByTagName "input") (.item 0) (.focus))))
 
 (defn- initial-state [{:keys [items] :as opts} defaults this]
-  (let [prepared-items (prepare-items items opts)]
+  (let [prepared-items (if items (prepare-items items opts))]
     (merge
       {:open? false
        :search nil
        :query nil
        :selected 0
-       :items items
+       :items (or items (r/atom nil))
        ; FIXME: Default opts. Uses only prepare-xform option.
        :prepared-items prepared-items
        :width nil
@@ -404,7 +422,7 @@
       ; FIXME: Default opts.
       (filter-results-top prepared-items nil 0 (merge defaults opts)))))
 
-(defn- will-receive-props [this [_ {:keys [items] :as opts}]]
+(defn- will-receive-props [this [_ {:keys [items query] :as opts}]]
   ;; When items changes, reset the results
   (when-not (= (:items (r/props this)) items)
     (r/set-state this {:items items})
@@ -527,13 +545,14 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [items open? results search selected width height]} (r/state this)
-             {:keys [value value->text ctrl-class disabled] :as opts} (build-options opts defaults this)
+             {:keys [value value->text control-class container-class disabled] :as opts} (build-options opts defaults this)
              text (value->text items value)]
 
          [:div.autocomplete.autocomplete--single
-          {:class ctrl-class}
+          {:class container-class}
           [:div.autocomplete__control
-           {:class (str (if open? "autocomplete__control--open ")
+           {:class (str control-class " "
+                        (if open? "autocomplete__control--open ")
                         (if disabled "autocomplete__control--disabled"))
             :on-click (partial click this)}
            [autocomplete-input opts text this]
@@ -581,17 +600,18 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [open? results search selected width height]} (r/state this)
-             {:keys [ctrl-class disabled] :as opts} (build-options opts multiple-defaults this)
+             {:keys [control-class container-class disabled] :as opts} (build-options opts multiple-defaults this)
              text ""]
 
          [:div.autocomplete
-          {:class ctrl-class}
+          {:class container-class}
           [:div.autocomplete__control
-           {:class (str (if open? "autocomplete__control--open ")
+           {:class (str control-class " "
+                        (if open? "autocomplete__control--open ")
                         (if disabled "autocomplete__control--disabled"))
             :on-click (partial click this)}
            [selected-items opts this]
            [autocomplete-input opts text this]
            [autocomplete-clear opts]]
           (if open?
-            [autocomplete-contents-top results {:width width :height height} selected search opts])]))}))
+            [autocomplete-contents-wrapper this results {:width width :height height} selected search opts])]))}))
