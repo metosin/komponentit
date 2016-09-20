@@ -553,7 +553,8 @@
           [:div.autocomplete__control
            {:class (str control-class " "
                         (if open? "autocomplete__control--open ")
-                        (if disabled "autocomplete__control--disabled"))
+                        (if disabled "autocomplete__control--disabled ")
+                        (if value "autocomplete__control--value "))
             :on-click (partial click this)}
            [autocomplete-input opts text this]
            [autocomplete-clear this opts]]
@@ -600,7 +601,7 @@
      (fn [this]
        (let [opts (r/props this)
              {:keys [open? results search selected width height]} (r/state this)
-             {:keys [control-class container-class disabled] :as opts} (build-options opts multiple-defaults this)
+             {:keys [control-class container-class disabled value] :as opts} (build-options opts multiple-defaults this)
              text ""]
 
          [:div.autocomplete
@@ -608,7 +609,8 @@
           [:div.autocomplete__control
            {:class (str control-class " "
                         (if open? "autocomplete__control--open ")
-                        (if disabled "autocomplete__control--disabled"))
+                        (if disabled "autocomplete__control--disabled ")
+                        (if value "autocomplete__control__value "))
             :on-click (partial click this)}
            [selected-items opts this]
            [autocomplete-input opts text this]
