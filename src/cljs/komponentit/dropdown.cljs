@@ -133,3 +133,26 @@
 
 (defn dropdown-button [opts]
   [dropdown (assoc opts :el dropdown-button')])
+
+(defn dropdown-a'
+  [open? dropdown {:keys [text container-class open-class a-class]
+                   :or {container-class ""
+                        open-class "open"
+                        a-class "dropdown-toggle"}
+                   :as opts}]
+  [:div
+   {:class (str container-class " " (if @open? open-class))}
+   [:a
+    {:href "#"
+     :class a-class
+     :on-click (fn [e]
+                 (.preventDefault e)
+                 (toggle open? e))
+     :aria-haspopup true
+     :aria-expanded @open?}
+    text
+    [caret' open? opts]]
+   dropdown])
+
+(defn dropdown-a [opts]
+  [dropdown (assoc opts :el dropdown-a')])
