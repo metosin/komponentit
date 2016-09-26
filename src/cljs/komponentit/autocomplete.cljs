@@ -457,7 +457,7 @@
     opts))
 
 (defn autocomplete-input [opts text this]
-  (let [{:keys [placeholder disabled on-blur]} opts
+  (let [{:keys [placeholder disabled on-blur auto-focus]} opts
         {:keys [open? search initial-search]} (r/state this)]
     [autosize/input
      {:input-class "autocomplete__input"
@@ -476,7 +476,8 @@
                (if initial-search
                  (str initial-search)
                  (str search))
-               text)}]))
+               text)
+      :auto-focus auto-focus}]))
 
 (defn selected-items [opts this]
   (let [{:keys [value item-removable? value->text]} opts
