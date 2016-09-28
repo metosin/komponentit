@@ -499,10 +499,11 @@
   (if (if (coll? value)
         (seq value)
         value)
-    [:span.autocomplete__clear-button
-     {:on-click (fn [e]
-                  (when-not disabled
-                    (clear-cb opts this))
+    [:button.autocomplete__clear-button
+     {:type "button"
+      :disabled disabled
+      :on-click (fn [e]
+                  (clear-cb opts this)
                   (focus-input this)
                   (.stopPropagation e)
                   (.preventDefault e))}]))
