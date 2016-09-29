@@ -1,6 +1,6 @@
 (ns komponentit.dropdown
   (:require [goog.dom :as dom]
-            [goog.events :as events]
+            [komponentit.mixins :as mixins]
             [reagent.core :as r]))
 
 (enable-console-print!)
@@ -53,32 +53,31 @@
   - `:close-on-click?` (Default `true`) Close dropdown when any item is selected.
   - `:caret?` (Default `true`) Whether to automatically append caret to text."
   [_]
-  (let [open?  (r/atom false)
-        listener (atom nil)]
-    (r/create-class
-      {:display-name "komponentit.dropdown.dropdown_class"
-       :component-did-mount
-       (fn [this]
-         (reset! listener (events/listen js/window events/EventType.CLICK
-                                         (fn [e]
-                                           ; If the click target is outside of navbar
-                                           (if-not (dom/contains (r/dom-node this) (.. e -target))
-                                             (reset! open? false))))))
-       :component-will-unmount
-       (fn [_]
-         (events/unlistenByKey @listener))
-       :reagent-render
-       (fn [{:keys [el content children dropdown-class]
-             :or {dropdown-class "dropdown-menu"}
-             :as opts}]
-         [el
-          open?
-          (if @open?
-            (into [:ul {:class dropdown-class}]
-                  (if children
-                    children
-                    (map (partial ->menu-item open? opts) content))))
-          opts])})))
+  (let [open? (r/atom false)
+        dropdown-el (atom nil)
+        dropdown-el-ref #(reset! dropdown-el %)]
+    (fn [{:keys [el content children dropdown-class]
+          :or {dropdown-class "dropdown-menu"}
+          :as opts}]
+      [el
+       open?
+       dropdown-el-ref
+       (if @open?
+         [mixins/window-event-listener
+          {:on-click (fn [e]
+                       ; If the click target is outside of navbar
+                       (if (and @dropdown-el (not (dom/contains @dropdown-el (.. e -target))))
+                         (reset! open? false)))
+           :on-key-down (fn [e]
+                          (case (.-keyCode e)
+                            ;; Esc
+                            27 (reset! open? false)
+                            nil))}
+          (into [:ul {:class dropdown-class}]
+                (if children
+                  children
+                  (map (partial ->menu-item open? opts) content)))])
+       opts])))
 
 (defn toggle [open? e]
   (.preventDefault e)
@@ -94,12 +93,15 @@
      [:span {:class (if @open? caret-up-class caret-class)}]]))
 
 (defn dropdown-li'
-  [open? dropdown {:keys [text li-class open-class a-class]
-                   :or {a-class "dropdown-toggle"
-                        open-class "open"
-                        li-class "dropdown"}
-                   :as opts}]
-  [:li {:class (str li-class " " (if @open? open-class))}
+  [open? ref dropdown
+   {:keys [text li-class open-class a-class]
+    :or {a-class "dropdown-toggle"
+         open-class "open"
+         li-class "dropdown"}
+    :as opts}]
+  [:li
+   {:class (str li-class " " (if @open? open-class))
+    :ref ref}
    [:a
     {:class a-class
      :href "#"
@@ -114,13 +116,15 @@
   [dropdown (assoc opts :el dropdown-li')])
 
 (defn dropdown-button'
-  [open? dropdown {:keys [text container-class open-class button-class]
-                   :or {container-class "btn-group"
-                        open-class "open"
-                        button-class "btn btn-default dropdown-toggle"}
-                   :as opts}]
+  [open? ref dropdown
+   {:keys [text container-class open-class button-class]
+    :or {container-class "btn-group"
+         open-class "open"
+         button-class "btn btn-default dropdown-toggle"}
+    :as opts}]
   [:div
-   {:class (str container-class " " (if @open? open-class))}
+   {:class (str container-class " " (if @open? open-class))
+    :ref ref}
    [:button
     {:class button-class
      :type "button"

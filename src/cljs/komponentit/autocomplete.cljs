@@ -382,13 +382,21 @@
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
        (fn [this results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
-         [:div.autocomplete__dropdown
-          {:class (str (if @top? "autocomplete__dropdown--above "))
-           :style (if @top? {:bottom (str (:height container-state) "px")})}
-          [:div.autocomplete__dropdown-content
-           {:ref scroll-wrapper-el-ref}
-           [create-new-item search selected opts]
-           [autocomplete-contents-top this results selected scroll-wrapper-el opts]]])})))
+         [mixins/window-event-listener
+          {:on-click (fn [e]
+                       (when (and @scroll-wrapper-el (not (dom/contains @scroll-wrapper-el (.-target e))))
+                         (close this opts)))
+           :on-key-down (fn [e]
+                          (case (.-keyCode e)
+                            27 (close this opts)
+                            nil))}
+          [:div.autocomplete__dropdown
+           {:class (str (if @top? "autocomplete__dropdown--above "))
+            :style (if @top? {:bottom (str (:height container-state) "px")})}
+           [:div.autocomplete__dropdown-content
+            {:ref scroll-wrapper-el-ref}
+            [create-new-item search selected opts]
+            [autocomplete-contents-top this results selected scroll-wrapper-el opts]]]])})))
 
 (defn update-el-dimensions
   "Save the container dimensions to component state.
@@ -417,7 +425,6 @@
        :prepared-items prepared-items
        :width nil
        :height nil
-       :closable nil
        :timeout (atom nil)}
       ; FIXME: Default opts.
       (filter-results-top prepared-items nil 0 (merge defaults opts)))))
@@ -429,19 +436,11 @@
     (r/set-state this {:prepared-items (prepare-items items opts)})
     (reset-search this opts)))
 
-(defn- will-unmount [this]
-  (if-let [closable (:closable (r/state this))]
-    (closable)))
-
 (defn- did-update [this old-argv]
   (update-el-dimensions this)
   (focus-input this))
 
 (defn- did-mount [opts this]
-  (r/set-state this {:closable (mixins/create-closable (fn [e]
-                                                         (when (or (= "keydown" (.-type e))
-                                                                   (not (dom/contains (r/dom-node this) (.-target e))))
-                                                           (close this opts))))})
   (update-el-dimensions this)
   (focus-input this))
 
@@ -539,7 +538,6 @@
     {:display-name "komponentit.autocomplete.autocomplete_class"
      :get-initial-state (partial initial-state opts defaults)
      :component-will-receive-props will-receive-props
-     :component-will-unmount will-unmount
      :component-did-update did-update
      :component-did-mount (partial did-mount opts)
 
@@ -595,7 +593,6 @@
     {:display-name "komponentit.autocomplete.multiple_autocomplete_class"
      :get-initial-state (partial initial-state opts multiple-defaults)
      :component-will-receive-props will-receive-props
-     :component-will-unmount will-unmount
      :component-did-update did-update
      :component-did-mount (partial did-mount opts)
 
