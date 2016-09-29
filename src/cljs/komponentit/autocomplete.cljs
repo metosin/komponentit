@@ -508,31 +508,31 @@
                   (.preventDefault e))}]))
 
 (defn autocomplete
-  ":value - (required) IDeref or value
-   :cb - (required) Function. [value]
-   :on-blur - Input :on-blur. Might be useful for form pristine handling.
-   :items
-   :max-results
-   :value->search
-   :value->text
-   :item->key
-   :item->value
-   :item-removable? - predicate function to determine if item is non-removable
-   :term-match-fn
-   :search-fields
-   :min-search-length - Required number of characters in search string before results are filtered.
-   :->query
-   :groups
-   :filter-current-out?
-   :debounce-timeout
+":value - (required) IDeref or value
+:cb - (required) Function. [value]
+:on-blur - Input :on-blur. Might be useful for form pristine handling.
+:items
+:max-results
+:value->search
+:value->text
+:item->key
+:item->value
+:item-removable? - predicate function to determine if item is non-removable
+:term-match-fn
+:search-fields
+:min-search-length - Required number of characters in search string before results are filtered.
+:->query
+:groups
+:filter-current-out?
+:debounce-timeout
 
-   Localization
-   :placeholder
-   :no-results-text
+Localization
+:placeholder
+:no-results-text
 
-   Style
-   :ctrl-class
-   :disabled"
+Style
+:ctrl-class
+:disabled"
   [opts]
   (r/create-class
     {:display-name "komponentit.autocomplete.autocomplete_class"
@@ -562,32 +562,32 @@
             [autocomplete-contents-wrapper this results {:width width :height height} selected search opts])]))}))
 
 (defn multiple-autocomplete
-  ":value - (required) IDeref or value
-   :cb - (required) Function. [value]
-   :remove-cb - For multiple?
-   :on-blur - Input :on-blur. Might be useful for form pristine handling.
-   :items
-   :max-results
-   :value->search
-   :value->text
-   :item->key
-   :item->value
-   :item-removable? - predicate function to determine if item is non-removable
-   :term-match-fn
-   :search-fields
-   :min-search-length - Required number of characters in search string before results are filtered.
-   :->query
-   :groups
-   :filter-current-out?
-   :debounce-timeout
+":value - (required) IDeref or value
+:cb - (required) Function. [value]
+:remove-cb - For multiple?
+:on-blur - Input :on-blur. Might be useful for form pristine handling.
+:items
+:max-results
+:value->search
+:value->text
+:item->key
+:item->value
+:item-removable? - predicate function to determine if item is non-removable
+:term-match-fn
+:search-fields
+:min-search-length - Required number of characters in search string before results are filtered.
+:->query
+:groups
+:filter-current-out?
+:debounce-timeout
 
-   Localization
-   :placeholder
-   :no-results-text
+Localization
+:placeholder
+:no-results-text
 
-   Style
-   :ctrl-class
-   :disabled"
+Style
+:ctrl-class
+:disabled"
   [opts]
   (r/create-class
     {:display-name "komponentit.autocomplete.multiple_autocomplete_class"
