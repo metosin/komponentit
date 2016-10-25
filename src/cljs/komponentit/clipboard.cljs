@@ -1,7 +1,8 @@
 (ns komponentit.clipboard)
 
 (defn copy-text [text]
-  (let [el (js/document.createElement "textarea")]
+  (let [el (js/document.createElement "textarea")
+        prev-focus-el js/document.activeElement]
     (set! (.-style el) #js {:fontSize "12pt"
                             :border 0
                             :padding 0
@@ -16,6 +17,7 @@
     (.focus el)
     (js/document.execCommand "copy")
     (.blur el)
-    ;; FIXME: restore focus?
+    (when prev-focus-el
+      (.focus prev-focus-el))
     (.removeAllRanges (.getSelection js/window))
     (js/window.document.body.removeChild el)))
