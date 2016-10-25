@@ -17,7 +17,7 @@
 - `:on-click` (Optional) callback
 - `:text` Text"
   [open?
-   {:keys [on-change close-on-click? active-item-class
+   {:keys [on-change close-on-click? active-item-class disabled
            separator-class menu-item-class menu-item-a-class]
     :or {active-item-class "active"
          separator-class "divider"}
@@ -39,7 +39,8 @@
                         (if-not (false? close-on-click?) (reset! open? false))
                         (if on-click (on-click e))
                         (if on-change (on-change item-opts))
-                        nil)}
+                        nil)
+            :disabled disabled}
         text]])))
 
 (defn dropdown
@@ -116,7 +117,7 @@ do not work with this option.
 
 (defn dropdown-button'
   [open? ref dropdown
-   {:keys [text container-class open-class button-class]
+   {:keys [text container-class open-class button-class disabled]
     :or {container-class "btn-group"
          open-class "open"
          button-class "btn btn-default dropdown-toggle"}
@@ -129,7 +130,8 @@ do not work with this option.
      :type "button"
      :on-click (partial toggle open?)
      :aria-haspopup true
-     :aria-expanded @open?}
+     :aria-expanded @open?
+     :disabled disabled}
     text
     [caret' open? opts]]
    dropdown])
@@ -138,7 +140,7 @@ do not work with this option.
   [dropdown (assoc opts :el dropdown-button')])
 
 (defn dropdown-a'
-  [open? dropdown {:keys [text container-class open-class a-class]
+  [open? dropdown {:keys [text container-class open-class a-class disabled]
                    :or {container-class ""
                         open-class "open"
                         a-class "dropdown-toggle"}
@@ -152,7 +154,8 @@ do not work with this option.
                  (.preventDefault e)
                  (toggle open? e))
      :aria-haspopup true
-     :aria-expanded @open?}
+     :aria-expanded @open?
+     :disabled disabled}
     text
     [caret' open? opts]]
    dropdown])
