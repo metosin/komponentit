@@ -58,7 +58,7 @@
     (reload :on-jsload 'example.main/restart!)
     (cljs-repl)
     (cljs)
-    (serve :port 3001 :resource-root "")
+    (serve :port 3002 :resource-root "")
     (build)))
 
 (deftask build-example []
