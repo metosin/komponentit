@@ -28,7 +28,8 @@
         menu-item-a-class (or (:menu-item-a-class item-opts) (:menu-item-a-class dropdown-opts))]
     (cond
       separator [:li
-                 {:class separator-class}]
+                 {:class separator-class
+                  :key key}]
       :else
       [:li {:key key
             :class (str menu-item-class (if (and value (= (:value dropdown-opts) value)) active-item-class))}
