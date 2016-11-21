@@ -365,7 +365,7 @@
     (if-not create
       [:div.autocomplete__no-results no-results-text])))
 
-(defn autocomplete-contents-wrapper [_ _ container-state _ _ _ _]
+(defn autocomplete-contents-wrapper [parent _ container-state _ _ _ _]
   (let [top? (r/atom false)
         scroll-wrapper-el (atom nil)
         scroll-wrapper-el-ref #(reset! scroll-wrapper-el %)]
@@ -384,7 +384,7 @@
        (fn [this results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
          [mixins/window-event-listener
           {:on-click (fn [e]
-                       (when (and @scroll-wrapper-el (not (dom/contains @scroll-wrapper-el (.-target e))))
+                       (when (not (dom/contains (r/dom-node parent) (.-target e)))
                          (close this opts)))
            :on-key-down (fn [e]
                           (case (.-keyCode e)
