@@ -4,15 +4,15 @@
   :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.9.89"  :scope "provided"]
-                  [adzerk/boot-cljs       "1.7.228-1"  :scope "test"]
+                  [adzerk/boot-cljs       "1.7.228-2"  :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
                   [com.cemerick/piggieback "0.2.1"     :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
                   [org.clojure/tools.nrepl "0.2.12"    :scope "test"]
-                  [adzerk/boot-reload     "0.4.12"     :scope "test"]
-                  [deraen/boot-less       "0.5.1-SNAPSHOT" :scope "test"]
+                  [adzerk/boot-reload     "0.4.13"     :scope "test"]
+                  [deraen/boot-less       "0.6.0"      :scope "test"]
                   [org.slf4j/slf4j-nop    "1.7.21"     :scope "test"]
-                  [pandeiro/boot-http     "0.7.3"      :scope "test"]
+                  [metosin/boot-alt-http  "0.1.0"      :scope "test"]
 
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.4.0"]
@@ -23,7 +23,7 @@
                   ;; overwrites Reagent version
                   [cljsjs/react-with-addons "15.3.0-0" :scope "test"]
                   [devcards "0.2.1-7" :scope "test"]
-                  [binaryage/devtools "0.8.1" :scope "test"]]
+                  [binaryage/devtools "0.8.3" :scope "test"]]
   :exclusions '[cljsjs/react])
 
 (require
@@ -31,7 +31,7 @@
   '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl repl-env]]
   '[adzerk.boot-reload    :refer [reload]]
   '[deraen.boot-less      :refer [less]]
-  '[pandeiro.boot-http    :refer [serve]])
+  '[metosin.boot-alt-http :refer [serve]])
 
 (def +version+ "0.2.0-SNAPSHOT")
 
@@ -58,7 +58,7 @@
     (reload :on-jsload 'example.main/restart!)
     (cljs-repl)
     (cljs)
-    (serve :port 3002 :resource-root "")
+    (serve :prefixes #{""})
     (build)))
 
 (deftask build-example []
