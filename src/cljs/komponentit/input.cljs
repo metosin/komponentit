@@ -64,17 +64,27 @@
 ;; Number input
 ;;
 
+;; TODO: Configurable delimiter
+
 (defn str->number [s multiplier]
   (if (str/blank? s)
     nil
-    (let [[_ minus? a _ b] (re-find #"([-])?(\d*)([,.](\d*))?" (str/replace s #"\s" ""))
-          f (if (seq minus?) - identity)]
-      (f (+ (long (* multiplier a)) (some-> b (.substring 0 2) long))))))
+    ;; huh? how is this so complex...
+    (let [x (re-find #"[-]?\d*[,\.]?\d*" (str/replace s #"\s" ""))
+          i (or (str/index-of x ".") (str/index-of x ","))
+          x (str/replace x #"[\.,]" "")
+          i (or i (count x))]
+      (js/console.log s x (- (count x) i))
+      (* (long x)
+         multiplier
+         (Math/pow 10 (- (- (count x) i)))))))
 
 (defn number->str [value multiplier]
   (if (nil? value)
     ""
-    (str (long (/ value multiplier)))))
+    (str (long (/ value multiplier))
+         (if (not= 0 (mod value multiplier))
+           (str "." (mod (js/Math.abs value) multiplier))))))
 
 (defn number
   [{:keys [value on-change on-blur multiplier]

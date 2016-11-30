@@ -2,6 +2,7 @@
   (:require [komponentit.input :as input]
             [komponentit.autosize :as autosize]
             [reagent.core :as r]
+            [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]
             [example.options :as options]))
 
@@ -102,3 +103,34 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
        :on-change (fn [x] (reset! value x))}]])
   (r/atom true)
   {:inspect-data true})
+
+
+(dc/deftest str->number-test
+  (is (= 1.1  (input/str->number "1,1" 1)))
+  (is (= 1.1  (input/str->number "1,10" 1)))
+  (is (= 1.11 (input/str->number "1,11" 1)))
+  (is (= 0.11 (input/str->number ",11" 1)))
+  (is (= 1000 (input/str->number "10.0" 100)))
+  (is (= 1000 (input/str->number "10,0" 100)))
+  (is (= 1050 (input/str->number "10.50" 100)))
+  (is (= 1050 (input/str->number " 	10.50" 100)))
+  (is (= 1050 (input/str->number "10.50abc" 100)))
+  (is (= 1050 (input/str->number "10,50" 100)))
+  (is (= 1050.5 (input/str->number "10.505" 100)))
+  (is (= 1000 (input/str->number "10" 100)))
+  (is (= 1000000 (input/str->number "10 000" 100)))
+  (is (= 100000000 (input/str->number "1 000 000" 100)))
+  (is (= 10 (input/str->number ".10" 100)))
+  (is (= 10 (input/str->number ",10" 100)))
+  (is (= -1055 (input/str->number "-10,55" 100)))
+  (is (= nil (input/str->number "" 100)))
+  (is (= nil (input/str->number "  	" 100))))
+
+(dc/deftest number->str-test
+  (is (= "10" (input/number->str 1000 100)))
+  (is (= "10" (input/number->str 1000 100)))
+  (is (= "10.5" (input/number->str 105 10)))
+  (is (= "-10" (input/number->str -1000 100)))
+  (is (= "-10.45" (input/number->str -1045 100)))
+  (is (= "1" (input/number->str 100 100)))
+  (is (= "" (input/number->str nil 100))))
