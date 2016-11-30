@@ -1,7 +1,7 @@
 (set-env!
   :source-paths #{"example-src/cljs" "example-src/less" "example-src/html"}
   :resource-paths #{"src/cljs" "src/less"}
-  :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
+  ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.9.89"  :scope "provided"]
                   [adzerk/boot-cljs       "1.7.228-2"  :scope "test"]
@@ -17,7 +17,7 @@
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.4.0"]
                   ;; Reagent before devcards to use proper React version
-                  [reagent "0.6.0-SNAPSHOT"]
+                  [reagent "0.6.0"]
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
@@ -33,7 +33,7 @@
   '[deraen.boot-less      :refer [less]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.2.0-SNAPSHOT")
+(def +version+ "0.2.0")
 
 (task-options!
   pom {:project 'metosin/komponentit
