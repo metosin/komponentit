@@ -12,7 +12,7 @@
                   [adzerk/boot-reload     "0.4.13"     :scope "test"]
                   [deraen/boot-less       "0.6.0"      :scope "test"]
                   [org.slf4j/slf4j-nop    "1.7.21"     :scope "test"]
-                  [metosin/boot-alt-http  "0.1.0"      :scope "test"]
+                  [metosin/boot-alt-http  "0.1.1"      :scope "test"]
 
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.4.0"]
@@ -33,7 +33,7 @@
   '[deraen.boot-less      :refer [less]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.2.0")
+(def +version+ "0.2.1")
 
 (task-options!
   pom {:project 'metosin/komponentit

@@ -36,7 +36,17 @@
         {:value @value
          :placeholder "placeholder"
          :placeholder-is-min-width? true
-         :on-change (fn [e] (reset! value (.. e -target -value)))}]]]])
+         :on-change (fn [e] (reset! value (.. e -target -value)))}]]]
+     [:div
+      [:label "Input with style"]
+      [:div
+       [autosize/input
+        {:value @value
+         :on-change (fn [e] (reset! value (.. e -target -value)))
+         :style {:fontSize "24pt"
+                 :fontWeight 600
+                 :padding "6px"
+                 :maxWidth "100%"}}]]] ])
   (r/atom "abc")
   {:inspect-data true})
 
