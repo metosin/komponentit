@@ -1,7 +1,16 @@
-## Unreleased
+## 0.2.2
+
+- Removed `console.log` from autosize input
+
+## 0.2.1
+
+- Reimplemented autosize input
+
+## 0.2.0
 
 - New autosize input element
 - Refactored autocomplete styles etc.?
+- Lots of stuff
 
 ## 0.1.3 (13.6.2016)
 
