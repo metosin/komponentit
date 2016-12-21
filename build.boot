@@ -33,7 +33,7 @@
   '[deraen.boot-less      :refer [less]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.2.2")
+(def +version+ "0.2.3-SNAPSHOT")
 
 (task-options!
   pom {:project 'metosin/komponentit

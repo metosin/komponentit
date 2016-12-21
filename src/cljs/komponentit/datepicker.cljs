@@ -46,30 +46,32 @@
                     (if disabled "datepicker--disabled "))
         :ref el-ref}
        [:input
-        {:class     input-class
-         :type      "text"
-         :value     (or @input-value (date/date->str value) "")
-         :on-change (fn [e]
-                      (reset! input-value (string/trim (.. e -target -value))))
-         :on-focus  (fn [_]
-                      (reset! open? true))
-         :on-blur   (fn [_]
-                      (reset! input-value nil))
-         :on-key-down (fn [e]
-                        (case (.-key e)
-                          "Enter" (do
-                                    (when on-change
-                                      ;; if empty, enter runs default action = sends form
-                                      (when (seq @input-value)
-                                        ;; stop form send
-                                        (.preventDefault e)
-                                        (let [v (date/date-read @input-value (loc i18n :date-format))]
-                                          (if (validate opts v)
-                                            (on-change v))))
-                                      (reset! open? false))
-                                    (reset! input-value nil))
-                          nil))
-         :disabled  disabled}]
+        (-> opts
+            (dissoc :clearable? :min-date :max-date :i18n :date-time? :week-numbers? :container-class :input-class)
+            (assoc :class     input-class
+                   :type      "text"
+                   :value     (or @input-value (date/date->str value) "")
+                   :on-change (fn [e]
+                                (reset! input-value (string/trim (.. e -target -value))))
+                   :on-focus  (fn [_]
+                                (reset! open? true))
+                   :on-blur   (fn [_]
+                                (reset! input-value nil))
+                   :on-key-down (fn [e]
+                                  (case (.-key e)
+                                    "Enter" (do
+                                              (when on-change
+                                                ;; if empty, enter runs default action = sends form
+                                                (when (seq @input-value)
+                                                  ;; stop form send
+                                                  (.preventDefault e)
+                                                  (let [v (date/date-read @input-value (loc i18n :date-format))]
+                                                    (if (validate opts v)
+                                                      (on-change v))))
+                                                (reset! open? false))
+                                              (reset! input-value nil))
+                                    nil))
+                   :disabled  disabled))]
        (if @open?
          [mixins/window-event-listener
           {:on-click
