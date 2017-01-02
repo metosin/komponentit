@@ -162,6 +162,8 @@
   background: #67ff64;
 }
 .autocomplete__clear-button {
+  background: transparent;
+  border: 0;
   cursor: pointer;
   padding: 2px 4px;
 }
