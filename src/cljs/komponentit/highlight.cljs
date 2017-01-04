@@ -26,7 +26,7 @@
                                      [x (subs rst x (+ x (count term)))]
                                      acc)))
                                [-1 nil]
-                               query)]
+                               (remove empty? query))]
          ; If match found, recurse the rest of str
          (if (not= i -1)
            (let [a (subs rst 0 i)

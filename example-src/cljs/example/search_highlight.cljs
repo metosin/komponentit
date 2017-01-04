@@ -37,6 +37,8 @@ Highlights matches in a string."))
          (highlight-string nil ["pek"])))
   (is (= [:span "xx"]
          (highlight-string "xx" nil)))
+  (is (= [:span "empty search term"]
+         (highlight-string "empty search term" [""])))
   (is (= [:span [:span.highlight "Pek"] "ka"]
          (highlight-string "Pekka" ["pek"])))
   (is (= [:span [:span.foo "Pek"] "ka"]
