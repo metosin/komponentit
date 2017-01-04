@@ -64,27 +64,28 @@
 ;; Number input
 ;;
 
-;; TODO: Configurable delimiter
+(defn str->number
+  ([s] (str->number s nil))
+  ([s {:keys [multiplier]
+       :or {multiplier 1}}]
+   (if (str/blank? s)
+     nil
+     (let [s (-> s
+                 (str/replace #" " "")
+                 (str/replace #"," "."))]
+       (* (js/parseFloat s) multiplier)))))
 
-(defn str->number [s multiplier]
-  (if (str/blank? s)
-    nil
-    ;; huh? how is this so complex...
-    (let [x (re-find #"[-]?\d*[,\.]?\d*" (str/replace s #"\s" ""))
-          i (or (str/index-of x ".") (str/index-of x ","))
-          x (str/replace x #"[\.,]" "")
-          i (or i (count x))]
-      (js/console.log s x (- (count x) i))
-      (* (long x)
-         multiplier
-         (Math/pow 10 (- (- (count x) i)))))))
-
-(defn number->str [value multiplier]
-  (if (nil? value)
-    ""
-    (str (long (/ value multiplier))
-         (if (not= 0 (mod value multiplier))
-           (str "." (mod (js/Math.abs value) multiplier))))))
+(defn number->str
+  ([value] (number->str value nil))
+  ([value {:keys [multiplier precision delimiter]
+           :or {multiplier 1
+                precision 2
+                delimiter "."}}]
+   (if (nil? value)
+     ""
+     (str (long (/ value multiplier))
+          (if (not= 0 (mod value multiplier))
+            (str delimiter (subs (str/replace (str (mod (js/Math.abs value) multiplier)) #"0\." "") 0 precision)))))))
 
 (defn number
   [{:keys [value on-change on-blur multiplier]
@@ -92,10 +93,10 @@
     :as opts}]
   [input
    (-> opts
-       (dissoc :multiplier)
+       (dissoc :multiplier :precision :delimiter)
        (assoc
-         :value-fn #(str->number % multiplier)
-         :text-fn #(number->str % multiplier)))])
+         :value-fn #(str->number % opts)
+         :text-fn #(number->str % opts)))])
 
 ;;
 ;; Password
