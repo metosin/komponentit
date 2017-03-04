@@ -84,7 +84,10 @@
        (fn [this]
          (reset! state (input-node-styles (r/dom-node this))))
        :component-did-update
-       (fn [this [prev-props]])
+       (fn [this [_ prev-props]]
+         (when (or (not= (:class (r/props this)) (:class prev-props))
+                   (not= (:style (r/props this)) (:style prev-props)) )
+           (reset! state (input-node-styles (r/dom-node this)))))
        :reagent-render
        (fn [{:keys [class style value placeholder] :as props}]
          [:input
@@ -155,10 +158,10 @@
        (fn [this]
          (reset! state (textarea-node-styles (r/dom-node this))))
        :component-did-update
-       (fn [this [prev-props]]
-         ;; FIXME: detect when class or style changes and update
-         ; (reset! state (node-styles @el))
-         )
+       (fn [this [_ prev-props]]
+         (when (or (not= (:class (r/props this)) (:class prev-props))
+                   (not= (:style (r/props this)) (:style prev-props)) )
+           (reset! state (textarea-node-styles (r/dom-node this)))))
        :reagent-render
        (fn [{:keys [style value min-rows max-rows] :as props}]
          [:textarea
