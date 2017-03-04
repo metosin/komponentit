@@ -40,10 +40,11 @@
   "Replaces first child node of the element with given text.
 
   createTextNode ensures that HTML in string is inserted as text."
-  [el content-str]
-  (if-let [f (.-firstChild el)]
-    (.replaceChild el (js/document.createTextNode content-str) f)
-    (.appendChild el (js/document.createTextNode content-str))))
+  [el s]
+  (let [s (if s s "")]
+    (if-let [f (.-firstChild el)]
+      (.replaceChild el (js/document.createTextNode s) f)
+      (.appendChild el (js/document.createTextNode s)))))
 
 (defonce input-sizer (delay (doto (js/document.createElement "span")
                               (js/document.body.appendChild))))
