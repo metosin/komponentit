@@ -13,7 +13,9 @@
   (str
 "# Highlight ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/highlight.cljs))
 
-Highlights matches in a string."))
+Highlights matches in a string.
+
+Note: font kerning can cause small movement in text when text is broken by the highlight element. You can see this by comparing searches \"of\" and \"off\" below, to see that \"ff\" width changes if the highlight elment separates the two characters. To fix this, one can disable kerning: `font-kerning: none;`."))
 
 (dc/defcard-rg highlight-example
   [:ul
