@@ -143,16 +143,14 @@
               {:key week-num}
               (if week-numbers?
                 [:td.calendar__week week-num])
-              (for [day week
-                    :let [date (:date day)
-                          day-num (date/date-format date "d")
-                          out? (:out? day)
+              (for [{:keys [date out?] :as day} week
+                    :let [day-num (date/date-format date "d")
                           disabled? (or (and min-date (< date min-date))
                                         (and max-date (> date max-date)))
                           selected? (or (and value (.equals value date))
                                         (and start end (<= start date end))
-                                        (and start (.equals date start))
-                                        (and end (.equals date end)))]]
+                                        (and start (.equals start date))
+                                        (and end (.equals end date)))]]
                 [:td
                  {:key date
                   :class (str "calendar__date "
@@ -164,9 +162,9 @@
                                 "calendar__date--out ")
                               (if selected?
                                 "calendar__date--selected ")
-                              (if (.equals date start)
+                              (if (and start (.equals start date))
                                 "calendar__date--start ")
-                              (if (.equals date end)
+                              (if (and end (.equals end date))
                                 "calendar__date--end "))}
                  [:button
                   {:class (str "calendar__date-button "
