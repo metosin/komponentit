@@ -6,7 +6,6 @@
    :top 0
    :right 0
    :visibility "hidden"
-   :width 0
    :height 0
    :min-height 0
    :max-height "none"
@@ -53,7 +52,7 @@
 
 (defn node-width [value placeholder placeholder-is-min-width? {:keys [box-sizing border-size padding-size sizer-style]}]
   (let [_ (set! (.-value @input-sizer) (if (seq value) value placeholder))
-        _ (set! (.-style @input-sizer) (str base-sizer-style-str sizer-style))
+        _ (set! (.-style @input-sizer) (str base-sizer-style-str "width:0;" sizer-style))
         width (.-scrollWidth @input-sizer)
         width (case box-sizing
                 "border-box" (+ width border-size)
