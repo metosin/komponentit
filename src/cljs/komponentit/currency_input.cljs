@@ -35,7 +35,7 @@
   [:span
    [input/input
     (-> opts
-        (dissoc :current-symbol :delimiter)
+        (dissoc :currency-symbol :delimiter)
         (assoc
           :value-fn #(str->currency %)
           :text-fn #(currency->str % delimiter)))]
