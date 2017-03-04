@@ -7,16 +7,6 @@
             [goog.dom :as dom])
   (:import [goog.date Date UtcDateTime]))
 
-(defn- clone-date [{:keys [date-time?]} value]
-  (if value
-    (.clone value)
-    (if date-time?
-      (doto (UtcDateTime.)
-        (.setHours 0)
-        (.setMinutes 0)
-        (.setSeconds 0))
-      (Date.))))
-
 (def default-i18n
   {:date-format "d.M.yyyy"})
 
@@ -36,7 +26,7 @@
         input-value (r/atom nil)
         el (atom nil)
         el-ref #(reset! el %)]
-    (fn [{:keys [value on-change i18n min-date max-date date-time? clearable? disabled week-numbers?
+    (fn [{:keys [value on-change i18n min-date max-date clearable? disabled week-numbers?
                  container-class input-class]
           :or {container-class "datepicker__container "
                input-class "datepicker "}
@@ -47,7 +37,7 @@
         :ref el-ref}
        [:input
         (-> opts
-            (dissoc :clearable? :min-date :max-date :i18n :date-time? :week-numbers? :container-class :input-class)
+            (dissoc :clearable? :min-date :max-date :i18n :week-numbers? :container-class :input-class)
             (assoc :class     input-class
                    :type      "text"
                    :value     (or @input-value (date/date->str value) "")

@@ -71,8 +71,14 @@
   (fn [date _]
     [:div
      [datepicker/date {:value @date
-                       :on-change (fn [x] (reset! date x))
-                       :date-time? true
+                       :on-change (fn [x]
+                                    (reset! date (if x
+                                                   (doto (if @date
+                                                           (.clone @date)
+                                                           (UtcDateTime.))
+                                                     (.setYear (.getYear x))
+                                                     (.setMonth (.getMonth x))
+                                                     (.setDate (.getDate x))))))
                        :clearable? true}]
      [timepicker/timepicker {:value @date
                              :on-select (fn [x] (reset! date x))}]])
