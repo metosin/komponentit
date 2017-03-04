@@ -36,11 +36,20 @@
        :sizer-style (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
                             "" input-size-style-props)})))
 
+(defn set-el-text
+  "Replaces first child node of the element with given text.
+
+  createTextNode ensures that HTML in string is inserted as text."
+  [el content-str]
+  (if-let [f (.-firstChild el)]
+    (.replaceChild el (js/document.createTextNode content-str) f)
+    (.appendChild el (js/document.createTextNode content-str))))
+
 (defonce input-sizer (delay (doto (js/document.createElement "span")
                               (js/document.body.appendChild))))
 
 (defn node-width [value placeholder placeholder-is-min-width? {:keys [box-sizing border-size padding-size sizer-style]}]
-  (let [_ (set! (.-innerHTML @input-sizer) (if (seq value) value placeholder))
+  (let [_ (set-el-text @input-sizer (if (seq value) value placeholder))
         _ (set! (.-style @input-sizer) (str base-sizer-style-str sizer-style))
         width (.-scrollWidth @input-sizer)
         width (case box-sizing
@@ -48,7 +57,7 @@
                 "content-box" (- width padding-size)
                 width)
         placeholder-width (when placeholder-is-min-width?
-                            (set! (.-innerHTML @input-sizer) placeholder)
+                            (set-el-text @input-sizer placeholder)
                             (- (.-scrollWidth @input-sizer) padding-size))
         min-width (if placeholder-is-min-width?
                     (+ placeholder-width (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
