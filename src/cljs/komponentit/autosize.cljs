@@ -15,36 +15,35 @@
 (def base-sizer-style-str
   (reduce-kv (fn [s prop v] (str s (name prop) ":" v ";")) "" base-sizer-style))
 
+(def size-style-props
+  "List of style properties which affect the size of textarea"
+  ["letter-spacing" "line-height"
+   "font-family" "font-kerning-settings" "font-kerning" "font-size" "font-stretch" "font-style" "font-variant" "font-variant-caps" "font-variant-ligatures" "font-variant-numeric" "font-weight"
+   "text-rendering" "text-indent"
+   "padding-left" "padding-right" "padding-top" "padding-bottom"
+   "box-sizing"
+   "border-left" "border-right" "border-bottom" "border-top"])
+
+(defn copy-styles [style]
+  (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
+          "" size-style-props))
+
+(defn get-property-value [style k]
+  (or (js/parseFloat (.getPropertyValue style k)) 0))
+
 ;;
 ;; Input
 ;;
-
-(def input-size-style-props
-  "List of style properties which affect the size of textarea"
-  ["letter-spacing" "line-height" "padding-left" "padding-padding-right"
-   "font-family" "font-weight" "font-size" "text-rendering" "text-indent"
-   "box-sizing" "padding-left" "padding-right" "border-left" "border-right" "border-width"])
 
 (defn input-node-styles [el]
   (if el
     (let [style (js/window.getComputedStyle el)]
       {:box-sizing (.getPropertyValue style "box-sizing")
-       :border-size (+ (or (js/parseFloat (.getPropertyValue style "border-left-width")) 0)
-                       (or (js/parseFloat (.getPropertyValue style "border-right-width")) 0))
-       :padding-size (+ (or (js/parseFloat (.getPropertyValue style "padding-left")) 0)
-                        (or (js/parseFloat (.getPropertyValue style "padding-right")) 0))
-       :sizer-style (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
-                            "" input-size-style-props)})))
-
-(defn set-el-text
-  "Replaces first child node of the element with given text.
-
-  createTextNode ensures that HTML in string is inserted as text."
-  [el s]
-  (let [s (if s s "")]
-    (if-let [f (.-firstChild el)]
-      (.replaceChild el (js/document.createTextNode s) f)
-      (.appendChild el (js/document.createTextNode s)))))
+       :border-size (+ (get-property-value style "border-left-width")
+                       (get-property-value style "border-right-width"))
+       :padding-size (+ (get-property-value style "padding-left")
+                        (get-property-value style "padding-right"))
+       :sizer-style (copy-styles style)})))
 
 ;; One hidden element for all autosize inputs
 (defonce input-sizer (delay (doto (js/document.createElement "input")
@@ -98,22 +97,15 @@
 ;; Textaraa
 ;;
 
-(def textarea-size-style-props
-  "list of style properties which affect the size of textarea"
-  ["letter-spacing" "line-height" "padding-top" "padding-bottom"
-   "font-family" "font-weight" "font-size" "text-rendering" "text-indent"
-   "width" "box-sizing" "padding-left" "padding-right" "border-top" "border-bottom" "border-width"])
-
 (defn textarea-node-styles [el]
   (if el
     (let [style (js/window.getComputedStyle el)]
       {:box-sizing (.getPropertyValue style "box-sizing")
-       :border-size (+ (or (js/parseFloat (.getPropertyValue style "border-bottom-width")) 0)
-                       (or (js/parseFloat (.getPropertyValue style "border-top-width")) 0))
-       :padding-size (+ (or (js/parseFloat (.getPropertyValue style "padding-bottom")) 0)
-                        (or (js/parseFloat (.getPropertyValue style "padding-top")) 0))
-       :sizer-style (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
-                            "" textarea-size-style-props)})))
+       :border-size (+ (get-property-value style "border-bottom-width")
+                       (get-property-value style "border-top-width"))
+       :padding-size (+ (get-property-value style "padding-bottom")
+                        (get-property-value style "padding-top"))
+       :sizer-style (copy-styles style)})))
 
 (defonce textarea-sizer (delay (doto (js/document.createElement "textarea")
                                  (js/document.body.appendChild))))
