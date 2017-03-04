@@ -63,7 +63,8 @@
         min-width (if placeholder-is-min-width?
                     (+ placeholder-width (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
                     (- js/Infinity))
-        width (max min-width (max 1 width))]
+        ;; extra 2px should provide room for the caret
+        width (+ 2 (max min-width (max 1 width)))]
     {:width width
      :min-width min-width}))
 
