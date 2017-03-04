@@ -58,10 +58,11 @@
      :min-width min-width}))
 
 (defn input
-  "Calculate width for the input automatically.
+  "Calculate width of the input based on the contents.
 
-  For now the width is calculated using element managed by this React
-  component, and both real and sizer element are wrapped in a div."
+  Content width is calculated using separate hidden element. This
+  element is not managed by React and is placed outside of this
+  component, for easier styling."
   [{:keys [placeholder placeholder-is-min-width?]}]
   (let [state (r/atom nil)]
     (r/create-class
