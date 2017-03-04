@@ -31,6 +31,12 @@
 (defn get-property-value [style k]
   (or (js/parseFloat (.getPropertyValue style k)) 0))
 
+(defn apply-box-sizing [value {:keys [box-sizing border-size padding-size]}]
+  (case box-sizing
+    "border-box" (+ value border-size)
+    "content-box" (- value padding-size)
+    value))
+
 ;;
 ;; Input
 ;;
@@ -49,14 +55,10 @@
 (defonce input-sizer (delay (doto (js/document.createElement "input")
                               (js/document.body.appendChild))))
 
-(defn node-width [value placeholder placeholder-is-min-width? {:keys [box-sizing border-size padding-size sizer-style]}]
+(defn node-width [value placeholder placeholder-is-min-width? {:keys [box-sizing border-size padding-size sizer-style] :as styles}]
   (let [_ (set! (.-value @input-sizer) (if (seq value) value placeholder))
         _ (set! (.-style @input-sizer) (str base-sizer-style-str "width:0;" sizer-style))
-        width (.-scrollWidth @input-sizer)
-        width (case box-sizing
-                "border-box" (+ width border-size)
-                "content-box" (- width padding-size)
-                width)
+        width (apply-box-sizing (.-scrollWidth @input-sizer) styles)
         placeholder-width (when placeholder-is-min-width?
                             (set! (.-value @input-sizer) placeholder)
                             (- (.-scrollWidth @input-sizer) padding-size))
@@ -110,14 +112,10 @@
 (defonce textarea-sizer (delay (doto (js/document.createElement "textarea")
                                  (js/document.body.appendChild))))
 
-(defn node-height [value min-rows max-rows {:keys [box-sizing border-size padding-size sizer-style]}]
+(defn node-height [value min-rows max-rows {:keys [box-sizing border-size padding-size sizer-style] :as styles}]
   (let [_ (set! (.-value @textarea-sizer) value)
         _ (set! (.-style @textarea-sizer) (str base-sizer-style-str sizer-style))
-        height (.-scrollHeight @textarea-sizer)
-        height (case box-sizing
-                 "border-box" (+ height border-size)
-                 "content-box" (- height padding-size)
-                 height)
+        height (apply-box-sizing (.-scrollHeight @textarea-sizer) styles)
         single-row-height (when (or min-rows max-rows)
                             (set! (.-value @textarea-sizer) "x")
                             (- (.-scrollHeight @textarea-sizer) padding-size))
