@@ -6,6 +6,7 @@
    :top 0
    :right 0
    :visibility "hidden"
+   :width 0
    :height 0
    :min-height 0
    :max-height "none"
@@ -47,11 +48,11 @@
       (.appendChild el (js/document.createTextNode s)))))
 
 ;; One hidden element for all autosize inputs
-(defonce input-sizer (delay (doto (js/document.createElement "span")
+(defonce input-sizer (delay (doto (js/document.createElement "input")
                               (js/document.body.appendChild))))
 
 (defn node-width [value placeholder placeholder-is-min-width? {:keys [box-sizing border-size padding-size sizer-style]}]
-  (let [_ (set-el-text @input-sizer (if (seq value) value placeholder))
+  (let [_ (set! (.-value @input-sizer) (if (seq value) value placeholder))
         _ (set! (.-style @input-sizer) (str base-sizer-style-str sizer-style))
         width (.-scrollWidth @input-sizer)
         width (case box-sizing
@@ -59,7 +60,7 @@
                 "content-box" (- width padding-size)
                 width)
         placeholder-width (when placeholder-is-min-width?
-                            (set-el-text @input-sizer placeholder)
+                            (set! (.-value @input-sizer) placeholder)
                             (- (.-scrollWidth @input-sizer) padding-size))
         min-width (if placeholder-is-min-width?
                     (+ placeholder-width (if (= "border-box" box-sizing) (+ padding-size border-size)) 0)
