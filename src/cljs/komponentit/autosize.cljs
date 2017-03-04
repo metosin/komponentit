@@ -46,6 +46,7 @@
       (.replaceChild el (js/document.createTextNode s) f)
       (.appendChild el (js/document.createTextNode s)))))
 
+;; One hidden element for all autosize inputs
 (defonce input-sizer (delay (doto (js/document.createElement "span")
                               (js/document.body.appendChild))))
 
