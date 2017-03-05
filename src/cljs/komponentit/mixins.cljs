@@ -1,12 +1,13 @@
 (ns komponentit.mixins
   (:require [reagent.core :as r]
+            [clojure.set :as set]
+            [clojure.string :as string]
             [goog.events :as events]
-            [clojure.set :as set])
-  (:import [goog.events EventType]))
+            [goog.object :as obj]))
 
-(def event-map
-  {:on-key-down events/EventType.KEYDOWN
-   :on-click events/EventType.CLICK})
+(defn- get-event-type [k]
+  (or (obj/get events/EventType (-> k name string/upper-case (string/replace #"^ON-" "") (string/replace #"-" "")))
+      (throw (js/Error. (str "Event type " (name k) " is not valid.")))))
 
 (defn- update-listeners [listeners props this]
   (swap! listeners
@@ -16,7 +17,7 @@
              (as-> listeners $
                (reduce (fn [listeners event-type]
                          (assoc listeners event-type
-                                (events/listen js/window (get event-map event-type)
+                                (events/listen js/window (get-event-type event-type)
                                                ;; Need to retrieve latest props incase the function as been updated
                                                (fn [e]
                                                  (let [f (get (r/props this) event-type)]
