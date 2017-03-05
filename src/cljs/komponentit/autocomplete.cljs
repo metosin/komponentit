@@ -337,14 +337,15 @@
       ; FIXME: Is this window height or content height? Does this work correctly with non absolute positioned page?
       {:top 0 :bottom (.-innerHeight js/window)})))
 
-(defn create-new-item [search selected {:keys [create-cb] :as opts}]
-  (if (and create-cb (seq search))
+(defn create-new-item [search selected scroll-wrapper-el {:keys [create] :as opts}]
+  (if (and create (seq search))
     [choice-item-wrapper
      {:item {::i +create-item-index+
              ::text (str "Add " search "...")}
-      :cb (fn [_] (create-cb search))
+      :cb (fn [_] (create search))
       :selected selected
-      :opts opts}]))
+      :opts opts
+      :scroll-wrapper-el scroll-wrapper-el}]))
 
 (defn autocomplete-contents-list
   [this results selected scroll-wrapper-el {:keys [item->key] :as opts}]
@@ -395,7 +396,7 @@
             :style (if @top? {:bottom (str (:height container-state) "px")})}
            [:div.autocomplete__dropdown-content
             {:ref scroll-wrapper-el-ref}
-            [create-new-item search selected opts]
+            [create-new-item search selected scroll-wrapper-el opts]
             [autocomplete-contents-top this results selected scroll-wrapper-el opts]]]])})))
 
 (defn update-el-dimensions
