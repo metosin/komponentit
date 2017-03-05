@@ -1,5 +1,6 @@
 (ns example.autocomplete
   (:require [komponentit.autocomplete :as autocomplete]
+            [komponentit.mixins :as mixins]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
@@ -86,38 +87,43 @@ Items can be provided as:
   {:inspect-data true})
 
 (defn person-popup [person change-fn submit-fn cancel-fn]
-  [:div {:style {:background-color "#fff"
-                 :padding "10px 13px"
-                 :border "1px solid #e3e3e3"
-                 :position "absolute"
-                 :box-shadow "1px 2px 5px #888"}}
-   [:h2 "Add new person"]
-   [:form {:on-submit (fn [e]
-                        (.preventDefault e)
-                        (submit-fn))}
-    [:p
-     [:label {:for "first-name"
-              :style {:width "100px"}}
-      "First name"]
-     [:input {:type "text"
-              :auto-focus true
-              :id "first-name"
-              :value (:first-name person)
-              :on-change #(change-fn :first-name (.. % -target -value))}]]
-    [:p
-     [:label {:for "last-name"
-              :style {:width "100px"}}
-      "Last name"]
-     [:input {:type "text"
-              :id "last-name"
-              :value (:last-name person)
-              :on-change #(change-fn :last-name (.. % -target -value))}]]
-    [:button {:type "button"
-              :on-click cancel-fn
-              :style {:margin-right "7px"}}
-     "Cancel"]
-    [:button {:type "submit"}
-     "Add"]]])
+  [mixins/window-event-listener
+   {:on-key-down (fn [e]
+                   (case (.-keyCode e)
+                     27 (cancel-fn)
+                     nil))}
+   [:div {:style {:background-color "#fff"
+                  :padding "10px 13px"
+                  :border "1px solid #e3e3e3"
+                  :position "absolute"
+                  :box-shadow "1px 2px 5px #888"}}
+    [:h2 "Add new person"]
+    [:form {:on-submit (fn [e]
+                         (.preventDefault e)
+                         (submit-fn))}
+     [:p
+      [:label {:for "first-name"
+               :style {:width "100px"}}
+       "First name"]
+      [:input {:type "text"
+               :auto-focus true
+               :id "first-name"
+               :value (:first-name person)
+               :on-change #(change-fn :first-name (.. % -target -value))}]]
+     [:p
+      [:label {:for "last-name"
+               :style {:width "100px"}}
+       "Last name"]
+      [:input {:type "text"
+               :id "last-name"
+               :value (:last-name person)
+               :on-change #(change-fn :last-name (.. % -target -value))}]]
+     [:button {:type "button"
+               :on-click cancel-fn
+               :style {:margin-right "7px"}}
+      "Cancel"]
+     [:button {:type "submit"}
+      "Add"]]]])
 
 (dc/defcard-rg create-new-items-complex
   (fn [state _]
