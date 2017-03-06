@@ -15,7 +15,8 @@
             example.nav
             example.autosize
             example.timeago
-            example.clipboard))
+            example.clipboard
+            example.map))
 
 (defn restart! []
   (dc/start-devcard-ui!))
