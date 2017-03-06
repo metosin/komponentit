@@ -53,5 +53,4 @@
       {:type "button"
        :on-click #(reset! value (example-data))}
       "Reset data"]])
-  (r/atom (example-data))
-  {:inspect-data true})
+  (r/atom (example-data)))
