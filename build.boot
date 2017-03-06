@@ -61,7 +61,7 @@
     (reload :on-jsload 'example.main/restart!)
     (cljs-repl)
     (cljs)
-    (serve :prefixes #{""})
+    (serve :prefixes #{""} :port 4081)
     (build)))
 
 (deftask build-example []
