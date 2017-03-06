@@ -23,6 +23,7 @@
                   [cljsjs/leaflet "0.7.7-8" :scope "test"]
                   [cljsjs/react-leaflet "0.12.3-4" :scope "test"]
                   [cljsjs/react-input-autosize "1.1.0-0" :scope "test"]
+                  [metosin/clj-suomi "0.1.0" :scope "test"]
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version

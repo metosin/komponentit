@@ -1,10 +1,13 @@
 (ns example.autocomplete
+  (:require-macros [example.autocomplete :refer [get-postalcodes]])
   (:require [komponentit.autocomplete :as autocomplete]
             [komponentit.mixins :as mixins]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
             [example.options :as options]))
+
+(def postalcodes (get-postalcodes))
 
 (defn simple-items [n]
   (into (sorted-map)
@@ -55,7 +58,8 @@ Items can be provided as:
                     (js/console.log item)
                     (swap! state assoc :value (:key item)))
               :search-fields [:value]
-              :items (simple-items 50)})]])
+              :items postalcodes
+              :max-results 100})]])
   (r/atom {:value 5})
   {:inspect-data true})
 
