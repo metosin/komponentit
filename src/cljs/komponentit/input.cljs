@@ -83,13 +83,13 @@
                 delimiter "."}}]
    (if (nil? value)
      ""
+     ;; TODO: toLocaleString
      (str (long (/ value multiplier))
           (if (not= 0 (mod value multiplier))
             (str delimiter (subs (str/replace (str (mod (js/Math.abs value) multiplier)) #"0\." "") 0 precision)))))))
 
 (defn number
-  [{:keys [value on-change on-blur multiplier]
-    :or {multiplier 1}
+  [{:keys [value on-change on-blur]
     :as opts}]
   [input
    (-> opts

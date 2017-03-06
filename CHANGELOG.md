@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Tune autosize implementation to match react-autosize-input pixel perfectly
+- Improve number formatting and parsing
+
 **[compare](https://github.com/metosin/komponentit/compare/0.2.2...master)**
 
 ## 0.2.2

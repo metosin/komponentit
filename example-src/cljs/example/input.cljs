@@ -126,7 +126,18 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   (is (= 10 (input/str->number ",10" opts)))
   (is (= -1055 (input/str->number "-10,55" opts)))
   (is (= nil (input/str->number "" opts)))
-  (is (= nil (input/str->number "  	" opts)))))
+  (is (= nil (input/str->number "  	" opts))))
+
+
+  (is (= 15.5 (input/number->str "15.5")))
+  ; (is (= 123456789 (input/number->str "123,456,789")))
+  ; (is (= 123456789.012 (input/number->str "123,456,789.012")))
+
+  (is (= 15.5 (input/number->str "15,5" {:locale "fi-FI"})))
+  ;; non-breaking spaces
+  ; (is (= 123456789 (input/number->str "123 456 789" {:locale "fi-FI"})))
+  ; (is (= 123456789.012 (input/number->str "123 456 789,012" {:locale "fi-FI"})))
+  )
 
 (dc/deftest number->str-test
   (let [opts {:multiplier 100}]
@@ -140,5 +151,11 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   (is (= "10.5" (input/number->str 105 {:multiplier 10})))
 
   (is (= "15.5" (input/number->str 15.5)))
+  ; (is (= "123,456,789" (input/number->str 123456789)))
+  ; (is (= "123,456,789.012" (input/number->str 123456789.012)))
 
-  (is (= "15,5" (input/number->str 15.5 {:delimiter ","}))) )
+  (is (= "15,5" (input/number->str 15.5 {:locale "fi-FI"})))
+  ;; non-breaking spaces
+  ; (is (= "123 456 789" (input/number->str 123456789 {:locale "fi-FI"})))
+  ; (is (= "123 456 789,012" (input/number->str 123456789.012 {:locale "fi-FI"})))
+  )
