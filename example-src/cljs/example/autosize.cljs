@@ -2,7 +2,10 @@
   (:require [komponentit.autosize :as autosize]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            cljsjs.react-input-autosize))
+
+(def Autosize (r/adapt-react-class js/AutosizeInput))
 
 (dc/defcard
   (str
@@ -43,10 +46,21 @@
        [autosize/input
         {:value @value
          :on-change (fn [e] (reset! value (.. e -target -value)))
-         :style {:fontSize "24pt"
-                 :fontWeight 600
+         :style {:font-size "24pt"
+                 :font-weight 600
                  :padding "6px"
-                 :maxWidth "100%"}}]]] ])
+                 :max-width "100%"}}]]]
+
+     [:div
+      [:label "react-input-autosize example"]
+      [:div
+       [Autosize
+        {:value @value
+         :on-change (fn [e] (reset! value (.. e -target -value)))
+         :input-style {:fontSize "24pt"
+                       :fontWeight 600
+                       :padding "6px"
+                       :maxWidth "100%"}}]]]])
   (r/atom "abc")
   {:inspect-data true})
 

@@ -19,6 +19,9 @@
                   ;; Reagent before devcards to use proper React version
                   [reagent "0.6.0"]
 
+                  ;; Dev
+                  [cljsjs/react-input-autosize "1.1.0-0" :scope "test"]
+
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
                   [cljsjs/react-with-addons "15.3.0-0" :scope "test"]
