@@ -1,8 +1,6 @@
 (ns komponentit.timeago
-  (:require [reagent.core :as r]
-            [goog.date.duration :as duration])
-  (:import [goog.date DateTime]
-           [goog.i18n DateTimeFormat MessageFormat]))
+  (:require [reagent.core :as r])
+  (:import [goog.date DateTime]))
 
 (defn humanize-duration [ms]
   (let [seconds (/ ms 1000)

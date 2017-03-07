@@ -8,8 +8,10 @@
 (def tree-data
   [{:id 1
     :name "Foo"
+    :selectable? false
     :items [{:id 2
              :name "Bar"
+             :selectable? false
              :items [{:id 3
                       :name "System Module"
                       :price 1380}
@@ -18,13 +20,16 @@
                       :price 1340}]}
             {:id 5
              :name "Ooooo"
+             :selectable? false
              :items [{:id 6
                       :name "asdasd"
                       :price 9000}]}]}
    {:id 7
     :name "Bar"
+    :selectable? false
     :items [{:id 8
              :name "A"
+             :selectable? false
              :items [{:id 9
                       :name "Foo"
                       :price 50000}]}]}
