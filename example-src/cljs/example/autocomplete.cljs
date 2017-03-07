@@ -60,7 +60,7 @@ Items can be provided as:
               :search-fields [:value]
               :items postalcodes
               :max-results 100})]])
-  (r/atom {:value 5})
+  (r/atom {:value "33100"})
   {:inspect-data true})
 
 (dc/defcard-rg autocomplete-multiple

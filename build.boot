@@ -3,16 +3,16 @@
   :resource-paths #{"src/cljs" "src/less"}
   ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
-                  [org.clojure/clojurescript "1.9.89"  :scope "provided"]
-                  [adzerk/boot-cljs       "1.7.228-2"  :scope "test"]
+                  [org.clojure/clojurescript "1.9.456" :scope "provided"]
+                  [adzerk/boot-cljs       "2.0.0-SNAPSHOT" :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
                   [com.cemerick/piggieback "0.2.1"     :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
                   [org.clojure/tools.nrepl "0.2.12"    :scope "test"]
-                  [adzerk/boot-reload     "0.5.0"      :scope "test"]
-                  [deraen/boot-less       "0.6.0"      :scope "test"]
-                  [org.slf4j/slf4j-nop    "1.7.21"     :scope "test"]
-                  [metosin/boot-alt-http  "0.1.1"      :scope "test"]
+                  [adzerk/boot-reload     "0.5.1"      :scope "test"]
+                  [deraen/boot-less       "0.6.2"      :scope "test"]
+                  [org.slf4j/slf4j-nop    "1.7.24"     :scope "test"]
+                  [metosin/boot-alt-http  "0.1.2"      :scope "test"]
 
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.4.0"]
@@ -27,9 +27,9 @@
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
-                  [cljsjs/react-with-addons "15.3.0-0" :scope "test"]
-                  [devcards "0.2.1-7" :scope "test"]
-                  [binaryage/devtools "0.8.3" :scope "test"]]
+                  [cljsjs/react-with-addons "15.2.1-0" :scope "test"]
+                  [devcards "0.2.2" :scope "test"]
+                  [binaryage/devtools "0.9.2" :scope "test"]]
   :exclusions '[cljsjs/react])
 
 (require
@@ -70,7 +70,8 @@
 (deftask build-example []
   (comp
     (less)
-    (cljs :optimizations :advanced)
+    (cljs :optimizations :advanced
+          :compiler-options {:preloads nil})
     (sift :to-resource #{#"^index\.html"})
     (sift :include #{#"^(main.js|example.css|index.html)"})
     (target)))
