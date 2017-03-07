@@ -33,7 +33,7 @@
 
 (dc/defcard
   (str
-"# React leaflet example ([View source](https://github.com/metosin/komponentit/blob/master/src/example-cljs/example/autosize.cljs))
+"# React leaflet example ([View source](https://github.com/metosin/komponentit/blob/master/example-src/cljs/example/map.cljs))
 
 Just example, no wrapper code is provided to work with React-leaflet."))
 
