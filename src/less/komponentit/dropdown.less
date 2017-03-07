@@ -1,0 +1,53 @@
+// FIXME: use unique name
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  float: left;
+  min-width: 260px;
+  padding: 0;
+  margin: 2px 0 0; // override default ul
+  list-style: none;
+  text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
+
+  background: #fff;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.dropdown-menu__item {
+  background: #fff;
+}
+
+.dropdown-menu__link {
+  display: block;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  clear: both;
+  white-space: nowrap; // prevent links from randomly breaking onto new lines
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+    background: #eee;
+  }
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.dropdown-menu__item--active {
+  background: #eee;
+  .dropdown-menu__link {
+  }
+}
+
+.dropdown-menu--right {
+  left: auto; // Reset the default from `.dropdown-menu`
+  right: 0;
+}
+
+.dropdown-container {
+  position: relative;
+}

@@ -2,6 +2,8 @@
 
 - Tune autosize implementation to match react-autosize-input pixel perfectly
 - Improve number formatting and parsing
+- Provide defualt CSS for dropdown and modal
+- Remove nav, currency-input and form-group components
 
 **[compare](https://github.com/metosin/komponentit/compare/0.2.2...master)**
 

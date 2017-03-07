@@ -1,9 +1,9 @@
 (ns komponentit.timepicker
   "Work in progress"
-  (:require [reagent.core :as reagent]
-            [reagent.ratom :refer-macros [reaction run!]]
-            [komponentit.date :refer [date->str jsdate->local-date jsdate->date-time]])
+  (:require [reagent.core :as reagent])
   (:import [goog.date UtcDateTime]))
+
+;; FIXME: This is a mess, not used anywhere?
 
 (defn- allow-only-numbers [e]
   (if-not (<= 48 (.-which e) 57)

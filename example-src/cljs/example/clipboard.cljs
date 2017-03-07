@@ -18,5 +18,5 @@
       [:button
        {:type "button"
         :on-click #(clipboard/copy-text "foo")}
-       "Copy"]]])
+       "Copy \"foo\""]]])
   (r/atom nil))

@@ -1,5 +1,6 @@
 (ns example.filepicker
   (:require [komponentit.filepicker :as filepicker]
+            [example.options :as options]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]))
 
@@ -8,19 +9,24 @@
 "# Filepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/filepicker.cljs))"))
 
 (dc/defcard-rg filepicker
-  (fn [value1 _]
-    [filepicker/filepicker {:value @value1
-                            :on-select #(reset! value1 %)
-                            :file-select-label "Select a file"}])
-  (r/atom nil))
+  (fn [state _]
+    [:div
+     [options/table
+      (:options @state)
+      (fn [k v] (swap! state update :options assoc k v))
+      [[:file-select-label :string]
+       [:clearable? :bool]
+       [:iec? :bool]
+       [:locale :string]]]
 
-(dc/defcard-rg filepicker-clearable
-  (fn [value1 _]
-    [filepicker/filepicker {:value @value1
-                            :on-select #(reset! value1 %)
-                            :file-select-label "Select a file"
-                            :clearable? true}])
-  (r/atom nil))
+     [filepicker/filepicker (merge (:options @state)
+                                   {:value (:value @state)
+                                    :on-select #(swap! state assoc :value %)})]])
+  (r/atom {:value nil
+           :options {:file-select-label "Select a file"
+                     :clearable? false
+                     :iec? false
+                     :locale "en-US"}}))
 
 (defn clear-button [state]
   [:button

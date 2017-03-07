@@ -19,20 +19,25 @@
   [open?
    {:keys [on-change close-on-click? active-item-class disabled
            separator-class menu-item-class menu-item-a-class]
-    :or {active-item-class "active"
+    :or {active-item-class "dropdown-menu__item--active"
+         ;; FIXME:
          separator-class "divider"}
     :as dropdown-opts}
    {:keys [separator key text value href on-click]
     :as item-opts}]
-  (let [menu-item-class (or (:menu-item-class item-opts) (:menu-item-class dropdown-opts))
-        menu-item-a-class (or (:menu-item-a-class item-opts) (:menu-item-a-class dropdown-opts))]
+  (let [menu-item-class (or (:menu-item-class item-opts)
+                            (:menu-item-class dropdown-opts)
+                            "dropdown-menu__item")
+        menu-item-a-class (or (:menu-item-a-class item-opts)
+                              (:menu-item-a-class dropdown-opts)
+                              "dropdown-menu__link")]
     (cond
       separator [:li
                  {:class separator-class
                   :key key}]
       :else
       [:li {:key key
-            :class (str menu-item-class (if (and value (= (:value dropdown-opts) value)) active-item-class))}
+            :class (str menu-item-class " " (if (and value (= (:value dropdown-opts) value)) active-item-class))}
        [:a {:href (or href "#")
             :class menu-item-a-class
             :on-click (fn [e]
@@ -98,7 +103,7 @@ do not work with this option.
    {:keys [text li-class open-class a-class]
     :or {a-class "dropdown-toggle"
          open-class "open"
-         li-class "dropdown"}
+         li-class "dropdown-container"}
     :as opts}]
   [:li
    {:class (str li-class " " (if @open? open-class))
@@ -119,7 +124,7 @@ do not work with this option.
 (defn dropdown-button'
   [open? ref dropdown
    {:keys [text container-class open-class button-class disabled]
-    :or {container-class "btn-group"
+    :or {container-class "btn-group dropdown-container"
          open-class "open"
          button-class "btn btn-default dropdown-toggle"}
     :as opts}]

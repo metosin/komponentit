@@ -217,6 +217,7 @@
                                    nil)))]
                   (cons (assoc item
                                ::full-match? (not not-matched)
+                               ::sub-items-match? (seq filtered-sub-items)
                                ::i this-i)
                         filtered-sub-items))
                 [item])))
@@ -227,7 +228,7 @@
           (if item->items
             ;; If item has subitems, show if subitems matched the search
             (filter (fn [item] (or (::full-match? item)
-                                   (seq (item->items item))
+                                   (::sub-items-match? item)
                                    ;; FIXME: Require for leaf nodes - unncesessary check for other nodes
                                    (query-match? term-match-fn item query))))
             (filter (fn [item] (query-match? term-match-fn item query))))

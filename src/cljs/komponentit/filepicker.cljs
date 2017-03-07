@@ -1,29 +1,35 @@
 (ns komponentit.filepicker
-  (:require [goog.string :as gs]
-            [goog.dom :as dom]
+  (:require [goog.dom :as dom]
             [reagent.core :as reagent]
             [reagent.ratom :refer-macros [reaction]]))
 
 ; Directory support: https://github.com/enyo/dropzone/blob/master/dist/dropzone.js#L908-L933
 
 (defn humanize-filesize
-  [bytes & [fmt]]
-  (let [units ["bytes" "kB" "MB" "GB" "TB" "PB"]
-        unit (if (zero? bytes)
-               0
-               (js/Math.floor (/ (js/Math.log bytes) (js/Math.log 1000))))
-        size (/ bytes (js/Math.pow 1000 unit))]
-    (gs/format (or fmt "%0.1f %s") size (get units unit))))
+  ([bytes] (humanize-filesize bytes nil))
+  ([bytes {:keys [locale iec?] :as opts}]
+   (let [units (if iec?
+                 ["bytes" "KiB" "MiB" "GiB" "TiB" "PiB"]
+                 ["bytes" "kB" "MB" "GB" "TB" "PB"])
+         m (if iec? 1024 1000)
+         unit (if (zero? bytes)
+                0
+                (js/Math.floor (/ (js/Math.log bytes) (js/Math.log m))))
+         size (/ bytes (js/Math.pow m unit))]
+     (str (.toLocaleString size (or locale js/undefined) (clj->js (or (dissoc opts :locale :iec?) {})))
+          " " (get units unit)))))
 
 (defn file-list->vec [file-list]
   (vec (mapv #(.item file-list %) (range (.-length file-list)))))
 
 (def noop (constantly nil))
 
-(defn filepicker [{:keys [on-select on-blur value file-select-label clear clearable?]}]
+(defn filepicker [{:keys [on-select on-blur value file-select-label on-clear clearable?]
+                   :as opts}]
   (let [this      (reagent/current-component)
         on-select (or on-select noop)
-        clear     (if clearable? (or clear (fn [] (on-select nil))) noop)
+        ;; FIXME:
+        on-clear  (if clearable? (or on-clear (fn [] (on-select nil))) noop)
         on-blur   (or on-blur noop)
         file-select-label (or file-select-label "Select file")]
     [:div
@@ -47,11 +53,11 @@
      (if clearable?
        [:button.btn.btn-default
         {:type "button"
-         :on-click #(clear)}
+         :on-click #(on-clear)}
         "×"])
      (if value
        [:span.selected-file
-        " " (.-name value) ", " (humanize-filesize (.-size value))])]))
+        " " (.-name value) ", " (humanize-filesize (.-size value) (dissoc opts :on-select :on-blur :value :file-select-label :on-clear :clearable?))])]))
 
 ;;
 ;; Drag and drop utilities

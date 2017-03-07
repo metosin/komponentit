@@ -40,7 +40,7 @@
             (dissoc :clearable? :min-date :max-date :i18n :week-numbers? :container-class :input-class)
             (assoc :class     input-class
                    :type      "text"
-                   :value     (or @input-value (date/date->str value) "")
+                   :value     (or @input-value (date/date-format value (loc i18n :date-format)) "")
                    :on-change (fn [e]
                                 (reset! input-value (string/trim (.. e -target -value))))
                    :on-focus  (fn [_]

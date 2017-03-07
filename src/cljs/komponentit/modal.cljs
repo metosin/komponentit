@@ -1,5 +1,6 @@
 (ns komponentit.modal
-  (:require [reagent.core :refer [atom]]))
+  (:require [reagent.core :refer [atom]]
+            [komponentit.mixins :as mixins]))
 
 (defn modal
 "- :title      The el for modal header
@@ -8,25 +9,28 @@
 - :on-close   (Optional) callback to be called when modal is closed by clicking outside of the modal
 - :class      (Optional) additional classes for .modal-dialog; Examples: modal-sm, modal-lg"
   [{:keys [title content footer on-close class]}]
-  [:div.modal.fade.in
-   {:style {:display "block"}}
-   [:div.modal-backdrop.in
-    (if on-close {:on-click (fn [_] (on-close) nil)})]
-   [:div
-    {:class (str "modal-dialog " class)
-     ; Z-index on backdrop is 1040
-     :style {:z-index 1050}}
-    [:div.modal-content
-     [:div.modal-header
+  [mixins/window-event-listener
+   {:on-key-down (fn [e]
+                   (case (.-keyCode e)
+                     27 (on-close)
+                     nil))}
+   [:div.modal__container
+    {:style {:display "block"}}
+    [:div.modal__backdrop
+     ;; could be replaced with window click handler
+     (if on-close {:on-click (fn [_] (on-close) nil)})]
+    [:div.modal
+     {:class class}
+     [:div.modal__header
       (if on-close
-        [:button.close
+        [:button.modal__close
          {:aria-label "Close"
           :type "button"
           :on-click (fn [_] (on-close) nil)}
          "×"])
       title]
-     [:div.modal-body content]
-     (into [:div.modal-footer] footer)]]])
+     [:div.modal__content content]
+     (into [:div.modal__footer] footer)]]])
 
 (defn confirm-modal
 "- :title        The el for modal header
@@ -44,25 +48,21 @@
          cancel-label "Cancel"
          ok-label "OK"}}]
   [modal
-   {:class (str class)
+   {:class class
     :title title
     :content content
-    ; When using .btn-group-justified with buttons, each button needs to be wrapped
-    ; in another .btn-group.
-    :footer [[:div.btn-group.btn-group-justified
-              [:div.btn-group
-               [:button.btn.btn-default
-                {:type "button"
-                 :on-click (fn [_]
-                             (when failure (failure))
-                             nil)}
-                cancel-label]]
-              [:div.btn-group
-               [:button.btn.btn-success
-                {:type "button"
-                 :on-click (fn [_]
-                             (when success (success))
-                             nil)}
-                ok-label]]]]
+    :footer [[:div.modal__buttons
+              [:button.modal__cancel
+               {:type "button"
+                :on-click (fn [_]
+                            (when failure (failure))
+                            nil)}
+               cancel-label]
+              [:button.modal__ok
+               {:type "button"
+                :on-click (fn [_]
+                            (when success (success))
+                            nil)}
+               ok-label]]]
     :on-close (fn []
                 (when failure (failure)))}])

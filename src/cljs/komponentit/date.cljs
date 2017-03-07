@@ -40,10 +40,6 @@
       (.setMinutes (.getMinutes v))
       (.setSeconds (.getSeconds v)))))
 
-(defn date->str [v]
-  (if v
-    (gs/format "%d.%d.%d" (.getDate v) (inc (.getMonth v)) (.getFullYear v))))
-
 (defn date-format [d f]
   (if d
     (.format (DateTimeFormat. f) d)))

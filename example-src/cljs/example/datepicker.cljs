@@ -10,28 +10,26 @@
   (str
 "# Datepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/datepicker.cljs))"))
 
-(dc/defcard-rg datepicker
-  (fn [date _]
-    [datepicker/date {:value @date
-                      :on-change (fn [x] (reset! date x))}])
-  (r/atom nil)
-  {:inspect-data true})
-
 (dc/defcard-rg datepicker-disabled
   (fn [state _]
-    (let [{:keys [date disabled]} @state]
-      [:div
-       [options/table
-        @state
-        (fn [k v] (swap! state assoc k v))
-        [[:disabled :bool]]]
-       [datepicker/date {:value         date
-                         :on-change     (fn [x] (swap! state assoc :date x))
-                         :week-numbers? true
-                         :disabled      disabled}]]))
-  (r/atom {:date nil :disabled true})
+    [:div
+     [options/table
+      @state
+      (fn [k v] (swap! state assoc k v))
+      [[:disabled :bool]
+       [:clearable? :bool]
+       [:week-numbers? :bool]
+       [:date-format :string]]]
+     [datepicker/date (merge (dissoc @state :date :date-format)
+                             {:value         (:date @state)
+                              :on-change     (fn [x] (swap! state assoc :date x))
+                              :i18n {:date-format (:date-format @state)}})]])
+  (r/atom {:date nil
+           :disabled false
+           :clearable? false
+           :week-numbers? true
+           :date-format "d.M.yyyy"})
   {:inspect-data true})
-
 
 (dc/defcard-rg datepicker-min-and-max
   "The selectable date can be limited with min and max dates."
