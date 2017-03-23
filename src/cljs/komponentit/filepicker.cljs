@@ -7,7 +7,7 @@
 
 (defn humanize-filesize
   ([bytes] (humanize-filesize bytes nil))
-  ([bytes {:keys [locale iec?] :as opts}]
+  ([bytes {:keys [locale iec? locale-opts]}]
    (let [units (if iec?
                  ["bytes" "KiB" "MiB" "GiB" "TiB" "PiB"]
                  ["bytes" "kB" "MB" "GB" "TB" "PB"])
@@ -16,7 +16,7 @@
                 0
                 (js/Math.floor (/ (js/Math.log bytes) (js/Math.log m))))
          size (/ bytes (js/Math.pow m unit))]
-     (str (.toLocaleString size (or locale js/undefined) (clj->js (or (dissoc opts :locale :iec?) {})))
+     (str (.toLocaleString size (or locale js/undefined) (clj->js (or locale-opts {})))
           " " (get units unit)))))
 
 (defn file-list->vec [file-list]
@@ -24,40 +24,43 @@
 
 (def noop (constantly nil))
 
-(defn filepicker [{:keys [on-select on-blur value file-select-label on-clear clearable?]
-                   :as opts}]
-  (let [this      (reagent/current-component)
-        on-select (or on-select noop)
-        ;; FIXME:
-        on-clear  (if clearable? (or on-clear (fn [] (on-select nil))) noop)
-        on-blur   (or on-blur noop)
-        file-select-label (or file-select-label "Select file")]
-    [:div
-     {:style {:display "inline-block"}}
-     [:input
-      {:style {:display "none"}
-       :type "file"
-       :on-change (fn [e]
-                    (if-let [file (.item e.target.files 0)]
-                      (on-select file)))
-       :on-blur on-blur}]
-     [:button.btn.btn-primary
-      {:type "button"
-       :on-click (fn [e]
-                   (-> (reagent/dom-node this)
-                       (.getElementsByTagName "input")
-                       (.item 0)
-                       (.click))
-                   nil)}
-      file-select-label]
-     (if clearable?
-       [:button.btn.btn-default
-        {:type "button"
-         :on-click #(on-clear)}
-        "×"])
-     (if value
-       [:span.selected-file
-        " " (.-name value) ", " (humanize-filesize (.-size value) (dissoc opts :on-select :on-blur :value :file-select-label :on-clear :clearable?))])]))
+(defn filepicker [_]
+  (let [input-ref (atom nil)
+        input-ref-fn #(reset! input-ref %)]
+    (fn [{:keys [on-select on-blur value file-select-label on-clear clearable?]
+          :as opts}]
+      (let [on-select (or on-select noop)
+            ;; FIXME:
+            on-clear  (if clearable? (or on-clear (fn [] (on-select nil))) noop)
+            on-blur   (or on-blur noop)
+            file-select-label (or file-select-label "Select file")]
+        [:div
+         {:style {:display "inline-block"}}
+         [:input
+          {:style {:display "none"}
+           :type "file"
+           :ref input-ref-fn
+           :on-change (fn [e]
+                        (if-let [file (.item e.target.files 0)]
+                          (on-select file)))
+           :on-blur on-blur
+           ;; This ensures that the on-change event is emited even if the
+           ;; same file is selected again.
+           :value nil}]
+         [:button.btn.btn-primary
+          (-> opts
+              (dissoc :on-select :on-blur :value :file-select-label :on-clear :clearable?)
+              (assoc :type "button"
+                     :on-click (fn [e] (.click @input-ref))))
+          file-select-label]
+         (if clearable?
+           [:button.btn.btn-default
+            {:type "button"
+             :on-click #(on-clear)}
+            "×"])
+         (if value
+           [:span.selected-file
+            " " (.-name value) ", " (humanize-filesize (.-size value) (select-keys opts [:locale :iec? :locale-opts]))])]))))
 
 ;;
 ;; Drag and drop utilities
