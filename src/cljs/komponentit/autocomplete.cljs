@@ -104,6 +104,7 @@
   (if-not (:open? (r/state this))
     (r/set-state this {:search ""}))
   (open this text)
+  ;; FIXME: Move cursor to the end of input, if there is selected value
   nil)
 
 (defn change [this cb opts e]
