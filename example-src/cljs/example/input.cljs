@@ -110,11 +110,13 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   (is (= 1.1  (input/str->number "1,10")))
   (is (= 1.11 (input/str->number "1,11")))
   (is (= 0.11 (input/str->number ",11")))
+  (is (= 10.0012 (input/str->number "10,0012")))
 
   (let [opts {:multiplier 100}]
   (is (= 1000 (input/str->number "10.0" opts)))
   (is (= 1000 (input/str->number "10,0" opts)))
   (is (= 1050 (input/str->number "10.50" opts)))
+  (is (= 1000 (long (input/str->number "10.0012" opts))))
   (is (= 1050 (input/str->number " 	10.50" opts)))
   (is (= 1050 (input/str->number "10.50abc" opts)))
   (is (= 1050 (input/str->number "10,50" opts)))
@@ -129,11 +131,11 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   (is (= nil (input/str->number "  	" opts))))
 
 
-  (is (= 15.5 (input/number->str "15.5")))
+  (is (= 15.5 (input/str->number "15.5")))
   ; (is (= 123456789 (input/number->str "123,456,789")))
   ; (is (= 123456789.012 (input/number->str "123,456,789.012")))
 
-  (is (= 15.5 (input/number->str "15,5" {:locale "fi-FI"})))
+  (is (= 15.5 (input/str->number "15,5" {:locale "fi-FI"})))
   ;; non-breaking spaces
   ; (is (= 123456789 (input/number->str "123 456 789" {:locale "fi-FI"})))
   ; (is (= 123456789.012 (input/number->str "123 456 789,012" {:locale "fi-FI"})))
@@ -150,11 +152,19 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
 
   (is (= "10.5" (input/number->str 105 {:multiplier 10})))
 
+  (is (= "10.00" (input/number->str 10 {:precision 2 :min-precision 2})))
+  (is (= "10" (input/number->str 10 {:precision 2})))
+  (is (= "10.5" (input/number->str 10.5 {:precision 2})))
+  (is (= "10.50" (input/number->str 10.5 {:precision 2 :min-precision 2})))
+  (is (= "10.55" (input/number->str 10.55 {:precision 2})))
+  (is (= "10.55" (input/number->str 10.554 {:precision 2})))
+  (is (= "10.00" (input/number->str 10.0012 {:precision 2})))
+
   (is (= "15.5" (input/number->str 15.5)))
   ; (is (= "123,456,789" (input/number->str 123456789)))
   ; (is (= "123,456,789.012" (input/number->str 123456789.012)))
 
-  (is (= "15,5" (input/number->str 15.5 {:locale "fi-FI"})))
+  (is (= "15,5" (input/number->str 15.5 {:delimiter ","})))
   ;; non-breaking spaces
   ; (is (= "123 456 789" (input/number->str 123456789 {:locale "fi-FI"})))
   ; (is (= "123 456 789,012" (input/number->str 123456789.012 {:locale "fi-FI"})))

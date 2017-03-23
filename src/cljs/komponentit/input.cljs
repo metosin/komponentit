@@ -76,24 +76,32 @@
        (* (js/parseFloat s) multiplier)))))
 
 (defn number->str
+  "Options:
+  - :precision - maximum number of digits after delimiter
+  - :min-precision - minimum number of digits after delimiter, zero padded if neeeded"
   ([value] (number->str value nil))
-  ([value {:keys [multiplier precision delimiter]
+  ([value {:keys [multiplier precision min-precision delimiter]
            :or {multiplier 1
                 precision 2
+                min-precision 0
                 delimiter "."}}]
    (if (nil? value)
      ""
      ;; TODO: toLocaleString
      (str (long (/ value multiplier))
-          (if (not= 0 (mod value multiplier))
-            (str delimiter (subs (str/replace (str (mod (js/Math.abs value) multiplier)) #"0\." "") 0 precision)))))))
+          (if (or (not= 0 (mod value multiplier)) (> min-precision 0))
+            (str delimiter (subs (str/replace (str (mod (js/Math.abs value) multiplier)
+                                                   ;; Add additional padding for precision
+                                                   (apply str (repeat min-precision "0")))
+                                              #"0\." "")
+                                 0 precision)))))))
 
 (defn number
   [{:keys [value on-change on-blur]
     :as opts}]
   [input
    (-> opts
-       (dissoc :multiplier :precision :delimiter)
+       (dissoc :multiplier :precision :min-precision :delimiter)
        (assoc
          :value-fn #(str->number % opts)
          :text-fn #(number->str % opts)))])
