@@ -65,6 +65,7 @@
     (cljs-repl)
     (cljs)
     (serve :prefixes #{""} :port 4081)
+    ;; FIXME: build should only include source files, not cljs results
     (build)))
 
 (deftask build-example []
