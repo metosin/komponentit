@@ -1,25 +1,30 @@
-## Unreleased
+## 0.3.0 (29.3.2017)
 
-- Tune autosize implementation to match react-autosize-input pixel perfectly
-- Improve number formatting and parsing
-- Provide defualt CSS for dropdown and modal
+- Provide default CSS for dropdown and modal
 - Remove nav, currency-input and form-group components
+- Autosize
+    - Tune implementation to match react-autosize-input pixel perfectly
+- Input
+    - Improve number formatting and parsing
+- Filepicker
+    - Emit `on-select` even when same file is selected again
+    - Pass additional properties to the button element
 
 **[compare](https://github.com/metosin/komponentit/compare/0.2.2...master)**
 
-## 0.2.2
+## 0.2.2 (20.12.2016)
 
 - Removed `console.log` from autosize input
 
 **[compare](https://github.com/metosin/komponentit/compare/0.2.1...0.2.2)**
 
-## 0.2.1
+## 0.2.1 (19.10.2016)
 
 - Reimplemented autosize input
 
 **[compare](https://github.com/metosin/komponentit/compare/0.2.0...0.2.1)**
 
-## 0.2.0
+## 0.2.0 (30.11.2016)
 
 - New autosize input element
 - Refactored autocomplete styles etc.?
