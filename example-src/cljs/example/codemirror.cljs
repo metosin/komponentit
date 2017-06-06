@@ -24,16 +24,22 @@
       {:display-name "example.codemirror.codemirror"
        :component-did-mount
        (fn [this]
-         (let [cm (js/CodeMirror.fromTextArea (r/dom-node this) (clj->js (merge default-codemirror-opts codemirror-opts)))
+         (let [x (js/CodeMirror.fromTextArea (r/dom-node this)
+                                             (clj->js (merge default-codemirror-opts
+                                                             codemirror-opts)))
                ; wrapper (.getWrapperElement cm)
                ; watch (js/scrollMonitor.create wrapper)
                ]
 
+           (.setValue x (:value (r/props this)))
+
            ;; Get the fn for each event from current props
-           (.on cm "change" (fn [e] ((:on-change (r/props this) identity) e)))
-           (.on cm "beforeChange" (fn [e] ((:on-before-change (r/props this) identity) e)))
-           (.on cm "cursorActivity" (fn [e] ((:on-cursor-activity (r/props this) identity) e)))
-           ))
+
+           (.on x "change" (fn [e] ((:on-change (r/props this) identity) e)))
+           (.on x "beforeChange" (fn [e] ((:on-before-change (r/props this) identity) e)))
+           (.on x "cursorActivity" (fn [e] ((:on-cursor-activity (r/props this) identity) e)))
+
+           (reset! cm x)))
        :component-did-update
        (fn [this [_ prev-props]]
          ;; Handle codemirror-opts changes?
@@ -46,7 +52,8 @@
 (dc/defcard-rg leaflet-example
   (fn [state _]
     [:div
-     [codemirror {:value (:code state)}]])
+     [codemirror {:value (:code @state)
+                  :on-change (fn [cm] (swap! state assoc :code (.getValue cm)))}]])
 
   (r/atom {:code "(defn hello
   []
