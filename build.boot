@@ -4,7 +4,7 @@
   ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.9.456" :scope "provided"]
-                  [adzerk/boot-cljs       "2.0.0-SNAPSHOT" :scope "test"]
+                  [adzerk/boot-cljs       "2.0.0"      :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
                   [com.cemerick/piggieback "0.2.1"     :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
@@ -23,7 +23,8 @@
                   [cljsjs/leaflet "0.7.7-8" :scope "test"]
                   [cljsjs/react-leaflet "0.12.3-4" :scope "test"]
                   [cljsjs/react-input-autosize "1.1.0-0" :scope "test"]
-                  [metosin/clj-suomi "0.1.0" :scope "test"]
+                  [metosin/clj-suomi "0.2.0" :scope "test"]
+                  [cljsjs/codemirror "5.24.0-1" :scope "test"]
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version

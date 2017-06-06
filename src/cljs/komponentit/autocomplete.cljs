@@ -331,7 +331,7 @@
 (defn- find-container [el]
   (loop [el el]
     (if el
-      ; FIXME:
+      ; FIXME: getComputedStyle and check for y-overflow scroll or auto instead?
       (if (classes/has el "scroll")
         (let [rect (.getBoundingClientRect el)]
           {:top (.-top rect) :bottom (.-bottom rect)})
