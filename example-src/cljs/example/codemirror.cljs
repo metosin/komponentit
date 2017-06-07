@@ -10,13 +10,7 @@
             ; parinfer.codemirror
             ))
 
-(def default-codemirror-opts
-  {:mode "clojure"
-   :theme "github"
-   :matchBrackets true
-   :extraKeys {:Tab (fn [cm]
-                      ;; parinfer?
-                      )}})
+(def default-codemirror-opts {})
 
 (defn codemirror [{:keys [codemirror-opts]}]
   (let [cm (atom nil)]
@@ -42,8 +36,10 @@
            (reset! cm x)))
        :component-did-update
        (fn [this [_ prev-props]]
-         ;; Handle codemirror-opts changes?
-         (when (not= (:value prev-props) (:value (r/props this)))
+         ;; TODO: Handle codemirror-opts changes?
+         ;; CHeck against cm value also, so on-change -> state update doesn't trigger setValue
+         ;; as the value is already the same.
+         (when (not= (:value prev-props) (:value (r/props this)) (.getValue cm))
            (.setValue @cm (:value (r/props this)))))
        :reagent-render
        (fn []
@@ -53,7 +49,10 @@
   (fn [state _]
     [:div
      [codemirror {:value (:code @state)
-                  :on-change (fn [cm] (swap! state assoc :code (.getValue cm)))}]])
+                  :on-change (fn [cm] (swap! state assoc :code (.getValue cm)))
+                  :codemirror-opts {:mode "clojure"
+                                    :theme "github"
+                                    :matchBrackets true}}]])
 
   (r/atom {:code "(defn hello
   []
