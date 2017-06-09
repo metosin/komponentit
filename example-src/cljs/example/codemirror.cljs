@@ -28,7 +28,6 @@ these yourself in the application if needed.
       {:value (:code @state)
        :on-change (fn [cm change] (swap! state assoc :code (.getValue cm)))
        :codemirror-opts {:mode "clojure"
-                         :theme "github"
                          :matchBrackets true}}]])
 
   (r/atom {:code "(defn hello
