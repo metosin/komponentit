@@ -1,3 +1,7 @@
+## Next release
+
+- Added codemirror component and parinfer example
+
 ## 0.3.0 (29.3.2017)
 
 - Provide default CSS for dropdown and modal

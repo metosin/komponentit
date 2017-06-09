@@ -15,6 +15,9 @@
   (str
 "# Codemirror ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/codemirror.cljs))
 
+Komponentit doesn't currently provide dependency on `cljsjs/codemirror` or `metosin/codemirror-parinfer`, include
+these yourself in the application if needed.
+
 - [Examples](https://github.com/metosin/komponentit/blob/master/example-src/cljs/example/codemirror.cljs)"))
 
 (dc/defcard-rg codemirror
