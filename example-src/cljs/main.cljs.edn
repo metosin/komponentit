@@ -3,4 +3,7 @@
                     :parallel-build true
                     :devcards true
                     :preloads [devtools.preload]
-                    :external-config {:devtools/config {:features-to-install [:formatters :hints :async]}}}}
+                    :external-config {:devtools/config {:features-to-install [:formatters :hints :async]}}
+                    :foreign-libs [{:file "public/codemirror/mode/clojure/clojure-parinfer.js"
+                                    :provides ["parinfer.codemirror"]
+                                    :requires ["cljsjs.codemirror"]}]}}
