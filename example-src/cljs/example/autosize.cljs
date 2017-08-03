@@ -3,9 +3,9 @@
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
-            cljsjs.react-input-autosize))
+            [react-input-autosize :as autosize-input]))
 
-(def Autosize (r/adapt-react-class js/AutosizeInput))
+(def Autosize (r/adapt-react-class autosize-input))
 
 (dc/defcard
   (str

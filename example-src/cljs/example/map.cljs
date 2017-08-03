@@ -1,28 +1,28 @@
 (ns example.map
   (:require [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            cljsjs.react-leaflet))
+            [leaflet :as leaflet]
+            [react-leaflet :as react-leaflet]))
 
-(def leaflet js/window.L)
 (def copy-osm "&copy; <a href=\"http://osm.org/copyright\">OpenStreetMap</a> contributors")
 (def osm-url (str js/window.location.protocol "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"))
 
-(def Map (r/adapt-react-class js/ReactLeaflet.Map))
-(def Marker (r/adapt-react-class js/ReactLeaflet.Marker))
-(def Popup (r/adapt-react-class js/ReactLeaflet.Popup))
-(def TileLayer (r/adapt-react-class js/ReactLeaflet.TileLayer))
-(def LayerGroup (r/adapt-react-class js/ReactLeaflet.LayerGroup))
-(def Circle (r/adapt-react-class js/ReactLeaflet.Circle))
-(def CircleMarker (r/adapt-react-class js/ReactLeaflet.CircleMarker))
+(def Map (r/adapt-react-class react-leaflet/Map))
+(def Marker (r/adapt-react-class react-leaflet/Marker))
+(def Popup (r/adapt-react-class react-leaflet/Popup))
+(def TileLayer (r/adapt-react-class react-leaflet/TileLayer))
+(def LayerGroup (r/adapt-react-class react-leaflet/LayerGroup))
+(def Circle (r/adapt-react-class react-leaflet/Circle))
+(def CircleMarker (r/adapt-react-class react-leaflet/CircleMarker))
 
 (defn make-icon [image-url opts]
-  (.icon leaflet (-> opts (assoc :iconUrl image-url) (clj->js))))
+  (leaflet/icon (-> opts (assoc :iconUrl image-url) (clj->js))))
 
 (defn latLng->latlon [lat-lng]
   (if lat-lng [(.-lat lat-lng) (.-lng lat-lng)]))
 
 (defn make-bounds [{:keys [sw ne]}]
-  (.latLngBounds leaflet (clj->js sw) (clj->js ne)))
+  (leaflet/latLngBounds (clj->js sw) (clj->js ne)))
 
 (defn map-bounds [map]
   (let [b (.getBounds map)]
