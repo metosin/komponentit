@@ -10,7 +10,7 @@
 
 (dc/defcard
   (str
-"# React-transition-group example ([View source](https://github.com/metosin/komponentit/blob/master/example-src/cljs/example/transition.cljs))
+"# React-transition-group example ([View source](https://github.com/metosin/komponentit/blob/master/example-src/cljs/example/transitions.cljs))
 
 Just example, no wrapper code is provided to work with React-transition-group."))
 
