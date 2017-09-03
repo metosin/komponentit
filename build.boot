@@ -4,7 +4,7 @@
   ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.8.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.9.908" :scope "provided"]
-                  [adzerk/boot-cljs       "2.1.2"      :scope "test"]
+                  [adzerk/boot-cljs       "2.1.3"      :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
                   [com.cemerick/piggieback "0.2.2"     :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
@@ -20,7 +20,8 @@
                   [reagent "0.8.0-alpha1"]
 
                   ;; Dev
-                  [cljsjs/leaflet "1.1.0-1" :scope "test"]
+                  [cljsjs/react-transition-group "2.2.0-0" :scope "test"]
+                  [cljsjs/leaflet "1.1.0-2" :scope "test"]
                   ;; FIXME: Exclusions can be removed once reagent has direct dep
                   [cljsjs/react-leaflet "1.4.1-2" :scope "test" :exclusions [cljsjs/react]]
                   [cljsjs/react-input-autosize "1.1.0-0" :scope "test" :exclusions [cljsjs/react]]

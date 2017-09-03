@@ -14,7 +14,8 @@
             example.timeago
             example.clipboard
             example.map
-            example.codemirror))
+            example.codemirror
+            example.transitions))
 
 (defn restart! []
   (dc/start-devcard-ui!))
