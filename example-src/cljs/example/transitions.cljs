@@ -51,3 +51,22 @@ Just example, no wrapper code is provided to work with React-transition-group.")
   (r/atom {:i 1
            :elements [0]}))
 
+(dc/defcard-rg css-transition-example
+  (fn [state _]
+    [:div
+     [:button
+      {:on-click (fn [_] (swap! state not))}
+      "Toggle"]
+     [:> CSSTransition
+      {:classNames "fade"
+       :timeout 500
+       :in @state
+       :on-enter #(js/console.log "enter")
+       :on-entering #(js/console.log "entering")
+       :on-entered #(js/console.log "entered")
+       :on-exit #(js/console.log "enter")
+       :on-exiting #(js/console.log "exiting")
+       :on-exited #(js/console.log "exited")}
+      [:div {:class (if-not @state "hide")} "foobar"]]])
+  (r/atom true))
+

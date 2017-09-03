@@ -2,6 +2,11 @@
 @import (inline) "cljsjs/leaflet/common/leaflet.inc.css";
 @import (inline) "cljsjs/codemirror/development/codemirror.css";
 
+// Not sure if this is best way, this class has to be before transition classes.
+.hide {
+  opacity: 0.01;
+}
+
 .fade-enter {
   opacity: 0.01;
 }
