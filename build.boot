@@ -23,8 +23,8 @@
                   [cljsjs/react-transition-group "2.2.0-0" :scope "test"]
                   [cljsjs/leaflet "1.1.0-2" :scope "test"]
                   ;; FIXME: Exclusions can be removed once reagent has direct dep
-                  [cljsjs/react-leaflet "1.4.1-2" :scope "test" :exclusions [cljsjs/react]]
-                  [cljsjs/react-input-autosize "1.1.0-0" :scope "test" :exclusions [cljsjs/react]]
+                  [cljsjs/react-leaflet "1.6.5-0" :scope "test" :exclusions [cljsjs/react]]
+                  [cljsjs/react-input-autosize "2.0.0-0" :scope "test" :exclusions [cljsjs/react]]
                   [metosin/clj-suomi "0.2.0" :scope "test"]
                   [cljsjs/codemirror "5.24.0-1" :scope "test"]
                   [metosin/codemirror-parinfer "0.1.0-SNAPSHOT" :scope "test"]
