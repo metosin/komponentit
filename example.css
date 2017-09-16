@@ -1420,6 +1420,9 @@ div.CodeMirror-dragcursors {
 
 /* Help users use markselection to safely style text background */
 span.CodeMirror-selectedtext { background: none; }
+.hide {
+  opacity: 0.01;
+}
 .fade-enter {
   opacity: 0.01;
 }
