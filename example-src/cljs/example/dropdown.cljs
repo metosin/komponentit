@@ -1,5 +1,5 @@
 (ns example.dropdown
-  (:require [komponentit.dropdown :refer [dropdown ->menu-item dropdown-button dropdown-li]]
+  (:require [komponentit.dropdown :refer [dropdown ->menu-item dropdown-button dropdown-li dropdown-a]]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]
@@ -9,8 +9,9 @@
 (dc/defcard (str
 "# Dropdowns ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/dropdown.cljs))
 
-There are currently two types of dropdowns on the basis of their container elements:
-`[dropdown-button]` (&lt;button&gt;) and `[dropdown-li]` (&lt;li&gt;).
+`[dropdown]` component uses by default `:div` and `:a` elements. These can be overriden using `:container-el`
+and `:toggle-el` options. Also three helper components are provided, which set these options:
+`[dropdown-a]` (same as default), `[dropdown-button]` and `[dropdown-li]`.
 
 Dropdowns can be used for several use cases:
 
@@ -42,6 +43,18 @@ If item doesn't have `:href` attribute, `:on-click` default action is prevented.
   (fn [value _]
     [dropdown-button
      {:text "A button with dropdown"
+      :content (map (fn [i]
+                      {:key i :value i :text (str "Option " i)})
+                    (range 5))
+      :value @value
+      :on-change #(reset! value (:value %))}])
+  (r/atom nil)
+  {:inspect-data true})
+
+(dc/defcard-rg link
+  (fn [value _]
+    [dropdown-a
+     {:text "A link with dropdown"
       :content (map (fn [i]
                       {:key i :value i :text (str "Option " i)})
                     (range 5))
