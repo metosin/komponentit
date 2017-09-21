@@ -6,10 +6,4 @@
                     :external-config {:devtools/config {:features-to-install [:formatters :hints :async]}}
                     :foreign-libs [{:file "public/codemirror/mode/clojure/clojure-parinfer.js"
                                     :provides ["parinfer.codemirror"]
-                                    :requires ["cljsjs.codemirror"]}
-                                   ;; FIXME: https://github.com/cljsjs/packages/pull/1278
-                                   {:file "cljsjs/react-input-autosize/development/react-input-autosize.inc.js"
-                                    :provides ["react-input-autosize"]
-                                    :requires ["react"]
-                                    :global-exports {react-input-autosize AutosizeInput}
-                                    :file-min "cljsjs/react-input-autosize/production/react-input-autosize.min.inc.js"}]}}
+                                    :requires ["cljsjs.codemirror"]}]}}
