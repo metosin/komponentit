@@ -1,5 +1,6 @@
 ## Next release
 
+- Refactored dropdown component
 - Added codemirror component and parinfer example
 
 ## 0.3.0 (29.3.2017)
