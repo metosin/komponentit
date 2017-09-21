@@ -146,14 +146,15 @@ Any other React props can be passed to the created elements:
         (when button-class ":button-class option is deprecated, use :toggle-class or [:toggle-props :class] instead"))
 
       [container-el
-       (merge {:class (str class " " container-class " " (if @open? open-class))}
-              container-props)
+       (merge container-props
+              {:class (str class " " container-class " " (if @open? open-class))})
        [el
-        (merge {:href "#"
+        (merge toggle-props
+               {:class (str (:class toggle-props) " " toggle-class)
+                :href "#"
                 :on-click (partial toggle open?)
                 :aria-haspopup true
-                :aria-expanded @open?}
-               toggle-props)
+                :aria-expanded @open?})
         text
         [caret' open? props]]
        (if @open?
