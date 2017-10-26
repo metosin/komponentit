@@ -1,6 +1,5 @@
 (ns komponentit.codemirror
   (:require [reagent.core :as r]
-            [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
             cljsjs.codemirror))
 
