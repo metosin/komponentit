@@ -71,7 +71,7 @@
    (if (str/blank? s)
      nil
      (let [s (-> s
-                 (str/replace #" " "")
+                 (str/replace #"\s" "")
                  (str/replace #"," "."))]
        (* (js/parseFloat s) multiplier)))))
 
