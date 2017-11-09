@@ -4,10 +4,14 @@
 - `input`: Handle unicode space and minus on parseNumber
 - `autosize`: Don't use infinite numbers as style props
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.1...0.3.2)**
+
 ## 0.3.1 (2017-09-21)
 
 - Refactored dropdown component
 - Added codemirror component and parinfer example
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.0...0.3.1)**
 
 ## 0.3.0 (29.3.2017)
 
@@ -21,7 +25,7 @@
     - Emit `on-select` even when same file is selected again
     - Pass additional properties to the button element
 
-**[compare](https://github.com/metosin/komponentit/compare/0.2.2...master)**
+**[compare](https://github.com/metosin/komponentit/compare/0.2.2...0.3.0)**
 
 ## 0.2.2 (20.12.2016)
 
