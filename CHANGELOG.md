@@ -1,4 +1,10 @@
-## Next release
+## 0.3.2 (2017-11-09)
+
+- `codemirror`: Remove unncessary devcards require
+- `input`: Handle unicode space and minus on parseNumber
+- `autosize`: Don't use infinite numbers as style props
+
+## 0.3.1 (2017-09-21)
 
 - Refactored dropdown component
 - Added codemirror component and parinfer example
