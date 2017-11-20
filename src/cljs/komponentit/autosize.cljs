@@ -24,9 +24,9 @@
    "box-sizing"
    "border-left" "border-right" "border-bottom" "border-top"])
 
-(defn copy-styles [style]
+(defn copy-styles [style props]
   (reduce (fn [s prop] (str s prop ":" (.getPropertyValue style prop) ";"))
-          "" size-style-props))
+          "" props))
 
 (defn get-property-value [style k]
   (or (js/parseFloat (.getPropertyValue style k)) 0))
@@ -49,7 +49,7 @@
                        (get-property-value style "border-right-width"))
        :padding-size (+ (get-property-value style "padding-left")
                         (get-property-value style "padding-right"))
-       :sizer-style (copy-styles style)})))
+       :sizer-style (copy-styles style size-style-props)})))
 
 ;; One hidden element for all autosize inputs
 (defonce input-sizer (delay (doto (js/document.createElement "input")
@@ -105,7 +105,7 @@
                        (get-property-value style "border-top-width"))
        :padding-size (+ (get-property-value style "padding-bottom")
                         (get-property-value style "padding-top"))
-       :sizer-style (copy-styles style)})))
+       :sizer-style (copy-styles style (into size-style-props ["width"]))})))
 
 (defonce textarea-sizer (delay (doto (js/document.createElement "textarea")
                                  (js/document.body.appendChild))))
