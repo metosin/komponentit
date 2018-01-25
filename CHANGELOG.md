@@ -1,3 +1,7 @@
+## 0.3.3 (2018-01-25)
+
+- `autosize`: Copy textarea width
+
 ## 0.3.2 (2017-11-09)
 
 - `codemirror`: Remove unncessary devcards require
