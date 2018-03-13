@@ -8,8 +8,7 @@
             cljsjs.codemirror.addon.edit.matchbrackets
             cljsjs.codemirror.mode.javascript
             cljsjs.codemirror.mode.clojure
-            ;; This adds the required JS files
-            [parinfer-codemirror.editor :as parinfer-codemirror]))
+            [parinfer-codemirror :as parinfer-codemirror]))
 
 (dc/defcard
   (str
@@ -36,20 +35,18 @@ these yourself in the application if needed.
   {:inspect-data true})
 
 (dc/defcard-rg parinfer
-  "Metosin fork of parinfer-codemirror is easiliy usable by using the
-  provided callbacks with the basic codemirror Reagent component."
+  "The new [parinfer-codemirror](https://github.com/shaunlebron/parinfer-codemirror)
+  only requires calling `init` function with CodeMirror instance to initialize
+  parinfer mode."
   (fn [state _]
     [:div
      [cm/codemirror
       {:value (:code @state)
-       :on-before-change parinfer-codemirror/before-change
-       :on-cursor-activity (partial parinfer-codemirror/on-cursor-activity :indent-mode)
+       :on-mount #(parinfer-codemirror/init % "smart" #js {})
        :on-change (fn [cm change]
-                    (parinfer-codemirror/on-change :indent-mode cm change)
-                    (if (not= "setState" (.-origin change))
-                      (swap! state assoc :code (.getValue cm))))
-       :codemirror-opts (merge parinfer-codemirror/default-opts
-                               {})}]])
+                    (swap! state assoc :code (.getValue cm)))
+       :codemirror-opts {:mode "clojure"
+                         :matchBrackets true}}]])
 
   (r/atom {:code "(defn hello
   []

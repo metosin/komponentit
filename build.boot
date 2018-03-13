@@ -27,7 +27,8 @@
                   [cljsjs/react-input-autosize "2.0.0-0" :scope "test" :exclusions [cljsjs/react]]
                   [metosin/clj-suomi "0.2.0" :scope "test"]
                   [cljsjs/codemirror "5.24.0-1" :scope "test"]
-                  [metosin/codemirror-parinfer "0.1.0-SNAPSHOT" :scope "test"]
+                  [cljsjs/parinfer "3.11.0-0" :scope "test"]
+                  [cljsjs/parinfer-codemirror "1.4.1-2" :scope "test"]
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
