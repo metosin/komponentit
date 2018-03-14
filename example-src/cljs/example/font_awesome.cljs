@@ -2,9 +2,7 @@
   (:require [komponentit.font-awesome :as fa]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
-            [devcards.core :as dc :include-macros true]
-            [example.options :as options])
-  (:import [goog.date Date]))
+            [devcards.core :as dc :include-macros true]))
 
 (dc/defcard (str "
 To use [FontAwesome icons](https://fontawesome.com/v4.7.0/)

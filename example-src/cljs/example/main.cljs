@@ -16,7 +16,8 @@
             example.map
             example.codemirror
             example.transitions
-            example.font-awesome))
+            example.font-awesome
+            example.scrollbar-width))
 
 (defn restart! []
   (dc/start-devcard-ui!))
