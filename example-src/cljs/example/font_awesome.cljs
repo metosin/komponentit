@@ -2,10 +2,12 @@
   (:require [komponentit.font-awesome :as fa]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
-            [devcards.core :as dc :include-macros true]))
+            [devcards.core :as dc :include-macros true]
+            [example.core :as e]))
 
-(dc/defcard (str "
-To use [FontAwesome icons](https://fontawesome.com/v4.7.0/)
+(dc/defcard (str
+(e/header 'font_awesome "FontAwesome")
+"To use [FontAwesome icons](https://fontawesome.com/v4.7.0/)
 either add stylesheet to your HTML:
 
 ```
@@ -20,8 +22,7 @@ Or add Webjars dependency:
 
 And use together with [ring-webars](https://github.com/weavejester/ring-webjars), to serve icon files,
 and [less4clj](https://github.com/Deraen/less4clj)/[sass4clj](https://github.com/Deraen/sass4clj)
-to include FA stylesheet in your CSS bundle.
-"))
+to include FA stylesheet in your CSS bundle."))
 
 (dc/defcard-rg mime-type-icons
   "This component can automatically provide icon given mime-type string."

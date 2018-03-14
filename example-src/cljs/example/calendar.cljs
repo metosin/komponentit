@@ -2,10 +2,12 @@
   (:require [komponentit.calendar :as calendar]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [example.options :as options])
+            [example.options :as options]
+            [example.core :as e])
   (:import [goog.date Date]))
 
-(dc/defcard "# Calendar ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/calendar.cljs))")
+(dc/defcard (str
+(e/header 'calendar "Calendar")))
 
 (dc/defcard-rg calendar
   (fn [date _]

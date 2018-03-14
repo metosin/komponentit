@@ -3,12 +3,12 @@
             [komponentit.timepicker :as timepicker]
             [example.options :as options]
             [reagent.core :as r]
-            [devcards.core :as dc :include-macros true])
+            [devcards.core :as dc :include-macros true]
+            [example.core :as e])
   (:import [goog.date Date UtcDateTime]))
 
-(dc/defcard
-  (str
-"# Datepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/datepicker.cljs))"))
+(dc/defcard (str
+(e/header 'datepicker "Datepicker")))
 
 (dc/defcard-rg datepicker-disabled
   (fn [state _]

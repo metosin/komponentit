@@ -5,7 +5,8 @@
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
-            [example.options :as options]))
+            [example.options :as options]
+            [example.core :as e]))
 
 (def postalcodes (get-postalcodes))
 
@@ -15,10 +16,9 @@
                [i (str "Option " i)])
              (range n))))
 
-(dc/defcard
-"# Autocomplete ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/autocomplete.cljs))
-
-## Features
+(dc/defcard (str
+(e/header 'autocomplete "Autocomplete")
+"## Features
 
 - Tries to mimick [Selectize.js](http://selectize.github.io/selectize.js/)
 - Opens when focused or clicked.
@@ -41,7 +41,7 @@ Items can be provided as:
 - Map from key to value
 - Seq of values
 - Function which sets the items
-")
+"))
 
 (dc/defcard-rg simple-autocomplete
   (fn [state _]

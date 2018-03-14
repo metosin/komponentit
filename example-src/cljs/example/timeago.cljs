@@ -2,13 +2,13 @@
   (:require [komponentit.timeago :as timeago]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [example.core :as e])
   (:import [goog.date DateTime Interval]))
 
-(dc/defcard
-  (str
-"# Timeago ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/timeago.cljs))
-" (:doc (meta #'timeago/timeago))))
+(dc/defcard (str
+(e/header 'timeago "Timeago")
+(:doc (meta #'timeago/timeago))))
 
 (defn in [x interval]
   (doto (DateTime.)

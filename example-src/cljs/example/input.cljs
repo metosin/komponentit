@@ -4,13 +4,12 @@
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]
-            [example.options :as options]))
+            [example.options :as options]
+            [example.core :as e]))
 
-(dc/defcard
-  (str
-"# Inputs ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/input.cljs))
-
-Collection of input elements which only call `on-change` after small timeout, on
+(dc/defcard (str
+(e/header 'input "Inputs")
+"Collection of input elements which only call `on-change` after small timeout, on
 `on-blur` event or when Enter is pressed. This allows good performance where
 `on-change` might trigger many re-renders."))
 

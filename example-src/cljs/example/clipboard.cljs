@@ -2,13 +2,12 @@
   (:require [komponentit.clipboard :as clipboard]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [clojure.string :as str])
-  (:import [goog.date DateTime Interval]))
+            [clojure.string :as str]
+            [example.core :as e]))
 
-(dc/defcard
-  (str
-"# Clipboard ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/clipboard.cljs))
-" (:doc (meta #'clipboard/copy-text))))
+(dc/defcard (str
+(e/header 'clipboard "Clipboard")
+(:doc (meta #'clipboard/copy-text))))
 
 (dc/defcard-rg clipboard-example
   (fn [value _]

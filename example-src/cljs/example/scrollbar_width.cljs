@@ -2,10 +2,12 @@
   (:require [komponentit.scrollbar-width :as scrollbar-width]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
-            [devcards.core :as dc :include-macros true]))
+            [devcards.core :as dc :include-macros true]
+            [example.core :as e]))
 
-(dc/defcard (str "
-This component can calculate scrollbar width and add padding to compensate for it.
+(dc/defcard (str
+(e/header 'scrollbar_width "Scrollbar-width")
+"This component can calculate scrollbar width and add padding to compensate for it.
 This can be useful for compensating for scrollbar width in cases with fixed header
 and scroll container.
 "))

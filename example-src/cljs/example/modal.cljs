@@ -2,12 +2,12 @@
   (:require [komponentit.modal :as modal]
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
-            [example.options :as options]))
+            [example.options :as options]
+            [example.core :as e]))
 
 (dc/defcard (str
-"# Modals
-
-## Basic options
+(e/header 'modal "Modals")
+"## Basic options
 " (:doc (meta #'modal/modal)) "
 
 ## Confirm modal options

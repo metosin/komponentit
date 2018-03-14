@@ -1,19 +1,17 @@
-(ns example.search-highlight
+(ns example.highlight
   (:require [komponentit.highlight :refer [highlight-string]]
             [komponentit.autocomplete :as ac]
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
-            [devcards.core :as dc :include-macros true])
-  (:import [goog.date Date]))
+            [devcards.core :as dc :include-macros true]
+            [example.core :as e]))
 
 (defn wrapper [s]
   [:span {:style {:background "#ccccff"}} s])
 
-(dc/defcard
-  (str
-"# Highlight ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/highlight.cljs))
-
-Highlights matches in a string.
+(dc/defcard (str
+(e/header 'highlight "Highlight")
+"Highlights matches in a string.
 
 Note: font kerning can cause small movement in text when text is broken by the highlight element. You can see this by comparing searches \"of\" and \"off\" below, to see that \"ff\" width changes if the highlight elment separates the two characters. To fix this, one can disable kerning: `font-kerning: none;`."))
 

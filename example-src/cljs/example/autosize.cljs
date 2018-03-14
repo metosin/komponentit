@@ -3,15 +3,14 @@
             [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
-            [react-input-autosize :as autosize-input]))
+            [react-input-autosize :as autosize-input]
+            [example.core :as e]))
 
 (def Autosize (r/adapt-react-class autosize-input))
 
-(dc/defcard
-  (str
-"# Autosize ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/autosize.cljs))
-
-## Input
+(dc/defcard (str
+(e/header 'autosize "Autosize")
+"## Input
 " (:doc (meta #'autosize/input)) "
 ## Textarea
 " (:doc (meta #'autosize/textarea))))

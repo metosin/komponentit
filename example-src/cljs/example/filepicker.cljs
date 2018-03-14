@@ -2,11 +2,11 @@
   (:require [komponentit.filepicker :as filepicker]
             [example.options :as options]
             [reagent.core :as r]
-            [devcards.core :as dc :include-macros true]))
+            [devcards.core :as dc :include-macros true]
+            [example.core :as e]))
 
-(dc/defcard
-  (str
-"# Filepicker ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/filepicker.cljs))"))
+(dc/defcard (str
+(e/header 'filepicker "Filepicker")))
 
 (dc/defcard-rg filepicker
   (fn [state _]

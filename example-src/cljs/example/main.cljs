@@ -6,7 +6,7 @@
             example.autocomplete-tree
             example.calendar
             example.timepicker
-            example.search-highlight
+            example.highlight
             example.dropdown
             example.input
             example.modal

@@ -3,13 +3,12 @@
             [reagent.core :as r]
             [cljs.test :refer-macros [is]]
             [devcards.core :as dc :include-macros true]
-            [example.options :as options])
-  (:import [goog.date Date]))
+            [example.options :as options]
+            [example.core :as e]))
 
 (dc/defcard (str
-"# Dropdowns ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/dropdown.cljs))
-
-`[dropdown]` component uses by default `:div` and `:a` elements. These can be overriden using `:container-el`
+(e/header 'dropdown "Dropdown")
+"`[dropdown]` component uses by default `:div` and `:a` elements. These can be overriden using `:container-el`
 and `:toggle-el` options. Also three helper components are provided, which set these options:
 `[dropdown-a]` (same as default), `[dropdown-button]` and `[dropdown-li]`.
 

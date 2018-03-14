@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [devcards.core :as dc :include-macros true]
             [clojure.string :as str]
+            [example.core :as e]
             [komponentit.codemirror :as cm]
             ;; Require additional addons and modes in application
             cljsjs.codemirror.addon.edit.matchbrackets
@@ -13,11 +14,9 @@
             cljsjs.codemirror
             cljsjs.codemirror.addon.hint.show-hint))
 
-(dc/defcard
-  (str
-"# Codemirror ([View source](https://github.com/metosin/komponentit/blob/master/src/cljs/komponentit/codemirror.cljs))
-
-Komponentit doesn't currently provide dependency on `cljsjs/codemirror` or `metosin/codemirror-parinfer`, include
+(dc/defcard (str
+(e/header 'coremirror "Codemirror")
+"Komponentit doesn't currently provide dependency on `cljsjs/codemirror` or `metosin/codemirror-parinfer`, include
 these yourself in the application if needed.
 
 - [Examples](https://github.com/metosin/komponentit/blob/master/example-src/cljs/example/codemirror.cljs)"))
