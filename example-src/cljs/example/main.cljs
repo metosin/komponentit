@@ -15,7 +15,8 @@
             example.clipboard
             example.map
             example.codemirror
-            example.transitions))
+            example.transitions
+            example.font-awesome))
 
 (defn restart! []
   (dc/start-devcard-ui!))
