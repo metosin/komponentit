@@ -24,6 +24,8 @@
 
 (def noop (constantly nil))
 
+;; FIXME: Refactor more customizable
+
 (defn filepicker [_]
   (let [input-ref (atom nil)
         input-ref-fn #(reset! input-ref %)]
@@ -49,7 +51,7 @@
            :value nil}]
          [:button.btn.btn-primary
           (-> opts
-              (dissoc :on-select :on-blur :value :file-select-label :on-clear :clearable?)
+              (dissoc :on-select :on-blur :value :file-select-label :on-clear :clearable? :iec? :locale :locale-opts)
               (assoc :type "button"
                      :on-click (fn [e] (.click @input-ref))))
           file-select-label]
