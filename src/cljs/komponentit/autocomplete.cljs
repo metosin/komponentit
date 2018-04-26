@@ -469,7 +469,7 @@
                    (if on-blur (on-blur e)))
       :on-change (partial change this nil opts)
       :on-key-down (partial key-down this text opts)
-      :auto-complete false
+      :auto-complete "off"
       :disabled disabled
       :type "text"
       :placeholder placeholder
