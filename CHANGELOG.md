@@ -1,3 +1,7 @@
+## 0.3.4 (2018-05-07)
+
+- Fix `autocomplete` input `:autocomplete` attribute value
+
 ## 0.3.3 (2018-01-25)
 
 - `autosize`: Copy textarea width
