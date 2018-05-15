@@ -56,11 +56,11 @@
                               (js/document.body.appendChild))))
 
 (defn node-width [value placeholder placeholder-is-min-width? {:keys [sizer-style] :as styles}]
-  (let [_ (set! (.-value @input-sizer) (if (seq value) value placeholder))
-        _ (set! (.-style @input-sizer) (str base-sizer-style-str "width:0;" sizer-style))
+  (let [_ (.setAttribute @input-sizer "value" (if (seq value) value placeholder))
+        _ (.setAttribute @input-sizer "style" (str base-sizer-style-str "width:0;" sizer-style))
         width (apply-box-sizing (.-scrollWidth @input-sizer) styles)
         placeholder-width (when placeholder-is-min-width?
-                            (set! (.-value @input-sizer) placeholder)
+                            (.setAttribute @input-sizer "value" placeholder)
                             (apply-box-sizing (.-scrollWidth @input-sizer) styles))
         min-width (if placeholder-is-min-width? placeholder-width (- js/Infinity))
         ;; extra 2px should provide room for the caret
@@ -111,13 +111,13 @@
                                  (js/document.body.appendChild))))
 
 (defn node-height [value min-rows max-rows {:keys [box-sizing border-size padding-size sizer-style] :as styles}]
-  (let [_ (set! (.-value @textarea-sizer) value)
-        _ (set! (.-style @textarea-sizer) (str base-sizer-style-str sizer-style))
+  (let [_ (.setAttribute @textarea-sizer "value" value)
+        _ (.setAttribute @textarea-sizer "style" (str base-sizer-style-str sizer-style))
         height (apply-box-sizing (.-scrollHeight @textarea-sizer) styles)
         ;; padding-size needs to be removed from single line height
         ;; and padding/border-size needs to be added to total height if border-box sizing is used
         single-row-height (when (or min-rows max-rows)
-                            (set! (.-value @textarea-sizer) "x")
+                            (.setAttribute @textarea-sizer "value" "x")
                             (- (.-scrollHeight @textarea-sizer) padding-size))
         min-height (if min-rows
                      (+ (* min-rows single-row-height)
