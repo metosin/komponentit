@@ -66,7 +66,7 @@
         ;; extra 2px should provide room for the caret
         width (+ 2 (max min-width (max 1 width)))]
     {:width width
-     :min-width (if (.isFinite js/Number min-width) min-width)}))
+     :min-width (if (js/isFinite min-width) min-width)}))
 
 (defn input
   "Calculate width of the input based on the contents.
@@ -129,8 +129,8 @@
                      js/Infinity)
         height (min max-height (max min-height height))]
     {:height height
-     :min-height (if (.isFinite js/Number min-height) min-height)
-     :max-height (if (.isFinite js/Number max-height) max-height)}))
+     :min-height (if (js/isFinite min-height) min-height)
+     :max-height (if (js/isFinite max-height) max-height)}))
 
 (defn textarea
   "Calculate height of the textarea based on the text contents.
