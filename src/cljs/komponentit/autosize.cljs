@@ -22,7 +22,7 @@
    "text-rendering" "text-indent"
    "padding-left" "padding-right" "padding-top" "padding-bottom"
    "box-sizing"
-   "border-left" "border-right" "border-bottom" "border-top"
+   "border-left-width" "border-right-width" "border-bottom-width" "border-top-width"
    "white-space" "word-wrap"])
 
 (defn copy-styles [style props]
