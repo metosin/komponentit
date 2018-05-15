@@ -1,3 +1,7 @@
+## 0.3.5 (2018-05-15)
+
+- Improved autosize support for IE11
+
 ## 0.3.4 (2018-05-07)
 
 - Fix `autocomplete` input `:autocomplete` attribute value
