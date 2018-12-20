@@ -18,7 +18,9 @@
     [:div
      [input/text
       {:value @value
-       :on-change #(reset! value %)}]])
+       :on-change (fn [v]
+                    (js/console.log "on-change" v)
+                    (reset! value v))}]])
   (r/atom "Hello World")
   {:inspect-data true})
 

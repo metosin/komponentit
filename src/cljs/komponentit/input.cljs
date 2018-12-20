@@ -27,13 +27,21 @@
                           ;; FIXME: is it problem that this is hardcoded?
                           (let [v (.. e -target -value)]
                             (swap! timeout (fn [current]
-                                             (if current (js/clearTimeout current))
+                                             (if current
+                                               (js/clearTimeout current))
                                              (js/setTimeout (fn [_]
+                                                              ;; Could check that field still has focus?
+                                                              ;; but this shouldn't be called in that case because :on-blur now
+                                                              ;; removes timeout.
                                                               (if on-change
                                                                 (on-change (value-fn v))))
                                                             timeout-ms)))
                             (reset! temp v)))
              :on-blur (fn [e]
+                        ;; Remove next timeout handler if field is already unfocused
+                        (swap! timeout (fn [current]
+                                         (if current
+                                           (js/clearTimeout current))))
                         (swap! temp (fn [x]
                                       (if x
                                         (if on-change
@@ -43,11 +51,15 @@
                           (on-blur e)))
              :on-key-press (fn [e]
                              (case (.-key e)
-                               "Enter" (swap! temp (fn [x]
-                                                     (if x
-                                                       (if on-change
-                                                         (on-change (value-fn x))))
-                                                     nil))
+                               "Enter" (do
+                                         (swap! timeout (fn [current]
+                                                          (if current
+                                                            (js/clearTimeout current))))
+                                         (swap! temp (fn [x]
+                                                       (if x
+                                                         (if on-change
+                                                           (on-change (value-fn x))))
+                                                       nil)))
                                nil)
                              (if on-key-press
                                (on-key-press e)))))])))
