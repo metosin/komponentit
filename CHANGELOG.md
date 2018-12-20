@@ -1,3 +1,8 @@
+## 0.3.6 (2018-12-20)
+
+- Don't call input `:on-change` second time if `:on-blur` or Enter key-press handler
+is already called
+
 ## 0.3.5 (2018-05-15)
 
 - Improved autosize support for IE11
