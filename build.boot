@@ -3,7 +3,7 @@
   :resource-paths #{"src/cljs" "src/less"}
   ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
   :dependencies '[[org.clojure/clojure    "1.9.0"      :scope "provided"]
-                  [org.clojure/clojurescript "1.10.145" :scope "provided"]
+                  [org.clojure/clojurescript "1.10.439" :scope "provided"]
                   [adzerk/boot-cljs       "2.1.4"      :scope "test"]
                   [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
                   [com.cemerick/piggieback "0.2.2"     :scope "test"]
@@ -17,7 +17,7 @@
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.5.2"]
                   ;; Reagent before devcards to use proper React version
-                  [reagent "0.8.0-alpha2"]
+                  [reagent "0.8.1"]
 
                   ;; Dev
                   [cljsjs/react-transition-group "2.2.1-1" :scope "test"]
@@ -41,7 +41,7 @@
   '[deraen.boot-less      :refer [less]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.3.5")
+(def +version+ "0.3.6-SNAPSHOT")
 
 (task-options!
   pom {:project 'metosin/komponentit
