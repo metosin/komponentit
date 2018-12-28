@@ -1,3 +1,13 @@
+## Unreleased
+
+- Add `.scss` styles
+- Rename `komponentit.autocomplete` callbacks:
+    - `:cb` -> `:on-change`
+    - `:create` -> `:on-create`
+    - `:remove-cb` -> `:on-remove`
+- Rename `komponentit.timepicker` callback:
+    - `:on-select` -> `:on-change`
+
 ## 0.3.6 (2018-12-20)
 
 - Don't call input `:on-change` second time if `:on-blur` or Enter key-press handler

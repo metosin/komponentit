@@ -107,30 +107,33 @@
   ;; FIXME: Move cursor to the end of input, if there is selected value
   nil)
 
-(defn change [this cb opts e]
+(defn call-on-change [this opts e]
   (let [{:keys [initial-search]} (r/state this)
         v (.. e -target -value)]
     ;; If item is selected, search can't be changed until item is cleared with backspace
     (when-not initial-search
-      (update-search this v opts)
-      (if cb (cb v))))
-  nil)
+      (update-search this v opts))))
 
-(defn select-cb [{:keys [cb] :as opts} this v]
-  (if cb (cb v))
+(defn select-value [{:keys [on-change] :as opts} this v]
+  (if on-change
+    (on-change v))
   (r/set-state this {:initial-search nil :search "" :open? false}))
 
-(defn remove-cb [{:keys [remove-cb] :as opts} this v]
-  (if remove-cb (remove-cb v))
+(defn call-on-remove [{:keys [on-remove] :as opts} this v]
+  (if on-remove
+    (on-remove v))
   (r/set-state this {:search "" :open? false}))
 
-(defn create-cb [{:keys [create] :as opts} this s]
-  (when create
-    (create s)
+(defn call-on-create [{:keys [on-create] :as opts} this s]
+  (when on-create
+    (on-create s)
     (r/set-state this {:search nil :open? false})))
 
-(defn limit-selection [n selected f search {:keys [create]}]
-  (util/limit (if (and create (seq search)) +create-item-index+ 0) n (f selected)))
+(defn limit-selection [n selected f search {:keys [on-create]}]
+  (util/limit (if (and on-create (seq search))
+                +create-item-index+ 0)
+              n
+              (f selected)))
 
 (defn update-selection [this f opts e]
   (.preventDefault e)
@@ -143,25 +146,29 @@
   (.stopPropagation e)
   (let [{:keys [results selected search]} (r/state this)]
     (if (= +create-item-index+ selected)
-      (create-cb opts this search)
+      (call-on-create opts this search)
       (when-let [v (find-by-selection results selected)]
-        (select-cb opts this v)))))
+        (select-value opts this v)))))
 
-(defn clear-cb [{:keys [cb value] :as opts} this]
-  (if (:remove-cb opts)
-    (remove-cb opts this (last value))
-    (do (if cb (cb nil))
+(defn call-clear [{:keys [on-change value] :as opts} this]
+  (if (:on-remove opts)
+    ;; FIXME: if over 8 values, value is no longer sorted?
+    (call-on-remove opts this (last value))
+    (do (if on-change
+          (on-change nil))
         (r/set-state this {:initial-search nil :search "" :open? true}))))
 
-(defn handle-backspace [this {:keys [cb] :as opts} e]
+(defn handle-backspace [this {:keys [on-change] :as opts} e]
   (let [{:keys [initial-search search]} (r/state this)]
     (cond
       (seq search) nil
       ;; FIXME: last? only for multiple select.
-      (:remove-cb opts) (remove-cb opts this (last (:value opts)))
+      ;; FIXME: if over 8 values, value is no longer sorted?
+      (:on-remove opts) (call-on-remove opts this (last (:value opts)))
       initial-search (do
                        (r/set-state this {:initial-search nil :search ""})
-                       (if cb (cb nil))
+                       (if on-change
+                         (on-change nil))
                        ;; prevent on-change event after this
                        (.preventDefault e)
                        (.stopPropagation e)))))
@@ -339,12 +346,12 @@
       ; FIXME: Is this window height or content height? Does this work correctly with non absolute positioned page?
       {:top 0 :bottom (.-innerHeight js/window)})))
 
-(defn create-new-item [search selected scroll-wrapper-el {:keys [create] :as opts}]
-  (if (and create (seq search))
+(defn create-new-item [search selected scroll-wrapper-el {:keys [on-create] :as opts}]
+  (if (and on-create (seq search))
     [choice-item-wrapper
      {:item {::i +create-item-index+
              ::text (str "Add " search "...")}
-      :cb (fn [_] (create search))
+      :cb (fn [_] (on-create search))
       :selected selected
       :opts opts
       :scroll-wrapper-el scroll-wrapper-el}]))
@@ -357,15 +364,15 @@
      [choice-item-wrapper
       {:item item
        :selected selected
-       :cb #(select-cb opts this item)
+       :cb #(select-value opts this item)
        :opts opts
        :scroll-wrapper-el scroll-wrapper-el}])])
 
 (defn autocomplete-contents-top
-  [this results selected scroll-wrapper-el {:keys [create no-results-text] :as opts}]
+  [this results selected scroll-wrapper-el {:keys [on-create no-results-text] :as opts}]
   (if (seq results)
     [autocomplete-contents-list this results selected scroll-wrapper-el opts]
-    (if-not create
+    (if-not on-create
       [:div.autocomplete__no-results no-results-text])))
 
 (defn autocomplete-contents-wrapper [parent _ container-state _ _ _ _]
@@ -384,7 +391,7 @@
            (reset! top? (and (> (+ top height) (:bottom container))
                              (> (- top (:height container-state) height) (:top container))))))
        :reagent-render
-       (fn [this results container-state selected search {:keys [create multiple? groups item->key no-results-text] :as opts}]
+       (fn [this results container-state selected search {:keys [on-create multiple? groups item->key no-results-text] :as opts}]
          [mixins/window-event-listener
           {:on-click (fn [e]
                        (when (not (dom/contains (r/dom-node parent) (.-target e)))
@@ -448,13 +455,23 @@
   (focus-input this))
 
 (defn- build-options [opts defaults this]
+  (when (:cb opts)
+    (js/console.warn "komponentit.autocomplete/autocomplete :cb options is deprecated, use :on-change instead."))
+  (when (:create opts)
+    (js/console.warn "komponentit.autocomplete/autocomplete :create options is deprecated, use :on-create instead."))
+  (when (:remove-cb opts)
+    (js/console.warn "komponentit.autocomplete/autocomplete :remove-cb options is deprecated, use :on-remove instead."))
   (let [;; Static defaults
-        {:keys [item->key search-fields create cb] :as opts}
+        {:keys [item->key item->value] :as opts}
         (merge defaults opts)
 
         ;; Dynamic defaults based on other options
         opts (merge {:item->value item->key
-                     :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))}
+                     :term-match-fn (if (:search-fields opts) (create-matcher* (:search-fields opts)))
+                     ;; Map deprecated callbacks to new
+                     :on-change (:cb opts)
+                     :on-create (:create opts)
+                     :on-remove (:remove-cb opts)}
                     opts)]
     opts))
 
@@ -467,7 +484,7 @@
       :on-blur   (fn [e]
                    (blur this opts e)
                    (if on-blur (on-blur e)))
-      :on-change (partial change this nil opts)
+      :on-change (partial call-on-change this opts)
       :on-key-down (partial key-down this text opts)
       :auto-complete "off"
       :disabled disabled
@@ -493,7 +510,7 @@
           (if removable?
             [:a.autocomplete__remove-item-button
              {:on-click (fn [e]
-                          (remove-cb opts this x)
+                          (call-on-remove opts this x)
                           nil)}
              "×"])]))]))
 
@@ -505,22 +522,23 @@
      {:type "button"
       :disabled disabled
       :on-click (fn [e]
-                  (clear-cb opts this)
+                  (call-clear opts this)
                   (focus-input this)
                   (.stopPropagation e)
                   (.preventDefault e))}]))
 
 (defn autocomplete
 ":value - (required) IDeref or value
-:cb - (required) Function. [value]
-:on-blur - Input :on-blur. Might be useful for form pristine handling.
+:on-change - (required) Function [item]
+:on-blur - Input :on-blur
+:on-create - Create a new item. Function [value]
 :items
 :max-results
 :value->search
 :value->text
 :item->key
 :item->value
-:item-removable? - predicate function to determine if item is non-removable
+:item-removable? - predicate function to determine if item is removable
 :term-match-fn
 :search-fields
 :min-search-length - Required number of characters in search string before results are filtered.
@@ -566,8 +584,8 @@ Style
 
 (defn multiple-autocomplete
 ":value - (required) IDeref or value
-:cb - (required) Function. [value]
-:remove-cb - For multiple?
+:on-change - (required) Function [item]
+:on-remove - Called when item is removed [value]
 :on-blur - Input :on-blur. Might be useful for form pristine handling.
 :items
 :max-results

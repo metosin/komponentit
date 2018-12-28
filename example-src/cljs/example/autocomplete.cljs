@@ -54,9 +54,9 @@ Items can be provided as:
      [autocomplete/autocomplete
       (merge (:options @state)
              {:value (:value @state)
-              :cb (fn [item]
-                    (js/console.log item)
-                    (swap! state assoc :value (:key item)))
+              :on-change (fn [item]
+                           (js/console.log item)
+                           (swap! state assoc :value (:key item)))
               :search-fields [:value]
               :items postalcodes
               :max-results 100})]])
@@ -67,9 +67,8 @@ Items can be provided as:
   (fn [value _]
     [autocomplete/multiple-autocomplete
      {:value @value
-      :cb (fn [item] (swap! value conj (:key item)))
-      ; FIXME: Remove-cb is called with value, not item
-      :remove-cb (fn [x] (swap! value disj x))
+      :on-change (fn [item] (swap! value conj (:key item)))
+      :on-remove (fn [v] (swap! value disj v))
       :search-fields [:value]
       :items (simple-items 50)}])
   (r/atom #{})
@@ -79,13 +78,13 @@ Items can be provided as:
   (fn [state _]
     [autocomplete/autocomplete
      {:value (:value @state)
-      :cb (fn [item] (swap! state assoc :value (:key item)))
+      :on-change (fn [item] (swap! state assoc :value (:key item)))
       :search-fields [:value]
       :items (:items @state)
-      :create (fn [s]
-                (let [v (inc (apply max (keys (:items @state))))]
-                  (swap! state assoc-in [:items v] s)
-                  (swap! state assoc :value v)))}])
+      :on-create (fn [s]
+                   (let [v (inc (apply max (keys (:items @state))))]
+                     (swap! state assoc-in [:items v] s)
+                     (swap! state assoc :value v)))}])
   (r/atom {:items (simple-items 5)
            :value nil})
   {:inspect-data true})
@@ -134,18 +133,18 @@ Items can be provided as:
     [:div
      [autocomplete/autocomplete
       {:value (:value @state)
-       :cb (fn [item] (swap! state assoc :value (:key item)))
+       :on-change (fn [item] (swap! state assoc :value (:key item)))
        :search-fields [:value]
        :items (into (sorted-map)
                     (map (fn [{:keys [id first-name last-name]}]
                            [id (str first-name " " last-name)])
                          (:persons @state)))
-       :create (fn [s]
-                 (let [id (inc (apply max (map :id (:persons @state))))
-                       [first-name last-name] (str/split s #" ")]
-                   (swap! state merge {:new {:id id
-                                             :first-name first-name
-                                             :last-name last-name}})))}]
+       :on-create (fn [s]
+                    (let [id (inc (apply max (map :id (:persons @state))))
+                          [first-name last-name] (str/split s #" ")]
+                      (swap! state merge {:new {:id id
+                                                :first-name first-name
+                                                :last-name last-name}})))}]
      (if (:new @state)
        [person-popup
         (:new @state)
@@ -167,7 +166,7 @@ Items can be provided as:
   (fn [value _]
     [autocomplete/autocomplete
      {:value @value
-      :cb (fn [item] (reset! value (:key item)))
+      :on-change (fn [item] (reset! value (:key item)))
       :search-fields [:value]
       :items (simple-items 5000)}])
   (r/atom 5)
