@@ -38,10 +38,13 @@
       (.setMinutes 0)
       (.setSeconds 0))))
 
-(defn timepicker [{:keys [value on-select on-blur clearable?] :as opts}]
+(defn timepicker [{:keys [value on-change on-blur clearable?] :as opts}]
   (let [hours (reagent/atom nil)
         minutes (reagent/atom nil)]
-    (fn [{:keys [value on-select on-blur clearable?] :as opts}]
+    (fn [{:keys [value on-change on-select on-blur clearable?] :as opts}]
+      (when on-select
+        (js/console.warn "komponentit.timepicker/timepicker :on-select option is deprecated, use :on-change instead."))
+      (let [on-change (or on-change on-select)]
       [:div.timepicker
        [:input.form-control.timepicker-hours
         {:type "number"
@@ -55,7 +58,7 @@
                         (reset! hours x)))
          :on-blur (fn [e]
                     (if-not (js/isNaN @hours)
-                      (on-select (doto (clone-date value)
+                      (on-change (doto (clone-date value)
                                    (.setHours @hours))))
                     (reset! hours nil)
                     (if on-blur (on-blur e))
@@ -64,7 +67,7 @@
                          (case (.-key e)
                            "Enter" (do
                                      (if-not (js/isNaN @hours)
-                                       (on-select (doto (clone-date value)
+                                       (on-change (doto (clone-date value)
                                                     (.setHours @hours))))
                                      (reset! hours nil))
                            nil)
@@ -81,7 +84,7 @@
                         (reset! minutes x)))
          :on-blur (fn [e]
                     (if-not (js/isNaN @minutes)
-                      (on-select (doto (clone-date value)
+                      (on-change (doto (clone-date value)
                                    (.setMinutes @minutes))))
                     (reset! minutes nil)
                     (if on-blur (on-blur e))
@@ -90,11 +93,11 @@
                          (case (.-key e)
                            "Enter" (do
                                      (if-not (js/isNaN @hours)
-                                       (on-select (doto (clone-date value)
+                                       (on-change (doto (clone-date value)
                                                     (.setMinutes @minutes))))
                                      (reset! minutes nil))
                            nil)
                          (allow-only-numbers e))}]
        (if clearable?
          [:span.glyphicon.glyphicon-remove.timepicker-remove-btn
-          {:on-click #(on-select nil)}])])))
+          {:on-click #(on-change nil)}])]))))

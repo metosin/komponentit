@@ -1,0 +1,30 @@
+.datepicker__container {
+  position: relative;
+}
+
+.datepicker {
+  width: 100%;
+}
+
+.datepicker__dropdown {
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: calc(100% - 1px);
+  width: 280px;
+}
+
+.datepicker__clear-button {
+  position: absolute;
+  top: 2px;
+  right: 0;
+
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 4px;
+  &:after {
+    content: "\232B";
+  }
+}

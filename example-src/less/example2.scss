@@ -1,0 +1,44 @@
+@import "komponentit/komponentit";
+@import "cljsjs/leaflet/common/leaflet.inc";
+@import "cljsjs/codemirror/development/codemirror";
+@import "cljsjs/codemirror/common/addon/hint/show-hint";
+
+// Not sure if this is best way, this class has to be before transition classes.
+.hide {
+  opacity: 0.01;
+}
+
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+// Scrollbar width example
+
+.scroll-container {
+  height: 200px;
+  overflow-y: auto;
+}
+
+.scroll-table {
+  width: 100%;
+  table-layout: fixed;
+
+  td, th {
+    border: 1px solid #ccc;
+    width: 33%;
+  }
+}

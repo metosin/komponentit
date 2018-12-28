@@ -11,6 +11,7 @@
                   [org.clojure/tools.nrepl "0.2.13"    :scope "test"]
                   [adzerk/boot-reload     "0.5.2"      :scope "test"]
                   [deraen/boot-less       "0.6.2"      :scope "test"]
+                  [deraen/boot-sass       "0.3.1"      :scope "test"]
                   [org.slf4j/slf4j-nop    "1.7.25"     :scope "test"]
                   [metosin/boot-alt-http  "0.2.0"      :scope "test"]
 
@@ -39,9 +40,10 @@
   '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl repl-env]]
   '[adzerk.boot-reload    :refer [reload]]
   '[deraen.boot-less      :refer [less]]
+  '[deraen.boot-sass      :refer [sass]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.3.6")
+(def +version+ "0.3.7-SNAPSHOT")
 
 (task-options!
   pom {:project 'metosin/komponentit
@@ -51,7 +53,8 @@
        :url "https://github.com/metosin/komponentit"
        :scm {:url "https://github.com/metosin/komponentit"}}
   cljs {:source-map true}
-  less {:source-map true})
+  less {:source-map true}
+  sass {:source-map true})
 
 (deftask build []
   (comp
@@ -63,6 +66,7 @@
   (comp
     (watch)
     (less)
+    (sass)
     (reload :on-jsload 'example.main/restart!)
     (cljs-repl)
     (cljs :optimizations :none)
@@ -73,6 +77,7 @@
 (deftask build-example []
   (comp
     (less)
+    (sass)
     (cljs :optimizations :advanced
           :compiler-options {:preloads nil})
     (sift :to-resource #{#"^index\.html"})
