@@ -1,12 +1,14 @@
-## Unreleased
+## 0.3.7 (2019-01-03)
 
 - Add `.scss` styles
 - Rename `komponentit.autocomplete` callbacks:
     - `:cb` -> `:on-change`
     - `:create` -> `:on-create`
     - `:remove-cb` -> `:on-remove`
+    - Old names continues to work with a warning
 - Rename `komponentit.timepicker` callback:
     - `:on-select` -> `:on-change`
+    - Old name continues to work with a warning
 
 ## 0.3.6 (2018-12-20)
 

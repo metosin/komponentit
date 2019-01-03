@@ -3,8 +3,6 @@
   (:require [reagent.core :as reagent])
   (:import [goog.date UtcDateTime]))
 
-;; FIXME: This is a mess, not used anywhere?
-
 (defn- allow-only-numbers [e]
   (if-not (<= 48 (.-which e) 57)
     (.preventDefault e)))
