@@ -5,13 +5,13 @@
   :dependencies '[[org.clojure/clojure    "1.9.0"      :scope "provided"]
                   [org.clojure/clojurescript "1.10.439" :scope "provided"]
                   [adzerk/boot-cljs       "2.1.4"      :scope "test"]
-                  [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
-                  [com.cemerick/piggieback "0.2.2"     :scope "test"]
+                  ; [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
+                  [cider/piggieback "0.3.10" :scope "test"]
                   [weasel                  "0.7.0"     :scope "test"]
-                  [org.clojure/tools.nrepl "0.2.13"    :scope "test"]
+                  [nrepl "0.5.3" :scope "test"]
                   [adzerk/boot-reload     "0.5.2"      :scope "test"]
-                  [deraen/boot-less       "0.6.2"      :scope "test"]
-                  [deraen/boot-sass       "0.3.1"      :scope "test"]
+                  [deraen/boot-less       "0.7.0-SNAPSHOT"      :scope "test"]
+                  [deraen/boot-sass       "0.4.0-SNAPSHOT"      :scope "test"]
                   [org.slf4j/slf4j-nop    "1.7.25"     :scope "test"]
                   [metosin/boot-alt-http  "0.2.0"      :scope "test"]
 
@@ -37,7 +37,7 @@
 
 (require
   '[adzerk.boot-cljs      :refer [cljs]]
-  '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl repl-env]]
+  ; '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl repl-env]]
   '[adzerk.boot-reload    :refer [reload]]
   '[deraen.boot-less      :refer [less]]
   '[deraen.boot-sass      :refer [sass]]
@@ -68,7 +68,8 @@
     (less)
     (sass)
     (reload :on-jsload 'example.main/restart!)
-    (cljs-repl)
+    ; (cljs-repl)
+    (repl :server true)
     (cljs :optimizations :none)
     (serve :prefixes #{""} :port 4081)
     ;; FIXME: build should only include source files, not cljs results
