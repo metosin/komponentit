@@ -53,15 +53,17 @@ Items can be provided as:
       (fn [k v] (swap! state assoc-in [:options k] v))
       [[:disabled :bool]]]
 
-     [autocomplete/autocomplete
-      (merge (:options @state)
-             {:value (:value @state)
-              :on-change (fn [item]
-                           (js/console.log item)
-                           (swap! state assoc :value (:key item)))
-              :search-fields [:value]
-              :items postalcodes
-              :max-results 100})]])
+     [:div
+      {:style {:width "150px"}}
+      [autocomplete/autocomplete
+       (merge (:options @state)
+              {:value (:value @state)
+               :on-change (fn [item]
+                            (js/console.log item)
+                            (swap! state assoc :value (:key item)))
+               :search-fields [:value]
+               :items postalcodes
+               :max-results 100})]]])
   (r/atom {:value "33100"})
   {:inspect-data true})
 

@@ -1,6 +1,7 @@
 $autocomplete-input-border-color: #444;
 $autocomplete-input-border-focus: #7FB6D4;
-$autocomplete-input-padding: 4px 8px;
+$autocomplete-input-padding-y: 4px;
+$autocomplete-input-padding-x: 8px;
 $autocomplete-dropdown-background: #fff;
 $autocomplete-dropdown-border-color: #444;
 $autocomplete-item-padding: 4px 8px;
@@ -8,13 +9,15 @@ $autocomplete-item-background-selected: #CAECFF;
 $autocomplete-item-background-hover: lighten($autocomplete-item-background-selected, 5);
 $autocomplete-item-background-active: #CBFFCA;
 $autocomplete-item-level-padding: 30px;
+$autocomplete-caret-size: 5px;
+$autocomplete-caret-padding: 15px;
 
 .autocomplete {
   position: relative;
 }
 
 .autocomplete__control {
-  padding: $autocomplete-input-padding;
+  padding: $autocomplete-input-padding-y ($autocomplete-input-padding-x + $autocomplete-caret-size + $autocomplete-caret-padding) $autocomplete-input-padding-y $autocomplete-input-padding-x;
   border: 1px solid $autocomplete-input-border-color;
   overflow: hidden;
   cursor: text;
@@ -22,17 +25,21 @@ $autocomplete-item-level-padding: 30px;
   // Match input background
   background: #fff;
 
+  // Force input and clear button to stay on same row
+  display: flex;
+  flex-direction: row;
+
   &:after {
     position: absolute;
     top: 50%;
-    right: 15px;
+    right: $autocomplete-caret-padding;
     display: block;
     width: 0;
     height: 0;
     margin-top: -3px;
     border-color: #444 transparent transparent transparent;
     border-style: solid;
-    border-width: 5px 5px 0 5px;
+    border-width: $autocomplete-caret-size $autocomplete-caret-size 0 $autocomplete-caret-size;
     content: ' ';
   }
 
@@ -44,7 +51,7 @@ $autocomplete-item-level-padding: 30px;
 .autocomplete__control--open {
   &:after {
     border-color: transparent transparent #444 transparent;
-    border-width: 0 5px 5px 5px;
+    border-width: 0 $autocomplete-caret-size $autocomplete-caret-size $autocomplete-caret-size;
   }
 }
 
@@ -62,7 +69,7 @@ $autocomplete-item-level-padding: 30px;
 .autocomplete__input {
   border: 0;
   outline: none;
-  max-width: 100%;
+  max-width: calc(100% - ($autocomplete-caret-size + $autocomplete-caret-padding + $autocomplete-input-padding-x));
 
   // debug
   // background: #FFE6E6;
