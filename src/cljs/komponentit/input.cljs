@@ -84,7 +84,8 @@
      nil
      (let [s (-> s
                  (str/replace #"\s" "")
-                 (str/replace #"–" "-")
+                 (str/replace #"–" "-") ;; EN DASH
+                 (str/replace #"−" "-") ;; MINUS SIGN
                  (str/replace #"," "."))]
        (* (js/parseFloat s) multiplier)))))
 

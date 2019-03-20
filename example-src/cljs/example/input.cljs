@@ -140,6 +140,10 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   ;; non-breaking spaces
   ; (is (= 123456789 (input/number->str "123 456 789" {:locale "fi-FI"})))
   ; (is (= 123456789.012 (input/number->str "123 456 789,012" {:locale "fi-FI"})))
+
+  ;; unicode "minus signs"
+  (is (= -10 (input/str->number "–10")))
+  (is (= -10 (input/str->number "−10")))
   )
 
 (dc/deftest number->str-test
