@@ -1,3 +1,11 @@
+## 0.3.8 (2019-03-20)
+
+- `input`: Read unicode minus sign for number inputs
+- `modal`: Focus confirm OK button when opened
+- `autocomplete`: Style fixes
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.7...0.3.8)**
+
 ## 0.3.7 (2019-01-03)
 
 - Add `.scss` styles
@@ -10,22 +18,32 @@
     - `:on-select` -> `:on-change`
     - Old name continues to work with a warning
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.6...0.3.7)**
+
 ## 0.3.6 (2018-12-20)
 
 - Don't call input `:on-change` second time if `:on-blur` or Enter key-press handler
 is already called
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.5...0.3.6)**
+
 ## 0.3.5 (2018-05-15)
 
 - Improved autosize support for IE11
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.4...0.3.5)**
 
 ## 0.3.4 (2018-05-07)
 
 - Fix `autocomplete` input `:autocomplete` attribute value
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.3...0.3.4)**
+
 ## 0.3.3 (2018-01-25)
 
 - `autosize`: Copy textarea width
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.2...0.3.3)**
 
 ## 0.3.2 (2017-11-09)
 
