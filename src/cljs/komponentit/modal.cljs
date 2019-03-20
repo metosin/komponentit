@@ -1,6 +1,8 @@
 (ns komponentit.modal
-  (:require [reagent.core :refer [atom]]
+  (:require [reagent.core :as r]
             [komponentit.mixins :as mixins]))
+
+;; TODO: Trap focus within modal
 
 (defn modal
 "- :title      The el for modal header
@@ -60,6 +62,7 @@
                cancel-label]
               [:button.modal__ok
                {:type "button"
+                :autoFocus true
                 :on-click (fn [_]
                             (when success (success))
                             nil)}
