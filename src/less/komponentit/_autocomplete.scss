@@ -19,6 +19,9 @@ $autocomplete-item-level-padding: 30px;
   overflow: hidden;
   cursor: text;
 
+  // Match input background
+  background: #fff;
+
   &:after {
     position: absolute;
     top: 50%;

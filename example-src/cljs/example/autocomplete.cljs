@@ -46,6 +46,8 @@ Items can be provided as:
 (dc/defcard-rg simple-autocomplete
   (fn [state _]
     [:div
+     {:style {:padding "1rem"
+              :background "lightsalmon"}}
      [options/table
       (:options @state)
       (fn [k v] (swap! state assoc-in [:options k] v))
