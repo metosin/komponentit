@@ -96,6 +96,18 @@ Suspendisse id bibendum velit. Phasellus cursus mauris finibus diam tempor, a fe
   (r/atom 1)
   {:inspect-data true})
 
+(dc/defcard-rg select-boolean
+  (fn [value _]
+    [:div
+     [input/select
+      {:value @value
+       :on-change (fn [x] (reset! value x))
+       :options [{:value true  :text "Option true"}
+                 {:value false :text "Option false"}]
+       :value-fn {"true" true "false" false}}]])
+  (r/atom true)
+  {:inspect-data true})
+
 (dc/defcard-rg checkbox
   (fn [value _]
     [:div

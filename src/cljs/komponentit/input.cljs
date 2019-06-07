@@ -164,9 +164,10 @@
    (-> opts
        (dissoc :empty-option? :value-fn :options)
        (assoc
-         :value (or value
-                    (if empty-option? +empty-value+)
-                    "")
+        :value (cond
+                 (some? value) value
+                 empty-option? +empty-value+
+                 true "")
          :on-change (fn [e]
                       (let [v (.. e -target -value)
                             v (if (= +empty-value+ v) nil v)]
