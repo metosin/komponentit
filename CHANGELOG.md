@@ -1,3 +1,9 @@
+## 0.3.9 (2019-06-28)
+
+- `input/select`: Support boolean `:value`
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.8...0.3.9)**
+
 ## 0.3.8 (2019-03-20)
 
 - `input`: Read unicode minus sign for number inputs
