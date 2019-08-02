@@ -21,7 +21,7 @@
                   [reagent "0.8.1"]
 
                   ;; Dev
-                  [cljsjs/react-transition-group "2.2.1-1" :scope "test"]
+                  [cljsjs/react-transition-group "4.2.1-0" :scope "test"]
                   [cljsjs/leaflet "1.2.0-0" :scope "test"]
                   [cljsjs/react-leaflet "1.6.5-0" :scope "test" :exclusions [cljsjs/react]]
                   [cljsjs/react-input-autosize "2.2.1-1" :scope "test" :exclusions [cljsjs/react]]

@@ -5,6 +5,7 @@
             ["react-transition-group/TransitionGroup" :as TransitionGroup]
             ["react-transition-group/Transition" :as Transition]
             ["react-transition-group/CSSTransition" :as CSSTransition]
+            ["react-transition-group/SwitchTransition" :as SwitchTransition]
             ; or [react-transition-group :as transition-group]
             ))
 
@@ -70,3 +71,16 @@ Just example, no wrapper code is provided to work with React-transition-group.")
       [:div {:class (if-not @state "hide")} "foobar"]]])
   (r/atom true))
 
+(dc/defcard-rg switch-transition-example
+  (fn [state _]
+    [:div
+     [:> SwitchTransition
+      [:> CSSTransition
+       {:key (if @state "active" "disabled")
+        ; :in @state
+        :classNames "fade"
+        :timeout 500}
+       [:button
+        {:on-click (fn [_] (swap! state not))}
+        (if @state "Active" "Disabled")]]]])
+  (r/atom true))
