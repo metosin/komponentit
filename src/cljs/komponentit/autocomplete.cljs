@@ -335,16 +335,21 @@
          :multiple? true
          :item-removable? (constantly true)))
 
-(defn- find-container [el]
+(defn- find-container [el p?]
   (loop [el el]
     (if el
-      ; FIXME: getComputedStyle and check for y-overflow scroll or auto instead?
-      (if (classes/has el "scroll")
+      (if (p? el)
         (let [rect (.getBoundingClientRect el)]
-          {:top (.-top rect) :bottom (.-bottom rect)})
+          {:top (.-top rect)
+           :bottom (.-bottom rect)
+           :left (.-left rect)
+           :right (.-right rect)})
         (recur (.-offsetParent el)))
       ; FIXME: Is this window height or content height? Does this work correctly with non absolute positioned page?
-      {:top 0 :bottom (.-innerHeight js/window)})))
+      {:top 0
+       :right (.-innerWidth js/window)
+       :bottom (.-innerHeight js/window)
+       :left 0})))
 
 (defn create-new-item [search selected scroll-wrapper-el {:keys [on-create] :as opts}]
   (if (and on-create (seq search))
@@ -377,6 +382,7 @@
 
 (defn autocomplete-contents-wrapper [parent _ container-state _ _ _ _]
   (let [top? (r/atom false)
+        right? (r/atom false)
         scroll-wrapper-el (atom nil)
         scroll-wrapper-el-ref #(reset! scroll-wrapper-el %)]
     (r/create-class
@@ -387,9 +393,21 @@
                rect (.getBoundingClientRect el)
                height (.-offsetHeight el)
                top (.-top rect)
-               container (find-container el)]
-           (reset! top? (and (> (+ top height) (:bottom container))
-                             (> (- top (:height container-state) height) (:top container))))))
+               y-container (find-container el (fn [el]
+                                                (let [style (js/window.getComputedStyle el)]
+                                                  (#{"scroll" "hidden"} (or (.getPropertyValue style "overflow-y")
+                                                                            (.getPropertyValue style "overflow"))))))
+
+               left (.-left rect)
+               width (.-offsetWidth el)
+               x-container (find-container el (fn [el]
+                                                (let [style (js/window.getComputedStyle el)]
+                                                  (#{"scroll" "hidden"} (or (.getPropertyValue style "overflow-x")
+                                                                            (.getPropertyValue style "overflow"))))))]
+           (reset! top? (and (> (+ top height) (:bottom y-container))
+                             (> (- top (:width container-state) height) (:top y-container))))
+           (reset! right? (and (< (+ left width) (:right x-container))
+                               (> (- left (:width container-state) height) (:left x-container))))))
        :reagent-render
        (fn [this results container-state selected search {:keys [on-create multiple? groups item->key no-results-text] :as opts}]
          [mixins/window-event-listener
@@ -401,7 +419,8 @@
                             27 (close this opts)
                             nil))}
           [:div.autocomplete__dropdown
-           {:class (str (if @top? "autocomplete__dropdown--above "))
+           {:class (str (if @top? "autocomplete__dropdown--above ")
+                        (if @right? "autocomplete__dropdown--left "))
             :style (if @top? {:bottom (str (:height container-state) "px")})}
            [:div.autocomplete__dropdown-content
             {:ref scroll-wrapper-el-ref}
