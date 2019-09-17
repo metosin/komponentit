@@ -2,38 +2,38 @@
   :source-paths #{"example-src/cljs" "example-src/less" "example-src/html"}
   :resource-paths #{"src/cljs" "src/less"}
   ; :checkouts '[[reagent "0.6.0-SNAPSHOT"]]
-  :dependencies '[[org.clojure/clojure    "1.9.0"      :scope "provided"]
-                  [org.clojure/clojurescript "1.10.439" :scope "provided"]
-                  [adzerk/boot-cljs       "2.1.4"      :scope "test"]
+  :dependencies '[[org.clojure/clojure    "1.10.1"      :scope "provided"]
+                  [org.clojure/clojurescript "1.10.520" :scope "provided"]
+                  [adzerk/boot-cljs       "2.1.5"      :scope "test"]
                   ; [adzerk/boot-cljs-repl  "0.3.3"      :scope "test"]
-                  [cider/piggieback "0.3.10" :scope "test"]
-                  [weasel                  "0.7.0"     :scope "test"]
-                  [nrepl "0.5.3" :scope "test"]
-                  [adzerk/boot-reload     "0.5.2"      :scope "test"]
-                  [deraen/boot-less       "0.7.0-SNAPSHOT"      :scope "test"]
-                  [deraen/boot-sass       "0.4.0-SNAPSHOT"      :scope "test"]
+                  ; [cider/piggieback "0.4.1" :scope "test"]
+                  ; [weasel                  "0.7.0"     :scope "test"]
+                  [nrepl "0.6.0" :scope "test"]
+                  [adzerk/boot-reload     "0.6.0"      :scope "test"]
+                  [deraen/boot-less       "0.7.1"      :scope "test"]
+                  [deraen/boot-sass       "0.4.1"      :scope "test"]
                   [org.slf4j/slf4j-nop    "1.7.25"     :scope "test"]
                   [metosin/boot-alt-http  "0.2.0"      :scope "test"]
 
                   ;; FIXME: Drop
                   [com.andrewmcveigh/cljs-time "0.5.2"]
                   ;; Reagent before devcards to use proper React version
-                  [reagent "0.8.1"]
+                  [reagent "0.9.0-rc1"]
 
                   ;; Dev
-                  [cljsjs/react-transition-group "4.2.1-0" :scope "test"]
-                  [cljsjs/leaflet "1.2.0-0" :scope "test"]
-                  [cljsjs/react-leaflet "1.6.5-0" :scope "test" :exclusions [cljsjs/react]]
+                  [cljsjs/react-transition-group "4.3.0-0" :scope "test"]
+                  [cljsjs/leaflet "1.5.1-0" :scope "test"]
+                  [cljsjs/react-leaflet "2.4.0-0" :scope "test" :exclusions [cljsjs/react]]
                   [cljsjs/react-input-autosize "2.2.1-1" :scope "test" :exclusions [cljsjs/react]]
                   [metosin/clj-suomi "0.2.0" :scope "test"]
-                  [cljsjs/codemirror "5.31.0-0" :scope "test"]
+                  [cljsjs/codemirror "5.44.0-1" :scope "test"]
                   [cljsjs/parinfer "3.11.0-0" :scope "test"]
                   [cljsjs/parinfer-codemirror "1.4.1-2" :scope "test"]
 
                   ;; Devcards has "closer" dependency to cljsjs/react package which
                   ;; overwrites Reagent version
-                  [devcards "0.2.4" :scope "test" :exclusions [cljsjs/react]]
-                  [binaryage/devtools "0.9.9" :scope "test"]])
+                  [devcards "0.2.6" :scope "test" :exclusions [cljsjs/react]]
+                  [binaryage/devtools "0.9.10" :scope "test"]])
 
 (require
   '[adzerk.boot-cljs      :refer [cljs]]
@@ -43,7 +43,7 @@
   '[deraen.boot-sass      :refer [sass]]
   '[metosin.boot-alt-http :refer [serve]])
 
-(def +version+ "0.3.9")
+(def +version+ "0.3.10-SNAPSHOT")
 
 (task-options!
   pom {:project 'metosin/komponentit
