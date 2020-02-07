@@ -9,3 +9,4 @@ figwheel_server.log
 /komponentit.iml
 /project.clj
 .cljs_rhino_repl
+dev-target

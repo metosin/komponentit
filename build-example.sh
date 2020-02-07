@@ -11,7 +11,8 @@ cd gh-pages
 git pull
 )
 
-boot build-example
+lein cljsbuild prod once
+lein less4clj once
 
 rm -rf gh-pages/*
 cp -r target/* gh-pages

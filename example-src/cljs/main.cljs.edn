@@ -1,9 +1,0 @@
-{:require [example.main]
- :compiler-options {:asset-path "main.out"
-                    :parallel-build true
-                    :devcards true
-                    :preloads [devtools.preload]
-                    :external-config {:devtools/config {:features-to-install [:formatters :hints]}}
-                    :foreign-libs [{:file "public/codemirror/mode/clojure/clojure-parinfer.js"
-                                    :provides ["parinfer.codemirror"]
-                                    :requires ["cljsjs.codemirror"]}]}}
