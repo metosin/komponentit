@@ -11,11 +11,13 @@ cd gh-pages
 git pull
 )
 
-lein cljsbuild prod once
+lein figwheel :once prod
 lein less4clj once
 
 rm -rf gh-pages/*
-cp -r target/* gh-pages
+cp -r build-target/public/* gh-pages
+cp example-src/html/index.hmtl gh-pages
+cp dev-target/public/example.css gh-pages
 
 cd gh-pages
 git add --all
