@@ -1,3 +1,8 @@
+## 0.3.10 (2020-03-06)
+
+- Use `reagent.dom/dom-node` instead of `reagent.core` function in preparation for next
+Reagent versions
+
 ## 0.3.9 (2019-06-28)
 
 - `input/select`: Support boolean `:value`

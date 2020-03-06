@@ -1,6 +1,6 @@
 (ns komponentit.codemirror
   (:require [reagent.core :as r]
-            [clojure.string :as str]
+            [reagent.dom :as rdom]
             cljsjs.codemirror))
 
 (def default-codemirror-opts {})
@@ -11,7 +11,7 @@
       {:display-name "komponentit.codemirror.codemirror"
        :component-did-mount
        (fn [this]
-         (reset! cm  (js/CodeMirror.fromTextArea (r/dom-node this)
+         (reset! cm  (js/CodeMirror.fromTextArea (rdom/dom-node this)
                                                  (clj->js (merge default-codemirror-opts
                                                                  codemirror-opts))))
          (if-let [f (:on-mount (r/props this))]

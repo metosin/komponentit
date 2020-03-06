@@ -1,7 +1,8 @@
 (ns komponentit.dropdown
   (:require [goog.dom :as dom]
             [komponentit.mixins :as mixins]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [reagent.dom :as rdom]))
 
 (enable-console-print!)
 
@@ -161,7 +162,7 @@ Any other React props can be passed to the created elements:
          [mixins/window-event-listener
           {:on-click (fn [e]
                        ; If the click target is outside of navbar
-                       (if (not (dom/contains (r/dom-node (r/current-component)) (.. e -target)))
+                       (if (not (dom/contains (rdom/dom-node (r/current-component)) (.. e -target)))
                          (reset! open? false)))
            :on-key-down (fn [e]
                           (case (.-keyCode e)
