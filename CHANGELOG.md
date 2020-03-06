@@ -3,6 +3,8 @@
 - Use `reagent.dom/dom-node` instead of `reagent.core` function in preparation for next
 Reagent versions
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.9...0.3.10)**
+
 ## 0.3.9 (2019-06-28)
 
 - `input/select`: Support boolean `:value`
