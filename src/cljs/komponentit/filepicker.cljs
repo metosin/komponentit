@@ -86,9 +86,8 @@
 
    Options:
 
-   - :files - The IReactiveAtom containing vector of Files.
-   - :active? - (optional) IReactiveAtom containing status if the drag'n'drop
-     is active."
+   - :on-file-drop - Called with vector of File
+   - :on-active-change - (optional) Called when dragged over and leaves the area."
   [{:keys [on-file-drop on-active-change]}]
   (fn [e]
     (.preventDefault e)
