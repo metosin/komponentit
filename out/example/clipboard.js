@@ -12,7 +12,7 @@ return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.c
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$clipboard,cljs.core.cst$kw$clipboard_DASH_example], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"clipboard-example",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.clipboard !== 'undefined') && (typeof example.clipboard.t_example$clipboard37996 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.clipboard !== 'undefined') && (typeof example.clipboard.t_example$clipboard37999 !== 'undefined')){
 } else {
 
 /**
@@ -21,26 +21,26 @@ if((typeof example !== 'undefined') && (typeof example.clipboard !== 'undefined'
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.clipboard.t_example$clipboard37996 = (function (meta37997){
-this.meta37997 = meta37997;
+example.clipboard.t_example$clipboard37999 = (function (meta38000){
+this.meta38000 = meta38000;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.clipboard.t_example$clipboard37996.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_37998,meta37997__$1){
+(example.clipboard.t_example$clipboard37999.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_38001,meta38000__$1){
 var self__ = this;
-var _37998__$1 = this;
-return (new example.clipboard.t_example$clipboard37996(meta37997__$1));
+var _38001__$1 = this;
+return (new example.clipboard.t_example$clipboard37999(meta38000__$1));
 }));
 
-(example.clipboard.t_example$clipboard37996.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_37998){
+(example.clipboard.t_example$clipboard37999.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_38001){
 var self__ = this;
-var _37998__$1 = this;
-return self__.meta37997;
+var _38001__$1 = this;
+return self__.meta38000;
 }));
 
-(example.clipboard.t_example$clipboard37996.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.clipboard.t_example$clipboard37999.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.clipboard.t_example$clipboard37996.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__36182__auto__,devcard_opts__36183__auto__){
+(example.clipboard.t_example$clipboard37999.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__36182__auto__,devcard_opts__36183__auto__){
 var self__ = this;
 var this__36182__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__36183__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__36201__auto__ = (function (value,_){
@@ -58,28 +58,28 @@ return reagent.core.as_element(v__36201__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__36183__auto__))], 0))], 0));
 }));
 
-(example.clipboard.t_example$clipboard37996.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta37997], null);
+(example.clipboard.t_example$clipboard37999.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta38000], null);
 }));
 
-(example.clipboard.t_example$clipboard37996.cljs$lang$type = true);
+(example.clipboard.t_example$clipboard37999.cljs$lang$type = true);
 
-(example.clipboard.t_example$clipboard37996.cljs$lang$ctorStr = "example.clipboard/t_example$clipboard37996");
+(example.clipboard.t_example$clipboard37999.cljs$lang$ctorStr = "example.clipboard/t_example$clipboard37999");
 
-(example.clipboard.t_example$clipboard37996.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.clipboard/t_example$clipboard37996");
+(example.clipboard.t_example$clipboard37999.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.clipboard/t_example$clipboard37999");
 }));
 
 /**
- * Positional factory function for example.clipboard/t_example$clipboard37996.
+ * Positional factory function for example.clipboard/t_example$clipboard37999.
  */
-example.clipboard.__GT_t_example$clipboard37996 = (function example$clipboard$__GT_t_example$clipboard37996(meta37997){
-return (new example.clipboard.t_example$clipboard37996(meta37997));
+example.clipboard.__GT_t_example$clipboard37999 = (function example$clipboard$__GT_t_example$clipboard37999(meta38000){
+return (new example.clipboard.t_example$clipboard37999(meta38000));
 });
 
 }
 
-return (new example.clipboard.t_example$clipboard37996(null));
+return (new example.clipboard.t_example$clipboard37999(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
