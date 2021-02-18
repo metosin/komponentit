@@ -19,12 +19,12 @@ return or__4185__auto__;
 return cljs.core.get.cljs$core$IFn$_invoke$arity$2(komponentit.datepicker.default_i18n,k);
 }
 });
-komponentit.datepicker.validate = (function komponentit$datepicker$validate(p__32639,v){
-var map__32640 = p__32639;
-var map__32640__$1 = (((((!((map__32640 == null))))?(((((map__32640.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32640.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32640):map__32640);
-var opts = map__32640__$1;
-var min_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32640__$1,cljs.core.cst$kw$min_DASH_date);
-var max_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32640__$1,cljs.core.cst$kw$max_DASH_date);
+komponentit.datepicker.validate = (function komponentit$datepicker$validate(p__32658,v){
+var map__32659 = p__32658;
+var map__32659__$1 = (((((!((map__32659 == null))))?(((((map__32659.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32659.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32659):map__32659);
+var opts = map__32659__$1;
+var min_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32659__$1,cljs.core.cst$kw$min_DASH_date);
+var max_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32659__$1,cljs.core.cst$kw$max_DASH_date);
 if(cljs.core.truth_((function (){var and__4174__auto__ = min_date;
 if(cljs.core.truth_(and__4174__auto__)){
 return max_date;
@@ -50,23 +50,23 @@ komponentit.datepicker.date = (function komponentit$datepicker$date(_){
 var open_QMARK_ = reagent.core.atom.cljs$core$IFn$_invoke$arity$1(false);
 var input_value = reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null);
 var el = cljs.core.atom.cljs$core$IFn$_invoke$arity$1(null);
-var el_ref = (function (p1__32642_SHARP_){
-return cljs.core.reset_BANG_(el,p1__32642_SHARP_);
+var el_ref = (function (p1__32661_SHARP_){
+return cljs.core.reset_BANG_(el,p1__32661_SHARP_);
 });
-return (function (p__32643){
-var map__32644 = p__32643;
-var map__32644__$1 = (((((!((map__32644 == null))))?(((((map__32644.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32644.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32644):map__32644);
-var opts = map__32644__$1;
-var week_numbers_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$week_DASH_numbers_QMARK_);
-var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$on_DASH_change);
-var i18n = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$i18n);
-var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32644__$1,cljs.core.cst$kw$container_DASH_class,"datepicker__container ");
-var min_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$min_DASH_date);
-var max_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$max_DASH_date);
-var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$clearable_QMARK_);
-var disabled = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$disabled);
-var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32644__$1,cljs.core.cst$kw$value);
-var input_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32644__$1,cljs.core.cst$kw$input_DASH_class,"datepicker ");
+return (function (p__32662){
+var map__32663 = p__32662;
+var map__32663__$1 = (((((!((map__32663 == null))))?(((((map__32663.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32663.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32663):map__32663);
+var opts = map__32663__$1;
+var week_numbers_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$week_DASH_numbers_QMARK_);
+var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$on_DASH_change);
+var i18n = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$i18n);
+var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32663__$1,cljs.core.cst$kw$container_DASH_class,"datepicker__container ");
+var min_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$min_DASH_date);
+var max_date = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$max_DASH_date);
+var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$clearable_QMARK_);
+var disabled = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$disabled);
+var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32663__$1,cljs.core.cst$kw$value);
+var input_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32663__$1,cljs.core.cst$kw$input_DASH_class,"datepicker ");
 return new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$div,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$class,[cljs.core.str.cljs$core$IFn$_invoke$arity$1(container_class),(cljs.core.truth_(disabled)?"datepicker--disabled ":null)].join(''),cljs.core.cst$kw$ref,el_ref], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$input,cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(cljs.core.dissoc.cljs$core$IFn$_invoke$arity$variadic(opts,cljs.core.cst$kw$clearable_QMARK_,cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$min_DASH_date,cljs.core.cst$kw$max_DASH_date,cljs.core.cst$kw$i18n,cljs.core.cst$kw$week_DASH_numbers_QMARK_,cljs.core.cst$kw$container_DASH_class,cljs.core.cst$kw$input_DASH_class], 0)),cljs.core.cst$kw$class,input_class,cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$type,"text",cljs.core.cst$kw$value,(function (){var or__4185__auto__ = cljs.core.deref(input_value);
 if(cljs.core.truth_(or__4185__auto__)){
 return or__4185__auto__;
@@ -85,16 +85,16 @@ return cljs.core.reset_BANG_(open_QMARK_,true);
 }),cljs.core.cst$kw$on_DASH_blur,(function (___$1){
 return cljs.core.reset_BANG_(input_value,null);
 }),cljs.core.cst$kw$on_DASH_key_DASH_down,(function (e){
-var G__32646 = e.key;
-switch (G__32646) {
+var G__32665 = e.key;
+switch (G__32665) {
 case "Enter":
 if(cljs.core.truth_(on_change)){
 if(cljs.core.seq(cljs.core.deref(input_value))){
 e.preventDefault();
 
-var v_32649 = komponentit.date.date_read(cljs.core.deref(input_value),komponentit.datepicker.loc(i18n,cljs.core.cst$kw$date_DASH_format));
-if(komponentit.datepicker.validate(opts,v_32649)){
-(on_change.cljs$core$IFn$_invoke$arity$1 ? on_change.cljs$core$IFn$_invoke$arity$1(v_32649) : on_change.call(null,v_32649));
+var v_32668 = komponentit.date.date_read(cljs.core.deref(input_value),komponentit.datepicker.loc(i18n,cljs.core.cst$kw$date_DASH_format));
+if(komponentit.datepicker.validate(opts,v_32668)){
+(on_change.cljs$core$IFn$_invoke$arity$1 ? on_change.cljs$core$IFn$_invoke$arity$1(v_32668) : on_change.call(null,v_32668));
 } else {
 }
 } else {
@@ -124,8 +124,8 @@ return cljs.core.reset_BANG_(open_QMARK_,false);
 return null;
 }
 }),cljs.core.cst$kw$on_DASH_key_DASH_down,(function (e){
-var G__32647 = e.keyCode;
-switch (G__32647) {
+var G__32666 = e.keyCode;
+switch (G__32666) {
 case (27):
 return cljs.core.reset_BANG_(open_QMARK_,false);
 

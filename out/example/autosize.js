@@ -14,7 +14,7 @@ return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.c
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$autosize,cljs.core.cst$kw$autosize_DASH_example], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"autosize-example",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined') && (typeof example.autosize.t_example$autosize32290 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined') && (typeof example.autosize.t_example$autosize32309 !== 'undefined')){
 } else {
 
 /**
@@ -23,26 +23,26 @@ if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.autosize.t_example$autosize32290 = (function (meta32291){
-this.meta32291 = meta32291;
+example.autosize.t_example$autosize32309 = (function (meta32310){
+this.meta32310 = meta32310;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.autosize.t_example$autosize32290.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32292,meta32291__$1){
+(example.autosize.t_example$autosize32309.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32311,meta32310__$1){
 var self__ = this;
-var _32292__$1 = this;
-return (new example.autosize.t_example$autosize32290(meta32291__$1));
+var _32311__$1 = this;
+return (new example.autosize.t_example$autosize32309(meta32310__$1));
 }));
 
-(example.autosize.t_example$autosize32290.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32292){
+(example.autosize.t_example$autosize32309.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32311){
 var self__ = this;
-var _32292__$1 = this;
-return self__.meta32291;
+var _32311__$1 = this;
+return self__.meta32310;
 }));
 
-(example.autosize.t_example$autosize32290.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.autosize.t_example$autosize32309.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.autosize.t_example$autosize32290.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.autosize.t_example$autosize32309.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (value,_){
@@ -68,34 +68,34 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.autosize.t_example$autosize32290.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32291], null);
+(example.autosize.t_example$autosize32309.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32310], null);
 }));
 
-(example.autosize.t_example$autosize32290.cljs$lang$type = true);
+(example.autosize.t_example$autosize32309.cljs$lang$type = true);
 
-(example.autosize.t_example$autosize32290.cljs$lang$ctorStr = "example.autosize/t_example$autosize32290");
+(example.autosize.t_example$autosize32309.cljs$lang$ctorStr = "example.autosize/t_example$autosize32309");
 
-(example.autosize.t_example$autosize32290.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.autosize/t_example$autosize32290");
+(example.autosize.t_example$autosize32309.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.autosize/t_example$autosize32309");
 }));
 
 /**
- * Positional factory function for example.autosize/t_example$autosize32290.
+ * Positional factory function for example.autosize/t_example$autosize32309.
  */
-example.autosize.__GT_t_example$autosize32290 = (function example$autosize$__GT_t_example$autosize32290(meta32291){
-return (new example.autosize.t_example$autosize32290(meta32291));
+example.autosize.__GT_t_example$autosize32309 = (function example$autosize$__GT_t_example$autosize32309(meta32310){
+return (new example.autosize.t_example$autosize32309(meta32310));
 });
 
 }
 
-return (new example.autosize.t_example$autosize32290(null));
+return (new example.autosize.t_example$autosize32309(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1("abc"),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$inspect_DASH_data,true,cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$autosize,cljs.core.cst$kw$textarea_DASH_example], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"textarea-example",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined') && (typeof example.autosize.t_example$autosize32293 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined') && (typeof example.autosize.t_example$autosize32312 !== 'undefined')){
 } else {
 
 /**
@@ -104,26 +104,26 @@ if((typeof example !== 'undefined') && (typeof example.autosize !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.autosize.t_example$autosize32293 = (function (meta32294){
-this.meta32294 = meta32294;
+example.autosize.t_example$autosize32312 = (function (meta32313){
+this.meta32313 = meta32313;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.autosize.t_example$autosize32293.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32295,meta32294__$1){
+(example.autosize.t_example$autosize32312.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32314,meta32313__$1){
 var self__ = this;
-var _32295__$1 = this;
-return (new example.autosize.t_example$autosize32293(meta32294__$1));
+var _32314__$1 = this;
+return (new example.autosize.t_example$autosize32312(meta32313__$1));
 }));
 
-(example.autosize.t_example$autosize32293.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32295){
+(example.autosize.t_example$autosize32312.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32314){
 var self__ = this;
-var _32295__$1 = this;
-return self__.meta32294;
+var _32314__$1 = this;
+return self__.meta32313;
 }));
 
-(example.autosize.t_example$autosize32293.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.autosize.t_example$autosize32312.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.autosize.t_example$autosize32293.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.autosize.t_example$autosize32312.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (value,_){
@@ -143,28 +143,28 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.autosize.t_example$autosize32293.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32294], null);
+(example.autosize.t_example$autosize32312.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32313], null);
 }));
 
-(example.autosize.t_example$autosize32293.cljs$lang$type = true);
+(example.autosize.t_example$autosize32312.cljs$lang$type = true);
 
-(example.autosize.t_example$autosize32293.cljs$lang$ctorStr = "example.autosize/t_example$autosize32293");
+(example.autosize.t_example$autosize32312.cljs$lang$ctorStr = "example.autosize/t_example$autosize32312");
 
-(example.autosize.t_example$autosize32293.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.autosize/t_example$autosize32293");
+(example.autosize.t_example$autosize32312.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.autosize/t_example$autosize32312");
 }));
 
 /**
- * Positional factory function for example.autosize/t_example$autosize32293.
+ * Positional factory function for example.autosize/t_example$autosize32312.
  */
-example.autosize.__GT_t_example$autosize32293 = (function example$autosize$__GT_t_example$autosize32293(meta32294){
-return (new example.autosize.t_example$autosize32293(meta32294));
+example.autosize.__GT_t_example$autosize32312 = (function example$autosize$__GT_t_example$autosize32312(meta32313){
+return (new example.autosize.t_example$autosize32312(meta32313));
 });
 
 }
 
-return (new example.autosize.t_example$autosize32293(null));
+return (new example.autosize.t_example$autosize32312(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1("abc\nfoo\n\nbar\nzzz"),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$inspect_DASH_data,true,cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));

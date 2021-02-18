@@ -13,7 +13,7 @@ return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.c
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$dropdown,cljs.core.cst$kw$navbar_DASH_links], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"navbar-links",cljs.core.cst$kw$documentation,"If you want to stay on this page, do not click on the items.",cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32848 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32928 !== 'undefined')){
 } else {
 
 /**
@@ -22,26 +22,26 @@ if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.dropdown.t_example$dropdown32848 = (function (meta32849){
-this.meta32849 = meta32849;
+example.dropdown.t_example$dropdown32928 = (function (meta32929){
+this.meta32929 = meta32929;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.dropdown.t_example$dropdown32848.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32850,meta32849__$1){
+(example.dropdown.t_example$dropdown32928.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32930,meta32929__$1){
 var self__ = this;
-var _32850__$1 = this;
-return (new example.dropdown.t_example$dropdown32848(meta32849__$1));
+var _32930__$1 = this;
+return (new example.dropdown.t_example$dropdown32928(meta32929__$1));
 }));
 
-(example.dropdown.t_example$dropdown32848.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32850){
+(example.dropdown.t_example$dropdown32928.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32930){
 var self__ = this;
-var _32850__$1 = this;
-return self__.meta32849;
+var _32930__$1 = this;
+return self__.meta32929;
 }));
 
-(example.dropdown.t_example$dropdown32848.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.dropdown.t_example$dropdown32928.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.dropdown.t_example$dropdown32848.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.dropdown.t_example$dropdown32928.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$div$navbar$navbar_DASH_default,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$ul$nav$navbar_DASH_nav,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$li,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$a,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$href,"#"], null),"Normal list item"], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.dropdown.dropdown_li,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$text,"List item with dropdown",cljs.core.cst$kw$content,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (i){
@@ -57,34 +57,34 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.dropdown.t_example$dropdown32848.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32849], null);
+(example.dropdown.t_example$dropdown32928.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32929], null);
 }));
 
-(example.dropdown.t_example$dropdown32848.cljs$lang$type = true);
+(example.dropdown.t_example$dropdown32928.cljs$lang$type = true);
 
-(example.dropdown.t_example$dropdown32848.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32848");
+(example.dropdown.t_example$dropdown32928.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32928");
 
-(example.dropdown.t_example$dropdown32848.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32848");
+(example.dropdown.t_example$dropdown32928.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32928");
 }));
 
 /**
- * Positional factory function for example.dropdown/t_example$dropdown32848.
+ * Positional factory function for example.dropdown/t_example$dropdown32928.
  */
-example.dropdown.__GT_t_example$dropdown32848 = (function example$dropdown$__GT_t_example$dropdown32848(meta32849){
-return (new example.dropdown.t_example$dropdown32848(meta32849));
+example.dropdown.__GT_t_example$dropdown32928 = (function example$dropdown$__GT_t_example$dropdown32928(meta32929){
+return (new example.dropdown.t_example$dropdown32928(meta32929));
 });
 
 }
 
-return (new example.dropdown.t_example$dropdown32848(null));
+return (new example.dropdown.t_example$dropdown32928(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,null,cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$dropdown,cljs.core.cst$kw$selectbox], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"selectbox",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32852 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32932 !== 'undefined')){
 } else {
 
 /**
@@ -93,33 +93,33 @@ if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.dropdown.t_example$dropdown32852 = (function (meta32853){
-this.meta32853 = meta32853;
+example.dropdown.t_example$dropdown32932 = (function (meta32933){
+this.meta32933 = meta32933;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.dropdown.t_example$dropdown32852.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32854,meta32853__$1){
+(example.dropdown.t_example$dropdown32932.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32934,meta32933__$1){
 var self__ = this;
-var _32854__$1 = this;
-return (new example.dropdown.t_example$dropdown32852(meta32853__$1));
+var _32934__$1 = this;
+return (new example.dropdown.t_example$dropdown32932(meta32933__$1));
 }));
 
-(example.dropdown.t_example$dropdown32852.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32854){
+(example.dropdown.t_example$dropdown32932.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32934){
 var self__ = this;
-var _32854__$1 = this;
-return self__.meta32853;
+var _32934__$1 = this;
+return self__.meta32933;
 }));
 
-(example.dropdown.t_example$dropdown32852.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.dropdown.t_example$dropdown32932.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.dropdown.t_example$dropdown32852.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.dropdown.t_example$dropdown32932.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (value,_){
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.dropdown.dropdown_button,new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$text,"A button with dropdown",cljs.core.cst$kw$content,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (i){
 return new cljs.core.PersistentArrayMap(null, 3, [cljs.core.cst$kw$key,i,cljs.core.cst$kw$value,i,cljs.core.cst$kw$text,["Option ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(i)].join('')], null);
-}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.deref(value),cljs.core.cst$kw$on_DASH_change,(function (p1__32851_SHARP_){
-return cljs.core.reset_BANG_(value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32851_SHARP_));
+}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.deref(value),cljs.core.cst$kw$on_DASH_change,(function (p1__32931_SHARP_){
+return cljs.core.reset_BANG_(value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32931_SHARP_));
 })], null)], null);
 });
 if(cljs.core.fn_QMARK_(v__31365__auto__)){
@@ -132,34 +132,34 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.dropdown.t_example$dropdown32852.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32853], null);
+(example.dropdown.t_example$dropdown32932.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32933], null);
 }));
 
-(example.dropdown.t_example$dropdown32852.cljs$lang$type = true);
+(example.dropdown.t_example$dropdown32932.cljs$lang$type = true);
 
-(example.dropdown.t_example$dropdown32852.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32852");
+(example.dropdown.t_example$dropdown32932.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32932");
 
-(example.dropdown.t_example$dropdown32852.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32852");
+(example.dropdown.t_example$dropdown32932.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32932");
 }));
 
 /**
- * Positional factory function for example.dropdown/t_example$dropdown32852.
+ * Positional factory function for example.dropdown/t_example$dropdown32932.
  */
-example.dropdown.__GT_t_example$dropdown32852 = (function example$dropdown$__GT_t_example$dropdown32852(meta32853){
-return (new example.dropdown.t_example$dropdown32852(meta32853));
+example.dropdown.__GT_t_example$dropdown32932 = (function example$dropdown$__GT_t_example$dropdown32932(meta32933){
+return (new example.dropdown.t_example$dropdown32932(meta32933));
 });
 
 }
 
-return (new example.dropdown.t_example$dropdown32852(null));
+return (new example.dropdown.t_example$dropdown32932(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$inspect_DASH_data,true,cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$dropdown,cljs.core.cst$kw$link], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"link",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32856 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32936 !== 'undefined')){
 } else {
 
 /**
@@ -168,33 +168,33 @@ if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.dropdown.t_example$dropdown32856 = (function (meta32857){
-this.meta32857 = meta32857;
+example.dropdown.t_example$dropdown32936 = (function (meta32937){
+this.meta32937 = meta32937;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.dropdown.t_example$dropdown32856.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32858,meta32857__$1){
+(example.dropdown.t_example$dropdown32936.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32938,meta32937__$1){
 var self__ = this;
-var _32858__$1 = this;
-return (new example.dropdown.t_example$dropdown32856(meta32857__$1));
+var _32938__$1 = this;
+return (new example.dropdown.t_example$dropdown32936(meta32937__$1));
 }));
 
-(example.dropdown.t_example$dropdown32856.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32858){
+(example.dropdown.t_example$dropdown32936.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32938){
 var self__ = this;
-var _32858__$1 = this;
-return self__.meta32857;
+var _32938__$1 = this;
+return self__.meta32937;
 }));
 
-(example.dropdown.t_example$dropdown32856.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.dropdown.t_example$dropdown32936.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.dropdown.t_example$dropdown32856.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.dropdown.t_example$dropdown32936.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (value,_){
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.dropdown.dropdown_a,new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$text,"A link with dropdown",cljs.core.cst$kw$content,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (i){
 return new cljs.core.PersistentArrayMap(null, 3, [cljs.core.cst$kw$key,i,cljs.core.cst$kw$value,i,cljs.core.cst$kw$text,["Option ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(i)].join('')], null);
-}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.deref(value),cljs.core.cst$kw$on_DASH_change,(function (p1__32855_SHARP_){
-return cljs.core.reset_BANG_(value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32855_SHARP_));
+}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.deref(value),cljs.core.cst$kw$on_DASH_change,(function (p1__32935_SHARP_){
+return cljs.core.reset_BANG_(value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32935_SHARP_));
 })], null)], null);
 });
 if(cljs.core.fn_QMARK_(v__31365__auto__)){
@@ -207,34 +207,34 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.dropdown.t_example$dropdown32856.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32857], null);
+(example.dropdown.t_example$dropdown32936.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32937], null);
 }));
 
-(example.dropdown.t_example$dropdown32856.cljs$lang$type = true);
+(example.dropdown.t_example$dropdown32936.cljs$lang$type = true);
 
-(example.dropdown.t_example$dropdown32856.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32856");
+(example.dropdown.t_example$dropdown32936.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32936");
 
-(example.dropdown.t_example$dropdown32856.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32856");
+(example.dropdown.t_example$dropdown32936.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32936");
 }));
 
 /**
- * Positional factory function for example.dropdown/t_example$dropdown32856.
+ * Positional factory function for example.dropdown/t_example$dropdown32936.
  */
-example.dropdown.__GT_t_example$dropdown32856 = (function example$dropdown$__GT_t_example$dropdown32856(meta32857){
-return (new example.dropdown.t_example$dropdown32856(meta32857));
+example.dropdown.__GT_t_example$dropdown32936 = (function example$dropdown$__GT_t_example$dropdown32936(meta32937){
+return (new example.dropdown.t_example$dropdown32936(meta32937));
 });
 
 }
 
-return (new example.dropdown.t_example$dropdown32856(null));
+return (new example.dropdown.t_example$dropdown32936(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$inspect_DASH_data,true,cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$dropdown,cljs.core.cst$kw$selectbox_DASH_2], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"selectbox-2",cljs.core.cst$kw$documentation,"List items with on-click handlers",cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32859 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32939 !== 'undefined')){
 } else {
 
 /**
@@ -243,26 +243,26 @@ if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.dropdown.t_example$dropdown32859 = (function (meta32860){
-this.meta32860 = meta32860;
+example.dropdown.t_example$dropdown32939 = (function (meta32940){
+this.meta32940 = meta32940;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.dropdown.t_example$dropdown32859.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32861,meta32860__$1){
+(example.dropdown.t_example$dropdown32939.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32941,meta32940__$1){
 var self__ = this;
-var _32861__$1 = this;
-return (new example.dropdown.t_example$dropdown32859(meta32860__$1));
+var _32941__$1 = this;
+return (new example.dropdown.t_example$dropdown32939(meta32940__$1));
 }));
 
-(example.dropdown.t_example$dropdown32859.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32861){
+(example.dropdown.t_example$dropdown32939.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32941){
 var self__ = this;
-var _32861__$1 = this;
-return self__.meta32860;
+var _32941__$1 = this;
+return self__.meta32940;
 }));
 
-(example.dropdown.t_example$dropdown32859.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.dropdown.t_example$dropdown32939.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.dropdown.t_example$dropdown32859.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.dropdown.t_example$dropdown32939.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (value,_){
@@ -282,34 +282,34 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.dropdown.t_example$dropdown32859.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32860], null);
+(example.dropdown.t_example$dropdown32939.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32940], null);
 }));
 
-(example.dropdown.t_example$dropdown32859.cljs$lang$type = true);
+(example.dropdown.t_example$dropdown32939.cljs$lang$type = true);
 
-(example.dropdown.t_example$dropdown32859.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32859");
+(example.dropdown.t_example$dropdown32939.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32939");
 
-(example.dropdown.t_example$dropdown32859.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32859");
+(example.dropdown.t_example$dropdown32939.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32939");
 }));
 
 /**
- * Positional factory function for example.dropdown/t_example$dropdown32859.
+ * Positional factory function for example.dropdown/t_example$dropdown32939.
  */
-example.dropdown.__GT_t_example$dropdown32859 = (function example$dropdown$__GT_t_example$dropdown32859(meta32860){
-return (new example.dropdown.t_example$dropdown32859(meta32860));
+example.dropdown.__GT_t_example$dropdown32939 = (function example$dropdown$__GT_t_example$dropdown32939(meta32940){
+return (new example.dropdown.t_example$dropdown32939(meta32940));
 });
 
 }
 
-return (new example.dropdown.t_example$dropdown32859(null));
+return (new example.dropdown.t_example$dropdown32939(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,null,cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$dropdown,cljs.core.cst$kw$options], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"options",cljs.core.cst$kw$documentation,null,cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32863 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined') && (typeof example.dropdown.t_example$dropdown32943 !== 'undefined')){
 } else {
 
 /**
@@ -318,26 +318,26 @@ if((typeof example !== 'undefined') && (typeof example.dropdown !== 'undefined')
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.dropdown.t_example$dropdown32863 = (function (meta32864){
-this.meta32864 = meta32864;
+example.dropdown.t_example$dropdown32943 = (function (meta32944){
+this.meta32944 = meta32944;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.dropdown.t_example$dropdown32863.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32865,meta32864__$1){
+(example.dropdown.t_example$dropdown32943.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32945,meta32944__$1){
 var self__ = this;
-var _32865__$1 = this;
-return (new example.dropdown.t_example$dropdown32863(meta32864__$1));
+var _32945__$1 = this;
+return (new example.dropdown.t_example$dropdown32943(meta32944__$1));
 }));
 
-(example.dropdown.t_example$dropdown32863.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32865){
+(example.dropdown.t_example$dropdown32943.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32945){
 var self__ = this;
-var _32865__$1 = this;
-return self__.meta32864;
+var _32945__$1 = this;
+return self__.meta32944;
 }));
 
-(example.dropdown.t_example$dropdown32863.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.dropdown.t_example$dropdown32943.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.dropdown.t_example$dropdown32863.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
+(example.dropdown.t_example$dropdown32943.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
 var this__31346__auto____$1 = this;
 return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (options,_){
@@ -345,8 +345,8 @@ return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMP
 return cljs.core.swap_BANG_.cljs$core$IFn$_invoke$arity$4(options,cljs.core.assoc,k,v);
 }),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$text,cljs.core.cst$kw$string], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_,cljs.core.cst$kw$bool], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$caret_QMARK_,cljs.core.cst$kw$bool], null)], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.dropdown.dropdown_button,new cljs.core.PersistentArrayMap(null, 6, [cljs.core.cst$kw$text,cljs.core.cst$kw$text.cljs$core$IFn$_invoke$arity$1(cljs.core.deref(options)),cljs.core.cst$kw$content,cljs.core.map.cljs$core$IFn$_invoke$arity$2((function (i){
 return new cljs.core.PersistentArrayMap(null, 3, [cljs.core.cst$kw$key,i,cljs.core.cst$kw$value,i,cljs.core.cst$kw$text,["Option ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(i)].join('')], null);
-}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(cljs.core.deref(options)),cljs.core.cst$kw$on_DASH_change,(function (p1__32862_SHARP_){
-return cljs.core.swap_BANG_.cljs$core$IFn$_invoke$arity$4(options,cljs.core.assoc,cljs.core.cst$kw$value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32862_SHARP_));
+}),cljs.core.range.cljs$core$IFn$_invoke$arity$1((5))),cljs.core.cst$kw$value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(cljs.core.deref(options)),cljs.core.cst$kw$on_DASH_change,(function (p1__32942_SHARP_){
+return cljs.core.swap_BANG_.cljs$core$IFn$_invoke$arity$4(options,cljs.core.assoc,cljs.core.cst$kw$value,cljs.core.cst$kw$value.cljs$core$IFn$_invoke$arity$1(p1__32942_SHARP_));
 }),cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_,cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_.cljs$core$IFn$_invoke$arity$1(cljs.core.deref(options)),cljs.core.cst$kw$caret_QMARK_,cljs.core.cst$kw$caret_QMARK_.cljs$core$IFn$_invoke$arity$1(cljs.core.deref(options))], null)], null)], null);
 });
 if(cljs.core.fn_QMARK_(v__31365__auto__)){
@@ -359,28 +359,28 @@ return reagent.core.as_element(v__31365__auto__);
 })(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.dropdown.t_example$dropdown32863.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32864], null);
+(example.dropdown.t_example$dropdown32943.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32944], null);
 }));
 
-(example.dropdown.t_example$dropdown32863.cljs$lang$type = true);
+(example.dropdown.t_example$dropdown32943.cljs$lang$type = true);
 
-(example.dropdown.t_example$dropdown32863.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32863");
+(example.dropdown.t_example$dropdown32943.cljs$lang$ctorStr = "example.dropdown/t_example$dropdown32943");
 
-(example.dropdown.t_example$dropdown32863.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32863");
+(example.dropdown.t_example$dropdown32943.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.dropdown/t_example$dropdown32943");
 }));
 
 /**
- * Positional factory function for example.dropdown/t_example$dropdown32863.
+ * Positional factory function for example.dropdown/t_example$dropdown32943.
  */
-example.dropdown.__GT_t_example$dropdown32863 = (function example$dropdown$__GT_t_example$dropdown32863(meta32864){
-return (new example.dropdown.t_example$dropdown32863(meta32864));
+example.dropdown.__GT_t_example$dropdown32943 = (function example$dropdown$__GT_t_example$dropdown32943(meta32944){
+return (new example.dropdown.t_example$dropdown32943(meta32944));
 });
 
 }
 
-return (new example.dropdown.t_example$dropdown32863(null));
+return (new example.dropdown.t_example$dropdown32943(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$text,"A dropdown button",cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_,true,cljs.core.cst$kw$caret_QMARK_,true,cljs.core.cst$kw$value,null], null)),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$inspect_DASH_data,true,cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
