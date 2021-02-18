@@ -7,7 +7,7 @@ if [[ ! -d gh-pages ]]; then
 fi
 
 (
-cd gh-pages
+cd gh-pages || exit
 git pull
 )
 
@@ -16,10 +16,10 @@ lein less4clj once
 
 rm -rf gh-pages/*
 cp -r build-target/public/* gh-pages
-cp example-src/html/index.hmtl gh-pages
+cp example-src/html/public/index.html gh-pages
 cp dev-target/public/example.css gh-pages
 
-cd gh-pages
+cd gh-pages || exit
 git add --all
 git commit -m "Build example from ${rev}."
 git push origin gh-pages

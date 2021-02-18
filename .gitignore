@@ -7,6 +7,6 @@ pom.xml
 figwheel_server.log
 /.idea
 /komponentit.iml
-/project.clj
 .cljs_rhino_repl
 dev-target
+build-target
