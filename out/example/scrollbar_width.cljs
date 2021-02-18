@@ -38,16 +38,17 @@ header is fixed (is shown at the top of the table always)."))
   until used, and drawn over the contents, the scrollbar width might be zero,
   and header will have 0px padding."
   [:div
-   [scrollbar-width/scrollbar-padding
-    {:style {:border "1px solid red"
-             :background "green"}}
-    [:table.scroll-table
-     {:style {:background "white"}}
-     [:thead
-      [:tr
-       [:th {:style {:width "50%"}} "50%"]
-       [:th {:style {:width "30%"}} "30%"]
-       [:th "20%"]]]]]
+   [:div {:style {:border "1px solid red"}}
+    ;; Adding paddings or borders to scrollbar-padding component would throw of the calculation.
+    [scrollbar-width/scrollbar-padding
+     {:style {:background "green"}}
+     [:table.scroll-table
+      {:style {:background "white"}}
+      [:thead
+       [:tr
+        [:th {:style {:width "50%"}} "50%"]
+        [:th {:style {:width "30%"}} "30%"]
+        [:th "20%"]]]]]]
    [:div.scroll-container
     {:style {:border "1px solid red"}}
     [:table.scroll-table
