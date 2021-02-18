@@ -18,30 +18,30 @@ cljs.core.enable_console_print_BANG_();
  * - `:link-props` (Optional) React props to dropdown item element
  * - `:text` Text
  */
-komponentit.dropdown.__GT_menu_item = (function komponentit$dropdown$__GT_menu_item(open_QMARK_,p__37562,p__37563){
-var map__37564 = p__37562;
-var map__37564__$1 = (((((!((map__37564 == null))))?(((((map__37564.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37564.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37564):map__37564);
-var dropdown_opts = map__37564__$1;
-var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37564__$1,cljs.core.cst$kw$on_DASH_change);
-var close_on_click_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37564__$1,cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_);
-var disabled = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37564__$1,cljs.core.cst$kw$disabled);
-var active_item_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37564__$1,cljs.core.cst$kw$active_DASH_item_DASH_class,"dropdown-menu__item--active");
-var separator_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37564__$1,cljs.core.cst$kw$separator_DASH_class,"divider");
-var menu_item_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37564__$1,cljs.core.cst$kw$menu_DASH_item_DASH_class);
-var menu_item_a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37564__$1,cljs.core.cst$kw$menu_DASH_item_DASH_a_DASH_class);
-var map__37565 = p__37563;
-var map__37565__$1 = (((((!((map__37565 == null))))?(((((map__37565.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37565.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37565):map__37565);
-var item_opts = map__37565__$1;
-var separator = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$separator);
-var href = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$href);
-var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$text);
-var props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$props);
-var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37565__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$li);
-var link_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37565__$1,cljs.core.cst$kw$link_DASH_el,cljs.core.cst$kw$a);
-var key = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$key);
-var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$value);
-var on_click = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$on_DASH_click);
-var link_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37565__$1,cljs.core.cst$kw$link_DASH_props);
+komponentit.dropdown.__GT_menu_item = (function komponentit$dropdown$__GT_menu_item(open_QMARK_,p__32317,p__32318){
+var map__32319 = p__32317;
+var map__32319__$1 = (((((!((map__32319 == null))))?(((((map__32319.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32319.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32319):map__32319);
+var dropdown_opts = map__32319__$1;
+var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32319__$1,cljs.core.cst$kw$on_DASH_change);
+var close_on_click_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32319__$1,cljs.core.cst$kw$close_DASH_on_DASH_click_QMARK_);
+var disabled = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32319__$1,cljs.core.cst$kw$disabled);
+var active_item_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32319__$1,cljs.core.cst$kw$active_DASH_item_DASH_class,"dropdown-menu__item--active");
+var separator_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32319__$1,cljs.core.cst$kw$separator_DASH_class,"divider");
+var menu_item_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32319__$1,cljs.core.cst$kw$menu_DASH_item_DASH_class);
+var menu_item_a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32319__$1,cljs.core.cst$kw$menu_DASH_item_DASH_a_DASH_class);
+var map__32320 = p__32318;
+var map__32320__$1 = (((((!((map__32320 == null))))?(((((map__32320.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32320.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32320):map__32320);
+var item_opts = map__32320__$1;
+var separator = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$separator);
+var href = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$href);
+var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$text);
+var props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$props);
+var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32320__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$li);
+var link_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32320__$1,cljs.core.cst$kw$link_DASH_el,cljs.core.cst$kw$a);
+var key = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$key);
+var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$value);
+var on_click = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$on_DASH_click);
+var link_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32320__$1,cljs.core.cst$kw$link_DASH_props);
 var menu_item_class__$1 = (function (){var or__4185__auto__ = cljs.core.cst$kw$menu_DASH_item_DASH_class.cljs$core$IFn$_invoke$arity$1(item_opts);
 if(cljs.core.truth_(or__4185__auto__)){
 return or__4185__auto__;
@@ -114,33 +114,33 @@ cljs.core.swap_BANG_.cljs$core$IFn$_invoke$arity$2(open_QMARK_,cljs.core.not);
 
 return null;
 });
-komponentit.dropdown.caret_SINGLEQUOTE_ = (function komponentit$dropdown$caret_SINGLEQUOTE_(open_QMARK_,p__37568){
-var map__37569 = p__37568;
-var map__37569__$1 = (((((!((map__37569 == null))))?(((((map__37569.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37569.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37569):map__37569);
-var caret_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37569__$1,cljs.core.cst$kw$caret_QMARK_);
-var caret_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37569__$1,cljs.core.cst$kw$caret_DASH_class,"caret");
-var caret_up_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37569__$1,cljs.core.cst$kw$caret_DASH_up_DASH_class,"caret");
+komponentit.dropdown.caret_SINGLEQUOTE_ = (function komponentit$dropdown$caret_SINGLEQUOTE_(open_QMARK_,p__32323){
+var map__32324 = p__32323;
+var map__32324__$1 = (((((!((map__32324 == null))))?(((((map__32324.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32324.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32324):map__32324);
+var caret_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32324__$1,cljs.core.cst$kw$caret_QMARK_);
+var caret_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32324__$1,cljs.core.cst$kw$caret_DASH_class,"caret");
+var caret_up_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32324__$1,cljs.core.cst$kw$caret_DASH_up_DASH_class,"caret");
 if((!(caret_QMARK_ === false))){
 return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$span," ",new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$span,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$class,(cljs.core.truth_(cljs.core.deref(open_QMARK_))?caret_up_class:caret_class)], null)], null)], null);
 } else {
 return null;
 }
 });
-komponentit.dropdown.dropdown_SINGLEQUOTE_ = (function komponentit$dropdown$dropdown_SINGLEQUOTE_(open_QMARK_,ref,dropdown,p__37571){
-var map__37572 = p__37571;
-var map__37572__$1 = (((((!((map__37572 == null))))?(((((map__37572.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37572.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37572):map__37572);
-var props = map__37572__$1;
-var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$text);
-var a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$a_DASH_class);
-var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37572__$1,cljs.core.cst$kw$container_DASH_class,"dropdown-container");
-var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37572__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$a);
-var button_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$button_DASH_class);
-var toggle_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$toggle_DASH_props);
-var open_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37572__$1,cljs.core.cst$kw$open_DASH_class,"open");
-var container_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37572__$1,cljs.core.cst$kw$container_DASH_el,cljs.core.cst$kw$div);
-var class$ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$class);
-var li_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37572__$1,cljs.core.cst$kw$li_DASH_class);
-var toggle_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37572__$1,cljs.core.cst$kw$toggle_DASH_class,"dropdown-toggle");
+komponentit.dropdown.dropdown_SINGLEQUOTE_ = (function komponentit$dropdown$dropdown_SINGLEQUOTE_(open_QMARK_,ref,dropdown,p__32326){
+var map__32327 = p__32326;
+var map__32327__$1 = (((((!((map__32327 == null))))?(((((map__32327.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32327.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32327):map__32327);
+var props = map__32327__$1;
+var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$text);
+var a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$a_DASH_class);
+var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32327__$1,cljs.core.cst$kw$container_DASH_class,"dropdown-container");
+var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32327__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$a);
+var button_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$button_DASH_class);
+var toggle_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$toggle_DASH_props);
+var open_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32327__$1,cljs.core.cst$kw$open_DASH_class,"open");
+var container_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32327__$1,cljs.core.cst$kw$container_DASH_el,cljs.core.cst$kw$div);
+var class$ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$class);
+var li_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32327__$1,cljs.core.cst$kw$li_DASH_class);
+var toggle_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32327__$1,cljs.core.cst$kw$toggle_DASH_class,"dropdown-toggle");
 return null;
 });
 /**
@@ -181,25 +181,25 @@ return null;
  */
 komponentit.dropdown.dropdown = (function komponentit$dropdown$dropdown(_){
 var open_QMARK_ = reagent.core.atom.cljs$core$IFn$_invoke$arity$1(false);
-return (function (p__37574){
-var map__37575 = p__37574;
-var map__37575__$1 = (((((!((map__37575 == null))))?(((((map__37575.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37575.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37575):map__37575);
-var props = map__37575__$1;
-var container_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$container_DASH_props);
-var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$text);
-var a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$a_DASH_class);
-var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$container_DASH_class,"dropdown-container");
-var children = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$children);
-var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$a);
-var button_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$button_DASH_class);
-var toggle_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$toggle_DASH_props);
-var content = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$content);
-var open_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$open_DASH_class,"open");
-var dropdown_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$dropdown_DASH_class,"dropdown-menu");
-var container_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$container_DASH_el,cljs.core.cst$kw$div);
-var class$ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$class);
-var li_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37575__$1,cljs.core.cst$kw$li_DASH_class);
-var toggle_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__37575__$1,cljs.core.cst$kw$toggle_DASH_class,"dropdown-toggle");
+return (function (p__32329){
+var map__32330 = p__32329;
+var map__32330__$1 = (((((!((map__32330 == null))))?(((((map__32330.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__32330.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__32330):map__32330);
+var props = map__32330__$1;
+var container_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$container_DASH_props);
+var text = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$text);
+var a_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$a_DASH_class);
+var container_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$container_DASH_class,"dropdown-container");
+var children = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$children);
+var el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$el,cljs.core.cst$kw$a);
+var button_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$button_DASH_class);
+var toggle_props = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$toggle_DASH_props);
+var content = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$content);
+var open_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$open_DASH_class,"open");
+var dropdown_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$dropdown_DASH_class,"dropdown-menu");
+var container_el = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$container_DASH_el,cljs.core.cst$kw$div);
+var class$ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$class);
+var li_class = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__32330__$1,cljs.core.cst$kw$li_DASH_class);
+var toggle_class = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__32330__$1,cljs.core.cst$kw$toggle_DASH_class,"dropdown-toggle");
 if(cljs.core.truth_(goog.DEBUG)){
 if(cljs.core.truth_(container_class)){
 } else {
@@ -226,8 +226,8 @@ return cljs.core.reset_BANG_(open_QMARK_,false);
 return null;
 }
 }),cljs.core.cst$kw$on_DASH_key_DASH_down,(function (e){
-var G__37577 = e.keyCode;
-switch (G__37577) {
+var G__32332 = e.keyCode;
+switch (G__32332) {
 case (27):
 return cljs.core.reset_BANG_(open_QMARK_,false);
 

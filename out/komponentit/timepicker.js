@@ -40,35 +40,35 @@ komponentit.timepicker.clone_date = (function komponentit$timepicker$clone_date(
 if(cljs.core.truth_(value)){
 return value.clone();
 } else {
-var G__37102 = (new goog.date.UtcDateTime());
-G__37102.setHours((0));
+var G__31857 = (new goog.date.UtcDateTime());
+G__31857.setHours((0));
 
-G__37102.setMinutes((0));
+G__31857.setMinutes((0));
 
-G__37102.setSeconds((0));
+G__31857.setSeconds((0));
 
-return G__37102;
+return G__31857;
 }
 });
-komponentit.timepicker.timepicker = (function komponentit$timepicker$timepicker(p__37103){
-var map__37104 = p__37103;
-var map__37104__$1 = (((((!((map__37104 == null))))?(((((map__37104.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37104.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37104):map__37104);
-var opts = map__37104__$1;
-var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37104__$1,cljs.core.cst$kw$value);
-var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37104__$1,cljs.core.cst$kw$on_DASH_change);
-var on_blur = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37104__$1,cljs.core.cst$kw$on_DASH_blur);
-var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37104__$1,cljs.core.cst$kw$clearable_QMARK_);
+komponentit.timepicker.timepicker = (function komponentit$timepicker$timepicker(p__31858){
+var map__31859 = p__31858;
+var map__31859__$1 = (((((!((map__31859 == null))))?(((((map__31859.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__31859.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__31859):map__31859);
+var opts = map__31859__$1;
+var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31859__$1,cljs.core.cst$kw$value);
+var on_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31859__$1,cljs.core.cst$kw$on_DASH_change);
+var on_blur = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31859__$1,cljs.core.cst$kw$on_DASH_blur);
+var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31859__$1,cljs.core.cst$kw$clearable_QMARK_);
 var hours = reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null);
 var minutes = reagent.core.atom.cljs$core$IFn$_invoke$arity$1(null);
-return (function (p__37106){
-var map__37107 = p__37106;
-var map__37107__$1 = (((((!((map__37107 == null))))?(((((map__37107.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37107.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37107):map__37107);
-var opts__$1 = map__37107__$1;
-var value__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37107__$1,cljs.core.cst$kw$value);
-var on_change__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37107__$1,cljs.core.cst$kw$on_DASH_change);
-var on_select = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37107__$1,cljs.core.cst$kw$on_DASH_select);
-var on_blur__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37107__$1,cljs.core.cst$kw$on_DASH_blur);
-var clearable_QMARK___$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37107__$1,cljs.core.cst$kw$clearable_QMARK_);
+return (function (p__31861){
+var map__31862 = p__31861;
+var map__31862__$1 = (((((!((map__31862 == null))))?(((((map__31862.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__31862.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__31862):map__31862);
+var opts__$1 = map__31862__$1;
+var value__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31862__$1,cljs.core.cst$kw$value);
+var on_change__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31862__$1,cljs.core.cst$kw$on_DASH_change);
+var on_select = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31862__$1,cljs.core.cst$kw$on_DASH_select);
+var on_blur__$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31862__$1,cljs.core.cst$kw$on_DASH_blur);
+var clearable_QMARK___$1 = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__31862__$1,cljs.core.cst$kw$clearable_QMARK_);
 if(cljs.core.truth_(on_select)){
 console.warn("komponentit.timepicker/timepicker :on-select option is deprecated, use :on-change instead.");
 } else {
@@ -82,16 +82,16 @@ return on_select;
 }
 })();
 return new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$div$timepicker,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$input$form_DASH_control$timepicker_DASH_hours,cljs.core.PersistentHashMap.fromArrays([cljs.core.cst$kw$min,cljs.core.cst$kw$on_DASH_key_DASH_press,cljs.core.cst$kw$placeholder,cljs.core.cst$kw$value,cljs.core.cst$kw$on_DASH_blur,cljs.core.cst$kw$type,cljs.core.cst$kw$max,cljs.core.cst$kw$on_DASH_change,cljs.core.cst$kw$step],[(0),(function (e){
-var G__37109_37119 = e.key;
-switch (G__37109_37119) {
+var G__31864_31874 = e.key;
+switch (G__31864_31874) {
 case "Enter":
 if(cljs.core.not(isNaN(cljs.core.deref(hours)))){
-var G__37110_37121 = (function (){var G__37111 = komponentit.timepicker.clone_date(value__$1);
-G__37111.setHours(cljs.core.deref(hours));
+var G__31865_31876 = (function (){var G__31866 = komponentit.timepicker.clone_date(value__$1);
+G__31866.setHours(cljs.core.deref(hours));
 
-return G__37111;
+return G__31866;
 })();
-(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__37110_37121) : on_change__$2.call(null,G__37110_37121));
+(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__31865_31876) : on_change__$2.call(null,G__31865_31876));
 } else {
 }
 
@@ -115,12 +115,12 @@ return null;
 }
 })(),(function (e){
 if(cljs.core.not(isNaN(cljs.core.deref(hours)))){
-var G__37112_37122 = (function (){var G__37113 = komponentit.timepicker.clone_date(value__$1);
-G__37113.setHours(cljs.core.deref(hours));
+var G__31867_31877 = (function (){var G__31868 = komponentit.timepicker.clone_date(value__$1);
+G__31868.setHours(cljs.core.deref(hours));
 
-return G__37113;
+return G__31868;
 })();
-(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__37112_37122) : on_change__$2.call(null,G__37112_37122));
+(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__31867_31877) : on_change__$2.call(null,G__31867_31877));
 } else {
 }
 
@@ -141,16 +141,16 @@ return cljs.core.reset_BANG_(hours,x);
 return null;
 }
 }),(1)])], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$input$form_DASH_control$timepicker_DASH_minutes,cljs.core.PersistentHashMap.fromArrays([cljs.core.cst$kw$min,cljs.core.cst$kw$on_DASH_key_DASH_press,cljs.core.cst$kw$placeholder,cljs.core.cst$kw$value,cljs.core.cst$kw$on_DASH_blur,cljs.core.cst$kw$type,cljs.core.cst$kw$max,cljs.core.cst$kw$on_DASH_change,cljs.core.cst$kw$step],[(0),(function (e){
-var G__37114_37123 = e.key;
-switch (G__37114_37123) {
+var G__31869_31878 = e.key;
+switch (G__31869_31878) {
 case "Enter":
 if(cljs.core.not(isNaN(cljs.core.deref(hours)))){
-var G__37115_37125 = (function (){var G__37116 = komponentit.timepicker.clone_date(value__$1);
-G__37116.setMinutes(cljs.core.deref(minutes));
+var G__31870_31880 = (function (){var G__31871 = komponentit.timepicker.clone_date(value__$1);
+G__31871.setMinutes(cljs.core.deref(minutes));
 
-return G__37116;
+return G__31871;
 })();
-(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__37115_37125) : on_change__$2.call(null,G__37115_37125));
+(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__31870_31880) : on_change__$2.call(null,G__31870_31880));
 } else {
 }
 
@@ -174,12 +174,12 @@ return null;
 }
 })(),(function (e){
 if(cljs.core.not(isNaN(cljs.core.deref(minutes)))){
-var G__37117_37126 = (function (){var G__37118 = komponentit.timepicker.clone_date(value__$1);
-G__37118.setMinutes(cljs.core.deref(minutes));
+var G__31872_31881 = (function (){var G__31873 = komponentit.timepicker.clone_date(value__$1);
+G__31873.setMinutes(cljs.core.deref(minutes));
 
-return G__37118;
+return G__31873;
 })();
-(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__37117_37126) : on_change__$2.call(null,G__37117_37126));
+(on_change__$2.cljs$core$IFn$_invoke$arity$1 ? on_change__$2.cljs$core$IFn$_invoke$arity$1(G__31872_31881) : on_change__$2.call(null,G__31872_31881));
 } else {
 }
 

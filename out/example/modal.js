@@ -12,7 +12,7 @@ return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.c
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$modal,cljs.core.cst$kw$modal], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"modal",cljs.core.cst$kw$documentation,"With basic modal the buttons need to be defined manually",cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') && (typeof example.modal.t_example$modal38141 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') && (typeof example.modal.t_example$modal32896 !== 'undefined')){
 } else {
 
 /**
@@ -21,29 +21,29 @@ if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') &&
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.modal.t_example$modal38141 = (function (meta38142){
-this.meta38142 = meta38142;
+example.modal.t_example$modal32896 = (function (meta32897){
+this.meta32897 = meta32897;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.modal.t_example$modal38141.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_38143,meta38142__$1){
+(example.modal.t_example$modal32896.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32898,meta32897__$1){
 var self__ = this;
-var _38143__$1 = this;
-return (new example.modal.t_example$modal38141(meta38142__$1));
+var _32898__$1 = this;
+return (new example.modal.t_example$modal32896(meta32897__$1));
 }));
 
-(example.modal.t_example$modal38141.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_38143){
+(example.modal.t_example$modal32896.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32898){
 var self__ = this;
-var _38143__$1 = this;
-return self__.meta38142;
+var _32898__$1 = this;
+return self__.meta32897;
 }));
 
-(example.modal.t_example$modal38141.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.modal.t_example$modal32896.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.modal.t_example$modal38141.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__36182__auto__,devcard_opts__36183__auto__){
+(example.modal.t_example$modal32896.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
-var this__36182__auto____$1 = this;
-return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__36183__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__36201__auto__ = (function (open_QMARK_,_){
+var this__31346__auto____$1 = this;
+return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (open_QMARK_,_){
 return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$div,(cljs.core.truth_(cljs.core.deref(open_QMARK_))?new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.modal.modal,new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$title,"Example modal",cljs.core.cst$kw$content,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$p,"Some content"], null),cljs.core.cst$kw$footer,new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$button$btn$btn_DASH_default,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$on_DASH_click,(function (){
 return cljs.core.reset_BANG_(open_QMARK_,false);
 })], null),"Close"], null)], null),cljs.core.cst$kw$on_DASH_close,(function (){
@@ -52,44 +52,44 @@ return cljs.core.reset_BANG_(open_QMARK_,false);
 return cljs.core.reset_BANG_(open_QMARK_,true);
 })], null),"Open"], null)], null);
 });
-if(cljs.core.fn_QMARK_(v__36201__auto__)){
-return (function (data_atom__36202__auto__,owner__36203__auto__){
-return reagent.core.as_element(new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [v__36201__auto__,data_atom__36202__auto__,owner__36203__auto__], null));
+if(cljs.core.fn_QMARK_(v__31365__auto__)){
+return (function (data_atom__31366__auto__,owner__31367__auto__){
+return reagent.core.as_element(new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [v__31365__auto__,data_atom__31366__auto__,owner__31367__auto__], null));
 });
 } else {
-return reagent.core.as_element(v__36201__auto__);
+return reagent.core.as_element(v__31365__auto__);
 }
-})(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__36183__auto__))], 0))], 0));
+})(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.modal.t_example$modal38141.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta38142], null);
+(example.modal.t_example$modal32896.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32897], null);
 }));
 
-(example.modal.t_example$modal38141.cljs$lang$type = true);
+(example.modal.t_example$modal32896.cljs$lang$type = true);
 
-(example.modal.t_example$modal38141.cljs$lang$ctorStr = "example.modal/t_example$modal38141");
+(example.modal.t_example$modal32896.cljs$lang$ctorStr = "example.modal/t_example$modal32896");
 
-(example.modal.t_example$modal38141.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.modal/t_example$modal38141");
+(example.modal.t_example$modal32896.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.modal/t_example$modal32896");
 }));
 
 /**
- * Positional factory function for example.modal/t_example$modal38141.
+ * Positional factory function for example.modal/t_example$modal32896.
  */
-example.modal.__GT_t_example$modal38141 = (function example$modal$__GT_t_example$modal38141(meta38142){
-return (new example.modal.t_example$modal38141(meta38142));
+example.modal.__GT_t_example$modal32896 = (function example$modal$__GT_t_example$modal32896(meta32897){
+return (new example.modal.t_example$modal32896(meta32897));
 });
 
 }
 
-return (new example.modal.t_example$modal38141(null));
+return (new example.modal.t_example$modal32896(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(false),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
 devcards.core.register_card(new cljs.core.PersistentArrayMap(null, 2, [cljs.core.cst$kw$path,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$example$modal,cljs.core.cst$kw$confirm_DASH_modal], null),cljs.core.cst$kw$func,(function (){
 return devcards.core.card_base(new cljs.core.PersistentArrayMap(null, 5, [cljs.core.cst$kw$name,"confirm-modal",cljs.core.cst$kw$documentation,"Confirm modal provides default buttons",cljs.core.cst$kw$main_DASH_obj,(function (){
-if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') && (typeof example.modal.t_example$modal38144 !== 'undefined')){
+if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') && (typeof example.modal.t_example$modal32899 !== 'undefined')){
 } else {
 
 /**
@@ -98,29 +98,29 @@ if((typeof example !== 'undefined') && (typeof example.modal !== 'undefined') &&
  * @implements {cljs.core.IWithMeta}
  * @implements {devcards.core.IDevcardOptions}
 */
-example.modal.t_example$modal38144 = (function (meta38145){
-this.meta38145 = meta38145;
+example.modal.t_example$modal32899 = (function (meta32900){
+this.meta32900 = meta32900;
 this.cljs$lang$protocol_mask$partition0$ = 393216;
 this.cljs$lang$protocol_mask$partition1$ = 0;
 });
-(example.modal.t_example$modal38144.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_38146,meta38145__$1){
+(example.modal.t_example$modal32899.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = (function (_32901,meta32900__$1){
 var self__ = this;
-var _38146__$1 = this;
-return (new example.modal.t_example$modal38144(meta38145__$1));
+var _32901__$1 = this;
+return (new example.modal.t_example$modal32899(meta32900__$1));
 }));
 
-(example.modal.t_example$modal38144.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_38146){
+(example.modal.t_example$modal32899.prototype.cljs$core$IMeta$_meta$arity$1 = (function (_32901){
 var self__ = this;
-var _38146__$1 = this;
-return self__.meta38145;
+var _32901__$1 = this;
+return self__.meta32900;
 }));
 
-(example.modal.t_example$modal38144.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
+(example.modal.t_example$modal32899.prototype.devcards$core$IDevcardOptions$ = cljs.core.PROTOCOL_SENTINEL);
 
-(example.modal.t_example$modal38144.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__36182__auto__,devcard_opts__36183__auto__){
+(example.modal.t_example$modal32899.prototype.devcards$core$IDevcardOptions$_devcard_options$arity$2 = (function (this__31346__auto__,devcard_opts__31347__auto__){
 var self__ = this;
-var this__36182__auto____$1 = this;
-return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__36183__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__36201__auto__ = (function (open_QMARK_,_){
+var this__31346__auto____$1 = this;
+return cljs.core.assoc.cljs$core$IFn$_invoke$arity$variadic(devcard_opts__31347__auto__,cljs.core.cst$kw$main_DASH_obj,(function (){var v__31365__auto__ = (function (open_QMARK_,_){
 return new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$div,(cljs.core.truth_(cljs.core.deref(open_QMARK_))?new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [komponentit.modal.confirm_modal,new cljs.core.PersistentArrayMap(null, 4, [cljs.core.cst$kw$title,"Example confirm-modal",cljs.core.cst$kw$content,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$p,"Would you please confirm this action?"], null),cljs.core.cst$kw$success,(function (){
 cljs.core.reset_BANG_(open_QMARK_,false);
 
@@ -131,38 +131,38 @@ return cljs.core.reset_BANG_(open_QMARK_,false);
 return cljs.core.reset_BANG_(open_QMARK_,true);
 })], null),"Open"], null)], null);
 });
-if(cljs.core.fn_QMARK_(v__36201__auto__)){
-return (function (data_atom__36202__auto__,owner__36203__auto__){
-return reagent.core.as_element(new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [v__36201__auto__,data_atom__36202__auto__,owner__36203__auto__], null));
+if(cljs.core.fn_QMARK_(v__31365__auto__)){
+return (function (data_atom__31366__auto__,owner__31367__auto__){
+return reagent.core.as_element(new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [v__31365__auto__,data_atom__31366__auto__,owner__31367__auto__], null));
 });
 } else {
-return reagent.core.as_element(v__36201__auto__);
+return reagent.core.as_element(v__31365__auto__);
 }
-})(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__36183__auto__))], 0))], 0));
+})(),cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.cst$kw$options,cljs.core.merge.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([cljs.core.PersistentArrayMap.EMPTY,devcards.core.assert_options_map(cljs.core.cst$kw$options.cljs$core$IFn$_invoke$arity$1(devcard_opts__31347__auto__))], 0))], 0));
 }));
 
-(example.modal.t_example$modal38144.getBasis = (function (){
-return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta38145], null);
+(example.modal.t_example$modal32899.getBasis = (function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$sym$meta32900], null);
 }));
 
-(example.modal.t_example$modal38144.cljs$lang$type = true);
+(example.modal.t_example$modal32899.cljs$lang$type = true);
 
-(example.modal.t_example$modal38144.cljs$lang$ctorStr = "example.modal/t_example$modal38144");
+(example.modal.t_example$modal32899.cljs$lang$ctorStr = "example.modal/t_example$modal32899");
 
-(example.modal.t_example$modal38144.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
-return cljs.core._write(writer__4429__auto__,"example.modal/t_example$modal38144");
+(example.modal.t_example$modal32899.cljs$lang$ctorPrWriter = (function (this__4428__auto__,writer__4429__auto__,opt__4430__auto__){
+return cljs.core._write(writer__4429__auto__,"example.modal/t_example$modal32899");
 }));
 
 /**
- * Positional factory function for example.modal/t_example$modal38144.
+ * Positional factory function for example.modal/t_example$modal32899.
  */
-example.modal.__GT_t_example$modal38144 = (function example$modal$__GT_t_example$modal38144(meta38145){
-return (new example.modal.t_example$modal38144(meta38145));
+example.modal.__GT_t_example$modal32899 = (function example$modal$__GT_t_example$modal32899(meta32900){
+return (new example.modal.t_example$modal32899(meta32900));
 });
 
 }
 
-return (new example.modal.t_example$modal38144(null));
+return (new example.modal.t_example$modal32899(null));
 })()
 ,cljs.core.cst$kw$initial_DASH_data,reagent.core.atom.cljs$core$IFn$_invoke$arity$1(false),cljs.core.cst$kw$options,new cljs.core.PersistentArrayMap(null, 1, [cljs.core.cst$kw$watch_DASH_atom,false], null)], null));
 })], null));
