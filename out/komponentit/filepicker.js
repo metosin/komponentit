@@ -6,8 +6,8 @@ goog.require('goog.dom');
 goog.require('reagent.core');
 goog.require('reagent.ratom');
 komponentit.filepicker.humanize_filesize = (function komponentit$filepicker$humanize_filesize(var_args){
-var G__37452 = arguments.length;
-switch (G__37452) {
+var G__37469 = arguments.length;
+switch (G__37469) {
 case 1:
 return komponentit.filepicker.humanize_filesize.cljs$core$IFn$_invoke$arity$1((arguments[(0)]));
 
@@ -26,12 +26,12 @@ throw (new Error(["Invalid arity: ",cljs.core.str.cljs$core$IFn$_invoke$arity$1(
 return komponentit.filepicker.humanize_filesize.cljs$core$IFn$_invoke$arity$2(bytes,null);
 }));
 
-(komponentit.filepicker.humanize_filesize.cljs$core$IFn$_invoke$arity$2 = (function (bytes,p__37453){
-var map__37454 = p__37453;
-var map__37454__$1 = (((((!((map__37454 == null))))?(((((map__37454.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37454.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37454):map__37454);
-var locale = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37454__$1,cljs.core.cst$kw$locale);
-var iec_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37454__$1,cljs.core.cst$kw$iec_QMARK_);
-var locale_opts = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37454__$1,cljs.core.cst$kw$locale_DASH_opts);
+(komponentit.filepicker.humanize_filesize.cljs$core$IFn$_invoke$arity$2 = (function (bytes,p__37470){
+var map__37471 = p__37470;
+var map__37471__$1 = (((((!((map__37471 == null))))?(((((map__37471.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37471.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37471):map__37471);
+var locale = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37471__$1,cljs.core.cst$kw$locale);
+var iec_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37471__$1,cljs.core.cst$kw$iec_QMARK_);
+var locale_opts = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37471__$1,cljs.core.cst$kw$locale_DASH_opts);
 var units = (cljs.core.truth_(iec_QMARK_)?new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, ["bytes","KiB","MiB","GiB","TiB","PiB"], null):new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, ["bytes","kB","MB","GB","TB","PB"], null));
 var m = (cljs.core.truth_(iec_QMARK_)?(1024):(1000));
 var unit = (((bytes === (0)))?(0):Math.floor((Math.log(bytes) / Math.log(m))));
@@ -54,26 +54,26 @@ return cljs.core.PersistentArrayMap.EMPTY;
 (komponentit.filepicker.humanize_filesize.cljs$lang$maxFixedArity = 2);
 
 komponentit.filepicker.file_list__GT_vec = (function komponentit$filepicker$file_list__GT_vec(file_list){
-return cljs.core.vec(cljs.core.mapv.cljs$core$IFn$_invoke$arity$2((function (p1__37457_SHARP_){
-return file_list.item(p1__37457_SHARP_);
+return cljs.core.vec(cljs.core.mapv.cljs$core$IFn$_invoke$arity$2((function (p1__37474_SHARP_){
+return file_list.item(p1__37474_SHARP_);
 }),cljs.core.range.cljs$core$IFn$_invoke$arity$1(file_list.length)));
 });
 komponentit.filepicker.noop = cljs.core.constantly(null);
 komponentit.filepicker.filepicker = (function komponentit$filepicker$filepicker(_){
 var input_ref = cljs.core.atom.cljs$core$IFn$_invoke$arity$1(null);
-var input_ref_fn = (function (p1__37458_SHARP_){
-return cljs.core.reset_BANG_(input_ref,p1__37458_SHARP_);
+var input_ref_fn = (function (p1__37475_SHARP_){
+return cljs.core.reset_BANG_(input_ref,p1__37475_SHARP_);
 });
-return (function (p__37459){
-var map__37460 = p__37459;
-var map__37460__$1 = (((((!((map__37460 == null))))?(((((map__37460.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37460.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37460):map__37460);
-var opts = map__37460__$1;
-var on_select = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$on_DASH_select);
-var on_blur = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$on_DASH_blur);
-var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$value);
-var file_select_label = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$file_DASH_select_DASH_label);
-var on_clear = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$on_DASH_clear);
-var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37460__$1,cljs.core.cst$kw$clearable_QMARK_);
+return (function (p__37476){
+var map__37477 = p__37476;
+var map__37477__$1 = (((((!((map__37477 == null))))?(((((map__37477.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37477.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37477):map__37477);
+var opts = map__37477__$1;
+var on_select = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$on_DASH_select);
+var on_blur = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$on_DASH_blur);
+var value = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$value);
+var file_select_label = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$file_DASH_select_DASH_label);
+var on_clear = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$on_DASH_clear);
+var clearable_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37477__$1,cljs.core.cst$kw$clearable_QMARK_);
 var on_select__$1 = (function (){var or__4185__auto__ = on_select;
 if(cljs.core.truth_(or__4185__auto__)){
 return or__4185__auto__;
@@ -119,10 +119,10 @@ return (on_clear__$1.cljs$core$IFn$_invoke$arity$0 ? on_clear__$1.cljs$core$IFn$
 })], null),"\u00D7"], null):null),(cljs.core.truth_(value)?new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$span$selected_DASH_file," ",value.name,", ",komponentit.filepicker.humanize_filesize.cljs$core$IFn$_invoke$arity$2(value.size,cljs.core.select_keys(opts,new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [cljs.core.cst$kw$locale,cljs.core.cst$kw$iec_QMARK_,cljs.core.cst$kw$locale_DASH_opts], null)))], null):null)], null);
 });
 });
-komponentit.filepicker.on_drag_over_handler = (function komponentit$filepicker$on_drag_over_handler(p__37462){
-var map__37463 = p__37462;
-var map__37463__$1 = (((((!((map__37463 == null))))?(((((map__37463.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37463.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37463):map__37463);
-var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37463__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
+komponentit.filepicker.on_drag_over_handler = (function komponentit$filepicker$on_drag_over_handler(p__37479){
+var map__37480 = p__37479;
+var map__37480__$1 = (((((!((map__37480 == null))))?(((((map__37480.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37480.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37480):map__37480);
+var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37480__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
 return (function (e){
 e.preventDefault();
 
@@ -136,10 +136,10 @@ if(cljs.core.truth_(on_active_change)){
 return null;
 });
 });
-komponentit.filepicker.on_drag_leave_handler = (function komponentit$filepicker$on_drag_leave_handler(p__37465){
-var map__37466 = p__37465;
-var map__37466__$1 = (((((!((map__37466 == null))))?(((((map__37466.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37466.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37466):map__37466);
-var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37466__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
+komponentit.filepicker.on_drag_leave_handler = (function komponentit$filepicker$on_drag_leave_handler(p__37482){
+var map__37483 = p__37482;
+var map__37483__$1 = (((((!((map__37483 == null))))?(((((map__37483.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37483.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37483):map__37483);
+var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37483__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
 return (function (e){
 if(cljs.core.truth_(on_active_change)){
 (on_active_change.cljs$core$IFn$_invoke$arity$1 ? on_active_change.cljs$core$IFn$_invoke$arity$1(false) : on_active_change.call(null,false));
@@ -157,11 +157,11 @@ return null;
  * - :on-file-drop - Called with vector of File
  * - :on-active-change - (optional) Called when dragged over and leaves the area.
  */
-komponentit.filepicker.on_drop_handler = (function komponentit$filepicker$on_drop_handler(p__37468){
-var map__37469 = p__37468;
-var map__37469__$1 = (((((!((map__37469 == null))))?(((((map__37469.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37469.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37469):map__37469);
-var on_file_drop = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37469__$1,cljs.core.cst$kw$on_DASH_file_DASH_drop);
-var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37469__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
+komponentit.filepicker.on_drop_handler = (function komponentit$filepicker$on_drop_handler(p__37485){
+var map__37486 = p__37485;
+var map__37486__$1 = (((((!((map__37486 == null))))?(((((map__37486.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37486.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37486):map__37486);
+var on_file_drop = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37486__$1,cljs.core.cst$kw$on_DASH_file_DASH_drop);
+var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37486__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
 return (function (e){
 e.preventDefault();
 
@@ -172,8 +172,8 @@ if(cljs.core.truth_(on_active_change)){
 } else {
 }
 
-var G__37471_37472 = komponentit.filepicker.file_list__GT_vec(e.dataTransfer.files);
-(on_file_drop.cljs$core$IFn$_invoke$arity$1 ? on_file_drop.cljs$core$IFn$_invoke$arity$1(G__37471_37472) : on_file_drop.call(null,G__37471_37472));
+var G__37488_37489 = komponentit.filepicker.file_list__GT_vec(e.dataTransfer.files);
+(on_file_drop.cljs$core$IFn$_invoke$arity$1 ? on_file_drop.cljs$core$IFn$_invoke$arity$1(G__37488_37489) : on_file_drop.call(null,G__37488_37489));
 
 return null;
 });
@@ -181,11 +181,11 @@ return null;
 /**
  * Create attribute map for drop area.
  */
-komponentit.filepicker.drop_area = (function komponentit$filepicker$drop_area(p__37473){
-var map__37474 = p__37473;
-var map__37474__$1 = (((((!((map__37474 == null))))?(((((map__37474.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37474.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37474):map__37474);
-var opts = map__37474__$1;
-var on_file_drop = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37474__$1,cljs.core.cst$kw$on_DASH_file_DASH_drop);
-var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37474__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
+komponentit.filepicker.drop_area = (function komponentit$filepicker$drop_area(p__37490){
+var map__37491 = p__37490;
+var map__37491__$1 = (((((!((map__37491 == null))))?(((((map__37491.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__37491.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__37491):map__37491);
+var opts = map__37491__$1;
+var on_file_drop = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37491__$1,cljs.core.cst$kw$on_DASH_file_DASH_drop);
+var on_active_change = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__37491__$1,cljs.core.cst$kw$on_DASH_active_DASH_change);
 return new cljs.core.PersistentArrayMap(null, 3, [cljs.core.cst$kw$on_DASH_drag_DASH_over,komponentit.filepicker.on_drag_over_handler(opts),cljs.core.cst$kw$on_DASH_drag_DASH_leave,komponentit.filepicker.on_drag_leave_handler(opts),cljs.core.cst$kw$on_DASH_drop,komponentit.filepicker.on_drop_handler(opts)], null);
 });

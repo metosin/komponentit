@@ -5,16 +5,16 @@ goog.require('cljs.core.constants');
 goog.require('clojure.string');
 goog.require('komponentit.util');
 komponentit.highlight.normalize = (function komponentit$highlight$normalize(s){
-var G__37244 = s;
-if((G__37244 == null)){
+var G__37247 = s;
+if((G__37247 == null)){
 return null;
 } else {
-return clojure.string.lower_case(G__37244);
+return clojure.string.lower_case(G__37247);
 }
 });
 komponentit.highlight.highlight_string = (function komponentit$highlight$highlight_string(var_args){
-var G__37246 = arguments.length;
-switch (G__37246) {
+var G__37249 = arguments.length;
+switch (G__37249) {
 case 2:
 return komponentit.highlight.highlight_string.cljs$core$IFn$_invoke$arity$2((arguments[(0)]),(arguments[(1)]));
 
@@ -41,11 +41,11 @@ var r = new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EM
 while(true){
 if(cljs.core.truth_(rst)){
 var normalized_rst = komponentit.highlight.normalize(rst);
-var vec__37254 = cljs.core.reduce.cljs$core$IFn$_invoke$arity$3(((function (rst,r,normalized_rst){
-return (function (p__37257,term){
-var vec__37258 = p__37257;
-var i = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37258,(0),null);
-var acc = vec__37258;
+var vec__37257 = cljs.core.reduce.cljs$core$IFn$_invoke$arity$3(((function (rst,r,normalized_rst){
+return (function (p__37260,term){
+var vec__37261 = p__37260;
+var i = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37261,(0),null);
+var acc = vec__37261;
 var x = normalized_rst.indexOf(term);
 if(((cljs.core.not_EQ_.cljs$core$IFn$_invoke$arity$2(x,(-1))) && (((cljs.core._EQ_.cljs$core$IFn$_invoke$arity$2(i,(-1))) || ((x < i)))))){
 return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x,cljs.core.subs.cljs$core$IFn$_invoke$arity$3(rst,x,(x + cljs.core.count(term)))], null);
@@ -54,16 +54,16 @@ return acc;
 }
 });})(rst,r,normalized_rst))
 ,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [(-1),null], null),cljs.core.remove.cljs$core$IFn$_invoke$arity$2(cljs.core.empty_QMARK_,query));
-var i = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37254,(0),null);
-var match = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37254,(1),null);
+var i = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37257,(0),null);
+var match = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__37257,(1),null);
 if(cljs.core.not_EQ_.cljs$core$IFn$_invoke$arity$2(i,(-1))){
 var a = cljs.core.subs.cljs$core$IFn$_invoke$arity$3(rst,(0),i);
 var b = cljs.core.subs.cljs$core$IFn$_invoke$arity$3(rst,i,(i + cljs.core.count(match)));
 var c = cljs.core.subs.cljs$core$IFn$_invoke$arity$2(rst,(i + cljs.core.count(match)));
-var G__37262 = c;
-var G__37263 = ((cljs.core.seq(a))?cljs.core.conj.cljs$core$IFn$_invoke$arity$variadic(r,a,cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([(wrapper.cljs$core$IFn$_invoke$arity$1 ? wrapper.cljs$core$IFn$_invoke$arity$1(b) : wrapper.call(null,b))], 0)):cljs.core.conj.cljs$core$IFn$_invoke$arity$2(r,(wrapper.cljs$core$IFn$_invoke$arity$1 ? wrapper.cljs$core$IFn$_invoke$arity$1(b) : wrapper.call(null,b))));
-rst = G__37262;
-r = G__37263;
+var G__37265 = c;
+var G__37266 = ((cljs.core.seq(a))?cljs.core.conj.cljs$core$IFn$_invoke$arity$variadic(r,a,cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([(wrapper.cljs$core$IFn$_invoke$arity$1 ? wrapper.cljs$core$IFn$_invoke$arity$1(b) : wrapper.call(null,b))], 0)):cljs.core.conj.cljs$core$IFn$_invoke$arity$2(r,(wrapper.cljs$core$IFn$_invoke$arity$1 ? wrapper.cljs$core$IFn$_invoke$arity$1(b) : wrapper.call(null,b))));
+rst = G__37265;
+r = G__37266;
 continue;
 } else {
 return cljs.core.conj.cljs$core$IFn$_invoke$arity$2(r,rst);
