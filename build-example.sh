@@ -16,7 +16,7 @@ lein less4clj once
 
 rm -rf gh-pages/*
 cp -r build-target/public/* gh-pages
-cp example-src/html/public/index.html gh-pages
+cp example-src/html/public/* gh-pages
 cp dev-target/public/example.css gh-pages
 
 cd gh-pages || exit

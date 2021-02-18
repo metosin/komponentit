@@ -34,9 +34,7 @@ header is fixed (is shown at the top of the table always)."))
   any column to stretch. This would break the widths, as the separate tables can't know if
   column widths are different on the other table due to cell contents.)
 
-  NOTE: If you are using OS X or other system where scrollbar is hidden
-  until used, and drawn over the contents, the scrollbar width might be zero,
-  and header will have 0px padding."
+  "
   [:div
    [:div {:style {:border "1px solid red"}}
     ;; Adding paddings or borders to scrollbar-padding component would throw of the calculation.
@@ -59,3 +57,12 @@ header is fixed (is shown at the top of the table always)."))
          [:td {:style {:width "50%"}} "50%"]
          [:td {:style {:width "30%"}} "30%"]
          [:td "20%"]])]]]])
+
+(dc/defcard-rg scrollbar-width-osx
+"NOTE: If you are using OS X or other system where scrollbar is hidden
+until used, and drawn over the contents, the scrollbar width might be zero,
+and header will have 0px padding.
+
+Here is screenshot from Linux showing the padding."
+  [:div
+   [:img {:src "scrollbar.png"}]])
