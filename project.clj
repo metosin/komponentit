@@ -20,7 +20,7 @@
                                   [cljsjs/leaflet "1.5.1-0"]
                                   [cljsjs/react-leaflet "2.4.0-0"]
                                   [cljsjs/react-input-autosize "2.2.1-1"]
-                                  [metosin/clj-suomi "0.2.0"]
+                                  [metosin/clj-suomi "0.2.1"]
                                   [cljsjs/codemirror "5.44.0-1"]
                                   [cljsjs/parinfer "3.11.0-0"]
                                   [cljsjs/parinfer-codemirror "1.4.1-2"]

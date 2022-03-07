@@ -41,6 +41,23 @@
    [:1-year (ago 11 Interval.MONTHS)]
    [:5-years (ago 5 Interval.YEARS)]])
 
+(dc/defcard-rg timeago-2-example
+  (fn [value _]
+    [:div
+     (for [[k v] @value]
+       [:div
+        {:key k}
+        [:strong (name k) ": "]
+        [timeago/timeago-2
+         {:value v
+          :format-fn (fn [x]
+                       (pr-str (assoc x :formatted (timeago/default-format-2 x))))}]])
+     [:button
+      {:type "button"
+       :on-click #(reset! value (example-data))}
+      "Reset data"]])
+  (r/atom (example-data)))
+
 (dc/defcard-rg timeago-example
   (fn [value _]
     [:div
