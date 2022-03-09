@@ -1,3 +1,11 @@
+## 0.3.11 (2022-03-09)
+
+- Add new `timeago-2` component where `format-fn` takes parameters as a map,
+`timeago` deprecated.
+- Fixed `timeago` running updates every second for future values.
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.10...0.3.11)**
+
 ## 0.3.10 (2020-03-06)
 
 - Use `reagent.dom/dom-node` instead of `reagent.core` function in preparation for next
