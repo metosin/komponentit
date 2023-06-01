@@ -1,3 +1,9 @@
+## unreleased
+
+- Fix bug in 'less or equal to one minute' comparison [#18](https://github.com/metosin/komponentit/pull/18)
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.11...master)**
+
 ## 0.3.11 (2022-03-09)
 
 - Add new `timeago-2` component where `format-fn` takes parameters as a map,

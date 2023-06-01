@@ -13,7 +13,7 @@
         years (/ months 12)]
     (cond
       (< seconds 45) [:ss (int seconds)]
-      (<= minutes 1) [:m 1]
+      (<= (int minutes) 1) [:m 1]
       (< minutes 45) [:mm (int minutes)]
       (<= hours 1) [:h 1]
       (< hours 22) [:hh (int hours)]
