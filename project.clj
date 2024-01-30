@@ -5,11 +5,11 @@
   :scm {:url "https://github.com/metosin/komponentit"}
 
   :dependencies [[com.andrewmcveigh/cljs-time "0.5.2"]
-                 [reagent "1.1.0"]]
+                 [reagent "1.2.0"]]
 
   :plugins [[deraen/lein-less4clj "0.7.4"]
-            [deraen/lein-sass4clj "0.5.1"]
-            [lein-figwheel "0.5.19"]]
+            [deraen/lein-sass4clj "0.5.5"]
+            [lein-figwheel "0.5.20"]]
 
   :source-paths ["src/cljs"]
   :resource-paths ["src/less"]
@@ -26,7 +26,7 @@
                                   [cljsjs/parinfer-codemirror "1.4.1-2"]
 
                                   [devcards "0.2.7"]
-                                  [binaryage/devtools "1.0.5"]]
+                                  [binaryage/devtools "1.0.7"]]
                    :resource-paths ["dev-target" "example-src/html"]}}
 
   :sass4clj {:source-map true
@@ -64,4 +64,4 @@
                                    :source-map "build-target/public/main.js.map"
                                    :foreign-libs [{:file "public/codemirror/mode/clojure/clojure-parinfer.js"
                                                    :provides ["parinfer.codemirror"]
-                                                   :requires ["cljsjs.codemirror"]}]}} ]})
+                                                   :requires ["cljsjs.codemirror"]}]}}]})
