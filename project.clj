@@ -1,4 +1,4 @@
-(defproject metosin/komponentit "0.3.12"
+(defproject metosin/komponentit "0.3.13"
   :description "Collection of bespoke Reagent components"
   :license {"Eclipse Public License" "http://www.eclipse.org/legal/epl-v10.html"}
   :url "https://github.com/metosin/komponentit"
