@@ -46,6 +46,6 @@
 
 (defn date-read [s f]
   (let [date (goog.date.Date. 0 0 0)]
-    (.strictParse (DateTimeParse. f) s date)
+    (.parse (DateTimeParse. f) s date #js{:validate true})
     (if (not= 0 (.getYear date))
       date)))

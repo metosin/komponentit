@@ -14,7 +14,7 @@
   :source-paths ["src/cljs"]
   :resource-paths ["src/less"]
 
-  :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.4"]
+  :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.132"]
 
                                   [cljsjs/react-transition-group "4.3.0-0"]
                                   [cljsjs/leaflet "1.7.1-0"]
