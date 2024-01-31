@@ -576,7 +576,7 @@ Style
   (r/create-class
     {:display-name "komponentit.autocomplete.autocomplete_class"
      :get-initial-state (partial initial-state opts defaults)
-     :component-will-receive-props will-receive-props
+     :UNSAFE_component-will-receive-props will-receive-props
      :component-did-update did-update
      :component-did-mount (partial did-mount opts)
 
@@ -631,7 +631,7 @@ Style
   (r/create-class
     {:display-name "komponentit.autocomplete.multiple_autocomplete_class"
      :get-initial-state (partial initial-state opts multiple-defaults)
-     :component-will-receive-props will-receive-props
+     :UNSAFE_component-will-receive-props will-receive-props
      :component-did-update did-update
      :component-did-mount (partial did-mount opts)
 
