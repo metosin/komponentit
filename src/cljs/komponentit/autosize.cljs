@@ -1,6 +1,6 @@
 (ns komponentit.autosize
-  (:require [reagent.core :as r]
-            [reagent.dom :as rdom]))
+  (:require [react-dom :as react-dom]
+            [reagent.core :as r]))
 
 (def base-sizer-style
   {:position "absolute"
@@ -82,12 +82,12 @@
       {:display-name "komponentit.autosize.input"
        :component-did-mount
        (fn [this]
-         (reset! state (input-node-styles (rdom/dom-node this))))
+         (reset! state (input-node-styles (react-dom/findDOMNode this))))
        :component-did-update
        (fn [this [_ prev-props]]
          (when (or (not= (:class (r/props this)) (:class prev-props))
                    (not= (:style (r/props this)) (:style prev-props)) )
-           (reset! state (input-node-styles (rdom/dom-node this)))))
+           (reset! state (input-node-styles (react-dom/findDOMNode this)))))
        :reagent-render
        (fn [{:keys [class style value placeholder] :as props}]
          [:input
@@ -148,12 +148,12 @@
       {:display-name "komponentit.autosize.textarea"
        :component-did-mount
        (fn [this]
-         (reset! state (textarea-node-styles (rdom/dom-node this))))
+         (reset! state (textarea-node-styles (react-dom/findDOMNode this))))
        :component-did-update
        (fn [this [_ prev-props]]
          (when (or (not= (:class (r/props this)) (:class prev-props))
                    (not= (:style (r/props this)) (:style prev-props)) )
-           (reset! state (textarea-node-styles (rdom/dom-node this)))))
+           (reset! state (textarea-node-styles (react-dom/findDOMNode this)))))
        :reagent-render
        (fn [{:keys [style value min-rows max-rows] :as props}]
          [:textarea

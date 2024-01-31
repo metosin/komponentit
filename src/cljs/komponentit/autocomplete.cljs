@@ -1,14 +1,14 @@
 (ns komponentit.autocomplete
   (:require-macros komponentit.autocomplete)
-  (:require [reagent.core :as r]
-            [reagent.dom :as rdom]
-            [komponentit.util :as util]
-            [komponentit.mixins :as mixins]
-            [komponentit.highlight :refer [highlight-string]]
-            [clojure.string :as string]
+  (:require [clojure.string :as string]
             [goog.dom :as dom]
             [goog.style :refer [scrollIntoContainerView]]
-            [komponentit.autosize :as autosize]))
+            [komponentit.autosize :as autosize]
+            [komponentit.highlight :refer [highlight-string]]
+            [komponentit.mixins :as mixins]
+            [komponentit.util :as util]
+            [react-dom :as react-dom]
+            [reagent.core :as r]))
 
 (def +create-item-index+ -1)
 
@@ -96,7 +96,7 @@
   nil)
 
 (defn click [this e]
-  (.focus (aget (.getElementsByClassName (rdom/dom-node this) "autocomplete__input") 0))
+  (.focus (aget (.getElementsByClassName (react-dom/findDOMNode this) "autocomplete__input") 0))
   nil)
 
 (defn focus [this search text e]
@@ -388,7 +388,7 @@
       {:display-name "komponentit.autocomplete.autocomplete_contents_wrapper_class"
        :component-did-mount
        (fn [this]
-         (let [el (rdom/dom-node this)
+         (let [el (react-dom/findDOMNode this)
                rect (.getBoundingClientRect el)
                height (.-offsetHeight el)
                top (.-top rect)
@@ -411,7 +411,7 @@
        (fn [this results container-state selected search {:keys [on-create multiple? groups item->key no-results-text] :as opts}]
          [mixins/window-event-listener
           {:on-click (fn [e]
-                       (when (not (dom/contains (rdom/dom-node parent) (.-target e)))
+                       (when (not (dom/contains (react-dom/findDOMNode parent) (.-target e)))
                          (close this opts)))
            :on-key-down (fn [e]
                           (case (.-keyCode e)
@@ -432,14 +432,14 @@
   [this]
   ; FIXME: Is is this useful as this contains the input? Would only the dropdown container
   ; be better?
-  (let [el (rdom/dom-node this)]
+  (let [el (react-dom/findDOMNode this)]
     (r/set-state this {:width (.-offsetWidth el) :height (.-offsetHeight el)})))
 
 (defn focus-input
   "Focus the input element if autocomplete is open."
   [this]
   (if (:open? (r/state this))
-    (some-> this rdom/dom-node (.getElementsByTagName "input") (.item 0) (.focus))))
+    (some-> this react-dom/findDOMNode (.getElementsByTagName "input") (.item 0) (.focus))))
 
 (defn- initial-state [{:keys [items] :as opts} defaults this]
   (let [prepared-items (if items (prepare-items items opts))]
