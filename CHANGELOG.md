@@ -6,9 +6,13 @@
 
 - Silence warnings about component-will-receive-props and reagent's dom-node
 
+**[compare](https://github.com/metosin/komponentit/compare/0.3.13...0.3.14)**
+
 ## 0.3.13 (2024-01-30)
 
 - Update deps and make this work in clojurescript 1.11.132 [#19](https://github.com/metosin/komponentit/pull/19)
+
+**[compare](https://github.com/metosin/komponentit/compare/0.3.12...0.3.13)**
 
 ## 0.3.12 (2023-06-01)
 
