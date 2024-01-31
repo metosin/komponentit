@@ -1,6 +1,10 @@
 ## unreleased
 
-**[compare](https://github.com/metosin/komponentit/compare/0.3.13...master)**
+**[compare](https://github.com/metosin/komponentit/compare/0.3.14...master)**
+
+## 0.3.14 (2024-01-31)
+
+- Silence warnings about component-will-receive-props and reagent's dom-node
 
 ## 0.3.13 (2024-01-30)
 
