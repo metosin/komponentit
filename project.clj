@@ -9,13 +9,15 @@
                  [reagent "1.2.0"]]
 
   :plugins [[deraen/lein-less4clj "0.7.4"]
-            [deraen/lein-sass4clj "0.5.5"]
+            [deraen/lein-sass4clj "0.6.0"]
             [lein-figwheel "0.5.20"]]
 
   :source-paths ["src/cljs"]
   :resource-paths ["src/less"]
 
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "1.11.132"]
+                                  ;; FIXME: for sass4clj
+                                  [com.fasterxml.jackson.core/jackson-core "2.9.9"]
 
                                   [cljsjs/react-transition-group "4.3.0-0"]
                                   [cljsjs/leaflet "1.7.1-0"]
@@ -30,9 +32,9 @@
                                   [binaryage/devtools "1.0.7"]]
                    :resource-paths ["dev-target" "example-src/html"]}}
 
-  :sass4clj {:source-map true
-             :source-paths ["example-src/less" "src/less"]
-             :target-path "dev-target/public/"}
+  :sass {:source-map true
+         :source-paths ["example-src/less" "src/less"]
+         :target-path "dev-target/public/"}
   :less4clj {:source-map true
              :source-paths ["example-src/less" "src/less"]
              :target-path "dev-target/public/"}
