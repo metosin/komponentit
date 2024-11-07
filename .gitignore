@@ -11,3 +11,4 @@ figwheel_server.log
 dev-target
 build-target
 .cpcache/
+/.direnv/
